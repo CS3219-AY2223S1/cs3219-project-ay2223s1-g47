@@ -21,4 +21,5 @@ This is a template repository for CS3219 project.
   * Matching Service: MS
   * Frontend: FE
   * Miscellaneous: MISC
-* Set up Dockerfile/deployment instructions for each new service
+  
+* Set up Dockerfile/deployment and provide instructions for setting up locally for each new service
