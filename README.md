@@ -12,3 +12,13 @@ This is a template repository for CS3219 project.
 ## Frontend
 1. Install npm packages using `npm i`.
 2. Run Frontend using `npm start`.
+
+## Developer conventions
+
+* Create a new branch `service/name-of-branch`
+  * Question Service: QS
+  * User Service: US
+  * Matching Service: MS
+  * Frontend: FE
+  * Miscellaneous: MISC
+* Set up Dockerfile/deployment instructions for each new service
