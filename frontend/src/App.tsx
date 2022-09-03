@@ -20,7 +20,7 @@ function App() {
                 <ProtectedRoute
                   redirectPath={"/login"}
                   isAllowed={false}
-                  element={<Home />}
+                  children={<Home />}
                 />
               }
             />
