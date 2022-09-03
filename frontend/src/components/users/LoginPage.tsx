@@ -8,44 +8,43 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import MuiAlert from "@mui/material/Alert";
-import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { handleSignupApi } from "../../api/userServiceApi";
+import { useNavigate } from "react-router-dom";
+import { handleLoginApi } from "../../api/userServiceApi";
 import useIsMobile from "../../hooks/useIsMobile";
-import { validatePassword, validateUsername } from "./utils";
+import { validateUsername } from "./utils";
+import MuiAlert from "@mui/material/Alert";
 
-function SignupPage() {
+function LoginPage() {
   // =============== State management ===============
   // user input data
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [reenteredPassword, setReenteredPassword] = useState("");
+  const [isUsernameError, setIsUsernameError] = useState(false);
+  const [isPasswordError, setIsPasswordError] = useState(false);
 
   // UI states
   const isMobile = useIsMobile();
   const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState(false);
   const [errorSnackBarContent, setErrorSnackbarContent] = useState("");
-  const [isUsernameError, setIsUsernameError] = useState(false);
-  const [isPasswordError, setIsPasswordError] = useState(false);
 
   // history
   const navigate = useNavigate();
 
-  // =============== Event handlers ===============
+  // ================== Event handlers ==================
   /**
-   * Makes the API call to sign up.
+   * Makes the API call to login.
    */
-  const handleSignup = async () => {
+  const handleLogin = async () => {
     // check and validate inputs
     if (!validateUsernameAndPassword()) {
       return;
     }
 
-    // try to sign up in the backend
-    await handleSignupApi(username, password).then((response) => {
+    // try to login in the backend
+    await handleLoginApi(username, password).then((response) => {
       if (response.status === 200) {
-        navigate("/login");
+        navigate("/home");
       } else {
         const messageFromBackend: string = response.data.message;
         setErrorSnackbarContent(
@@ -67,14 +66,30 @@ function SignupPage() {
     setIsUsernameError(!usernameIsValid);
 
     // validate password
-    const passwordIsValid = validatePassword(password, reenteredPassword);
+    const passwordIsValid = password.length > 0;
     setIsPasswordError(!passwordIsValid);
     return usernameIsValid && passwordIsValid;
   };
 
-  // =============== UI rendering ===============
+  // ================== UI components ================
+  /**
+   * Renders the login form.
+   */
+  const loginFormButtons = (
+    <Box>
+      <Button
+        style={{ width: "100%", textTransform: "none" }}
+        variant="contained"
+        onClick={handleLogin}
+      >
+        <Typography align="center" variant="subtitle1">
+          Log in
+        </Typography>
+      </Button>
+    </Box>
+  );
 
-  const signUpFormInputFields = (
+  const loginFormInputFields = (
     <Stack>
       <TextField
         label="Username"
@@ -96,49 +111,26 @@ function SignupPage() {
         type="password"
         value={password}
         error={isPasswordError}
-        helperText={isPasswordError && "Passwords must match!"}
+        helperText={isPasswordError && "Password cannot be empty!"}
         onChange={(e) => setPassword(e.target.value)}
         sx={{ marginBottom: "2rem" }}
       />
-      <TextField
-        label="Confirm Password"
-        variant="outlined"
-        type="password"
-        value={reenteredPassword}
-        onChange={(e) => setReenteredPassword(e.target.value)}
-        error={isPasswordError}
-        helperText={isPasswordError && "Passwords must match!"}
-        sx={{ marginBottom: "1rem" }}
-      />
-      <Link href="/login" underline="always" sx={{ marginBottom: "2rem" }}>
+
+      <Link href="/signup" underline="always" sx={{ marginBottom: "2rem" }}>
         <Typography noWrap={true} variant={"subtitle2"}>
-          Already have an account?
+          Don't have an account?
         </Typography>
       </Link>
     </Stack>
   );
 
-  const signUpFormButtons = (
-    <Box>
-      <Button
-        style={{ width: "100%", textTransform: "none" }}
-        variant="contained"
-        onClick={handleSignup}
-      >
-        <Typography align="center" variant="subtitle1">
-          Sign up
-        </Typography>
-      </Button>
-    </Box>
-  );
-
   /**
-   * This renders the sign up form.
+   * This renders the login form.
    */
-  const signUpForm = (
+  const loginForm = (
     <Box display={"flex"} flexDirection={"column"} padding={"2rem"}>
-      {signUpFormInputFields}
-      {signUpFormButtons}
+      {loginFormInputFields}
+      {loginFormButtons}
     </Box>
   );
 
@@ -172,13 +164,13 @@ function SignupPage() {
         }}
       >
         <Typography variant={"h2"} marginBottom={"2rem"} textAlign={"center"}>
-          Sign Up
+          Log in
         </Typography>
-        {signUpForm}
+        {loginForm}
         {errorSnackbar}
       </Paper>
     </Box>
   );
 }
 
-export default SignupPage;
+export default LoginPage;
