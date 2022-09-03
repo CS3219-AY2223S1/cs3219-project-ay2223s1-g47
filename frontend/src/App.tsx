@@ -1,8 +1,9 @@
 import ProtectedRoute from "./components/utils/routing/ProtectedRoute";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
-import SignupPage from "./components/users/SignupPage";
+import SignupPage from "./components/user/SignupPage";
 import { Box } from "@mui/material";
-import LoginPage from "./components/users/LoginPage";
+import LoginPage from "./components/user/LoginPage";
+import Home from "./components/Home";
 
 function App() {
   // =============== State management ===============
@@ -16,7 +17,11 @@ function App() {
             <Route
               path="/"
               element={
-                <ProtectedRoute redirectPath={"/login"} isAllowed={false} />
+                <ProtectedRoute
+                  redirectPath={"/login"}
+                  isAllowed={false}
+                  element={<Home />}
+                />
               }
             />
             <Route path="/signup" element={<SignupPage />} />

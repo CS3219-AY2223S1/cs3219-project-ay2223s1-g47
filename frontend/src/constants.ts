@@ -1,7 +1,9 @@
 // ================ Colours ==================
 export const colours = {
-  primary: "#f1faee",
+  primary: "#9b5de5",
   secondary: "#e63946",
+  white: "#ffffff",
+  black: "#000000",
   success: "#4caf50",
   info: "#00bcd4",
   warning: "#ffeb3b",
