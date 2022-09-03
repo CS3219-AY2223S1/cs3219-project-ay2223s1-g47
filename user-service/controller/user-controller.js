@@ -40,7 +40,7 @@ export async function login(req, res) {
                 return res.status(400).json({message: 'Could not login!'});
             } else {
                 console.log(`Successful login as ${username} !`)
-                return res.status(201).json({message: `Successful login as ${username} !`});
+                return res.status(201).json({message: `Successful login as ${username} !`,JWT:`${username}_${password}_${new Date().getTime()}`});
             }
         } else {
             return res.status(400).json({message: 'Username and/or Password are missing!'});

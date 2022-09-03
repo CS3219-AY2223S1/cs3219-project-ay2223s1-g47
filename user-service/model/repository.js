@@ -13,8 +13,9 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
 
 /**
  * 
- * @param {username:string, password:string} params
- * @returns 
+ * @param {*} params {username:string, password:string} username and password for new user
+ * @returns new UserModel if valid
+ * @throws Error if username already exists in database
  */
 export async function createUser(params) {
   // check for existing user with same username
@@ -22,6 +23,11 @@ export async function createUser(params) {
   return new UserModel(params);
 }
 
+/**
+ * 
+ * @param {*} params {username:string, password:string} username and password for existing user
+ * @returns true if matches existing user
+ */
 export async function login (params) { 
   // params is user,password
   return await UserModel.exists(params);
