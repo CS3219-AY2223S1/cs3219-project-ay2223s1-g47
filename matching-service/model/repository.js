@@ -1,6 +1,6 @@
 import RoomModel from './room-model.js';
 import PendingMatchModel from './pending-match-model.js';
-import 'dotenv/config'
+import 'dotenv/config';
 
 //Set up mongoose connection
 import mongoose from 'mongoose';

@@ -5,7 +5,7 @@ export async function ormCreateRoom(userIds) {
     try {
         const newRoom = await createRoom({userIds});
         newRoom.save();
-        return true;
+        return newRoom;
     } catch (err) {
         console.log('ERROR: Could not create new room.');
         return { err };

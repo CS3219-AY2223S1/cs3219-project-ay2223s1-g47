@@ -1,13 +1,13 @@
 import express from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
-import { createPendingMatch, match } from './controller/pending-match-controller';
-import { createRoom } from './controller/room-controller';
-const { Server } = require("socket.io");
-const httpServer = createServer(app)
-const io = new Server(httpServer);
+import { createPendingMatch, match } from './controller/pending-match-controller.js';
+import { createRoom } from './controller/room-controller.js';
+import { Server } from "socket.io";
 
 const app = express();
+const httpServer = createServer(app);
+const io = new Server(httpServer);
 app.use(express.urlencoded({ extended: true }))
 app.use(express.json())
 app.use(cors()) // config cors so that front-end can use
@@ -20,13 +20,13 @@ app.get('/', (req, res) => {
 });
 
 
-io.on('connection', (socket) => {
+io.on("connection", (socket) => {
     const socketId = socket.id;
 
     console.log("a user connected");
-    socket.on("match", () => {
+    socket.on("match", async () => {
         console.log("Match is being made");
-        await createPendingMatch(currentUser, socketId);
+        const match1 = await createPendingMatch(currentUser, socketId);
 
         // Check if any waiting matches
         const match2 = await match(match1);
@@ -43,17 +43,17 @@ io.on('connection', (socket) => {
         }
     });
 
-    socket.on("matchSuccess", (roomId) => {
+    socket.on("matchSuccess", async (roomId) => {
         await deletePendingMatch(socket.id);
         console.log("room created: ", roomId);
     });
 
-    socket.on("timeout", () => {
+    socket.on("timeout", async () => {
         await deletePendingMatch(socket.id);
         console.log("user timeout");
     });
 
-    socket.on("disconnect", () => {
+    socket.on("disconnect", async () => {
         await deletePendingMatch(socket.id);
         console.log("user disconnected");
     });
