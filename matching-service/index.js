@@ -1,7 +1,7 @@
 import express from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
-import { createPendingMatch, match } from './controller/pending-match-controller.js';
+import { createPendingMatch, deletePendingMatch, match } from './controller/pending-match-controller.js';
 import { createRoom } from './controller/room-controller.js';
 import { Server } from "socket.io";
 
@@ -37,7 +37,7 @@ io.on("connection", (socket) => {
         }
     });
 
-    socket.timeout(6000).emit("timeout", (err) => {
+    socket.timeout(60000).emit("timeout", (err) => {
         if (err) {
             console.log(err);
         }
