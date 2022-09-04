@@ -60,7 +60,7 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
         setUser(user);
       }
 
-      // else, set the user state to explicitly logged out
+      // else, do nothing
     });
   }, []);
 
