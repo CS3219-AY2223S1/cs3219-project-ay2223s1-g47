@@ -11,7 +11,7 @@ import {
 import MuiAlert from "@mui/material/Alert";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { handleSignupApi } from "../../api/userServiceApi";
+import { apiCallUserSignup } from "../../api/userServiceApi";
 import useIsMobile from "../../hooks/useIsMobile";
 import { validatePassword, validateUsername } from "./utils";
 
@@ -43,16 +43,14 @@ function SignupPage() {
     }
 
     // try to sign up in the backend
-    await handleSignupApi(username, password).then((response) => {
+    await apiCallUserSignup(username, password).then((response) => {
       if (response.status === 200) {
         navigate("/login");
       } else {
-        const messageFromBackend: string = response.data.message;
-        setErrorSnackbarContent(
-          messageFromBackend
-            ? messageFromBackend
-            : "Something went wrong! Please try again later."
-        );
+        const errorMessage: string =
+          response.data.message ??
+          "Something went wrong! Please try again later.";
+        setErrorSnackbarContent(errorMessage);
       }
       setIsErrorSnackbarOpen(true);
     });

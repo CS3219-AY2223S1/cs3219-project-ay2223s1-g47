@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { handleLoginApi } from "../../api/userServiceApi";
+import { apiCallUserLogin } from "../../api/userServiceApi";
 import useIsMobile from "../../hooks/useIsMobile";
 import { validateUsername } from "./utils";
 import MuiAlert from "@mui/material/Alert";
@@ -42,16 +42,14 @@ function LoginPage() {
     }
 
     // try to login in the backend
-    await handleLoginApi(username, password).then((response) => {
+    await apiCallUserLogin(username, password).then((response) => {
       if (response.status === 200) {
         navigate("/home");
       } else {
-        const messageFromBackend: string = response.data.message;
-        setErrorSnackbarContent(
-          messageFromBackend
-            ? messageFromBackend
-            : "Something went wrong! Please try again later."
-        );
+        const errorMessage: string =
+          response.data.message ??
+          "Something went wrong! Please try again later.";
+        setErrorSnackbarContent(errorMessage);
       }
       setIsErrorSnackbarOpen(true);
     });

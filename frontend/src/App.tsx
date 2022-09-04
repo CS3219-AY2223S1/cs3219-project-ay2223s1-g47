@@ -4,10 +4,14 @@ import SignupPage from "./components/user/SignupPage";
 import { Box } from "@mui/material";
 import LoginPage from "./components/user/LoginPage";
 import Home from "./components/Home";
+import { useContext } from "react";
+import { UserContext, UserContextType } from "./contexts/UserContext";
 
 function App() {
   // =============== State management ===============
   // user context on login state
+  const { user } = useContext(UserContext) as UserContextType;
+  const { loggedIn } = user;
 
   return (
     <div className="App">
@@ -15,11 +19,11 @@ function App() {
         <Router>
           <Routes>
             <Route
-              path="/"
+              path="/home"
               element={
                 <ProtectedRoute
                   redirectPath={"/login"}
-                  isAllowed={false}
+                  isAllowed={loggedIn}
                   children={<Home />}
                 />
               }
