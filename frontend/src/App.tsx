@@ -19,7 +19,7 @@ function App() {
         <Router>
           <Routes>
             <Route
-              path="/home"
+              path="/"
               element={
                 <ProtectedRoute
                   redirectPath={"/login"}

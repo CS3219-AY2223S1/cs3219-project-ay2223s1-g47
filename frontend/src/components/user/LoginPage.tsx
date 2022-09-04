@@ -8,12 +8,12 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiCallUserLogin } from "../../api/userServiceApi";
 import useIsMobile from "../../hooks/useIsMobile";
 import { validateUsername } from "./utils";
 import MuiAlert from "@mui/material/Alert";
+import { UserContext, UserContextType } from "../../contexts/UserContext";
 
 function LoginPage() {
   // =============== State management ===============
@@ -31,6 +31,9 @@ function LoginPage() {
   // history
   const navigate = useNavigate();
 
+  // contexts
+  const { login } = useContext(UserContext) as UserContextType;
+
   // ================== Event handlers ==================
   /**
    * Makes the API call to login.
@@ -42,9 +45,9 @@ function LoginPage() {
     }
 
     // try to login in the backend
-    await apiCallUserLogin(username, password).then((response) => {
+    await login(username, password).then((response) => {
       if (response.status === 200) {
-        navigate("/home");
+        navigate("/");
       } else {
         const errorMessage: string =
           response.data.message ??

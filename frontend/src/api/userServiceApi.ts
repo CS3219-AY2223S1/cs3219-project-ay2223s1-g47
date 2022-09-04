@@ -128,14 +128,14 @@ export const apiCallUserAuthentication: () => Promise<{
   //         return error; // propagate up the call stack
   //       }
   //     });
-  // dummy success response
-  return {
-    status: 200,
-    data: { username: "test", userId: "test" },
-  };
-  // // dummy error response
+  // // dummy success response
   // return {
-  //   status: 500,
-  //   data: { username: "test", userId: "test", message: "Error!" },
-  // }; // dummy data for now
+  //   status: 200,
+  //   data: { username: "test", userId: "test" },
+  // };
+  // dummy error response
+  return {
+    status: 401,
+    data: { username: "test", userId: "test", message: "Not logged in!" },
+  }; // dummy data for now
 };
