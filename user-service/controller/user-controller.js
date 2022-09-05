@@ -45,7 +45,7 @@ export async function login(req, res) {
                 return res.status(400).json({message: 'Could not login!'});
             } else {
 
-                let jwt_cookie = await new SignJWT({ })
+                let jwt_cookie = await new SignJWT({username:username})
                 .setProtectedHeader({ alg: 'ES256' })
                 .setIssuedAt()
                 .setIssuer('user-service')
