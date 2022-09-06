@@ -1,3 +1,5 @@
+[![GitHub Super-Linter](https://https://github.com/CS3219-AY2223S1/cs3219-project-ay2223s1-g47/workflows/Lint%20Code%20Base/badge.svg)](https://github.com/marketplace/actions/super-linter)
+
 # CS3219-AY22-23-Project-Skeleton
 
 This is a template repository for CS3219 project.
