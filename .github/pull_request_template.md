@@ -11,12 +11,12 @@ Some considerations were y
 
 ### Things to take note of
 
-* Something about a design choice 
+* Something about a design choice
 * Something about a janky solution
 
 ### Testing
 
-e.g. Simply run: 
+e.g. Simply run:
 ```
 cypress <some file>.ts
 ```
