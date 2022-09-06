@@ -6,7 +6,7 @@ Provide a high level overview of what was done.
 
 * Implemented x
 
-Some consderations were y
+Some considerations were y
 
 
 ### Things to take note of
