@@ -15,11 +15,8 @@ db.on('error', console.error.bind(console, 'MongoDB connection error:'));
  * 
  * @param {*} params {username:string, password:string} username and password for new user
  * @returns new UserModel if valid
- * @throws Error if username already exists in database
  */
 export async function createUser(params) {
-  // check for existing user with same username
-  if (await UserModel.exists({username:params.username})){throw new Error("Already Exists")}
   return new UserModel(params);
 }
 
@@ -30,9 +27,11 @@ export async function createUser(params) {
  */
 export async function login (params) { 
   // params is user,password
-  return await UserModel.exists(params);
-  
-  // check validity of arguments
-  // generate secret 
-  // return 
+  return Boolean(await UserModel.exists(params));
+}
+
+
+export async function existsUser(params) {
+  // _id if exists, null if false --> true if exists, false if not
+  return Boolean(await UserModel.exists({username:params.username}))
 }
