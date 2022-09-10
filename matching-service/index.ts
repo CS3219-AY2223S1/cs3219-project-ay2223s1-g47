@@ -9,9 +9,12 @@ import { User } from './interfaces/user';
 const app = express();
 const httpServer = createServer(app);
 const io = new Server(httpServer);
-app.use(express.urlencoded({ extended: true }))
-app.use(express.json())
-app.use(cors()) // config cors so that front-end can use
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json());
+app.use(cors()); // config cors so that front-end can use
+
+const FALLBACK_PORT = 8001; // localhost port
+const MATCH_TIMEOUT = 60000; // Pending match duration
 
 const currentUser: Partial<User> = {
     name: "name",
@@ -41,11 +44,11 @@ io.on("connection", (socket) => {
                 socket.to(match2.socketId).emit("matchSuccess", room._id);
             }
         } catch (err) {
-
+            console.log(err);
         }
     });
 
-    socket.timeout(60000).emit("timeout", (err: any) => {
+    socket.timeout(MATCH_TIMEOUT).emit("timeout", (err: any) => {
         if (err) {
             console.log(err);
         }
@@ -67,4 +70,4 @@ io.on("connection", (socket) => {
     });
 });
 
-httpServer.listen(8001);
+httpServer.listen(process.env.PORT || FALLBACK_PORT);
