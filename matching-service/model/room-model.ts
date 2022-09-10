@@ -1,4 +1,5 @@
 import mongoose from 'mongoose';
+import { Room } from '../interfaces/room';
 
 var Schema = mongoose.Schema
 const ObjectId = Schema.Types.ObjectId
@@ -10,4 +11,4 @@ let RoomModelSchema = new Schema({
     }
 })
 
-export default mongoose.model('RoomModel', RoomModelSchema)
+export default mongoose.model<Room>('RoomModel', RoomModelSchema);

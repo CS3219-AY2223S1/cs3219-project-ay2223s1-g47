@@ -4,7 +4,6 @@ import { createServer } from 'http';
 import { createPendingMatch, deletePendingMatch, match } from './controller/pending-match-controller';
 import { createRoom } from './controller/room-controller';
 import { Server } from "socket.io";
-import { PendingMatch } from './interfaces/pending-match';
 import { User } from './interfaces/user';
 
 const app = express();
@@ -34,7 +33,7 @@ io.on("connection", (socket) => {
             const match1 = await createPendingMatch(currentUser._id, socketId);
 
             // Check if any waiting matches
-            const match2 = await match(match1) as PendingMatch | undefined;
+            const match2 = await match(match1);
             if (match2) {
                 const users = [currentUser._id, match2.userId];
                 const room = await createRoom(users);

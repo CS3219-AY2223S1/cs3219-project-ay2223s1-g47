@@ -1,8 +1,9 @@
 import mongoose from 'mongoose';
+import { PendingMatch } from '../interfaces/pending-match';
 var Schema = mongoose.Schema;
 const ObjectId = Schema.Types.ObjectId;
 
-let MatchModelSchema = new Schema({
+let PendingMatchModelSchema = new Schema({
     userId: {
         type: ObjectId,
         required: true
@@ -13,4 +14,4 @@ let MatchModelSchema = new Schema({
     }
 })
 
-export default mongoose.model('MatchModel', MatchModelSchema);
+export default mongoose.model<PendingMatch>('PendingMatchModel', PendingMatchModelSchema);
