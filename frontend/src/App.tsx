@@ -6,12 +6,15 @@ import LoginPage from "./components/user/LoginPage";
 import Home from "./components/Home";
 import { useContext } from "react";
 import { UserContext, UserContextType } from "./contexts/UserContext";
+import MatchingPage from "./components/matching/MatchingPage";
 
 function App() {
   // =============== State management ===============
   // user context on login state
   const { user } = useContext(UserContext) as UserContextType;
   const { loggedIn } = user;
+
+  console.log("App.tsx: loggedIn = " + loggedIn);
 
   return (
     <div className="App">
@@ -25,6 +28,16 @@ function App() {
                   redirectPath={"/login"}
                   isAllowed={loggedIn}
                   children={<Home />}
+                />
+              }
+            />
+            <Route
+              path="/match"
+              element={
+                <ProtectedRoute
+                  redirectPath={"/"}
+                  isAllowed={loggedIn}
+                  children={<MatchingPage />}
                 />
               }
             />
