@@ -37,6 +37,8 @@ export async function createUser(req, res) {
 
 async function checkJWT(req){
     //handles checking for expiry
+
+    if(!req.headers.cookie){return false;}
     let cookies = req.headers.cookie.split("; ").filter(x=>x.startsWith("JWT="))
     if (cookies.length != 1){return{}}
 

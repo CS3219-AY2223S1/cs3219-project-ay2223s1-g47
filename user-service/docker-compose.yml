@@ -1,0 +1,17 @@
+version: '3.9'
+
+services:
+  
+  user_service:
+    build: 
+      context: .
+    volumes:
+      - .:/usr/userService
+      - /usr/userService/node_modules
+    ports:
+      - "8000:8000"
+  
+  mongodb:
+    image: mongo
+    ports:
+      - "27017:27017"
