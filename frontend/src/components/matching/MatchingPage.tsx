@@ -26,11 +26,11 @@ function MatchingPage() {
   const matchOptionCard = (
     title: string,
     description: string,
-    onclick: () => void
+    onClick: () => void
   ) => {
     return (
-      <Card sx={{ maxWidth: 345 }}>
-        <CardActionArea>
+      <Card elevation={24}>
+        <CardActionArea onClick={onClick}>
           {/*some image*/}
           <CardContent>
             <Typography gutterBottom variant="h5" component="div">
@@ -46,8 +46,14 @@ function MatchingPage() {
   };
 
   const matchingSelection = (
-    <Grid container spacing={2} columns={{ xs: 12, sm: 4 }}>
-      <Grid item>
+    <Grid
+      container
+      direction="row"
+      alignItems="center"
+      justifyContent="center"
+      spacing={4}
+    >
+      <Grid item xs={12} md={4}>
         {matchOptionCard(
           "Easy",
           "Choose this if you're new to programming",
@@ -56,12 +62,12 @@ function MatchingPage() {
           }
         )}
       </Grid>
-      <Grid item>
+      <Grid item xs={12} md={4}>
         {matchOptionCard("Medium", "For most people.", () => {
           /* Event handler for clicking difficulty*/
         })}
       </Grid>
-      <Grid item>
+      <Grid item xs={12} md={4}>
         {matchOptionCard("Hard", "Dark Souls, but for programmers", () => {
           /* Event handler for clicking difficulty*/
         })}
@@ -70,7 +76,18 @@ function MatchingPage() {
   );
 
   // ====== Render ======
-  return <div className="MatchingPage">{matchingSelection}</div>;
+  return (
+    <div
+      className="MatchingPage"
+      style={{
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+      }}
+    >
+      {matchingSelection}
+    </div>
+  );
 }
 
 export default MatchingPage;
