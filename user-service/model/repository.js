@@ -30,6 +30,13 @@ export async function login(params) {
   return Boolean(await UserModel.exists(params));
 }
 
+export async function deleteUser(params) {
+  return UserModel.deleteOne({username:params.username})
+}
+
+export async function changePassword(params) {
+  return await UserModel.findOneAndUpdate( {'username' : params.username} , params)
+}
 
 export async function existsUser(params) {
   // _id if exists, null if false --> true if exists, false if not

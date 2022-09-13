@@ -3,6 +3,7 @@ version: '3.9'
 services:
   
   user_service:
+    container_name: "user-service"
     build: 
       context: .
     volumes:
@@ -12,6 +13,7 @@ services:
       - "8000:8000"
   
   mongodb:
+    container_name: "mongodb"
     image: mongo
     ports:
       - "27017:27017"
