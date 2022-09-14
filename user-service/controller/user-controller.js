@@ -12,8 +12,9 @@ const { publicKey, privateKey } = await generateKeyPair('ES256')
 const salt = process.env.PW_SALT
 
 async function checkJWT(req) {
+  //TODO: check for blacklisted token
+  
   //handles checking for expiry
-
   if (!req.headers.cookie) { return false; }
   let cookies = req.headers.cookie.split("; ").filter(x => x.startsWith("JWT="))
   if (cookies.length != 1) { return false }
@@ -84,6 +85,14 @@ export async function login(req, res) {
     return databaseError(res)
   }
 }
+
+export async function logout(req,res) {
+  res.cookie('JWT', "", { httpOnly: true, secure: process.env.ENV == "PROD" });
+  //TODO: blacklist token
+  return res.status(200).json({message:"logged out"})
+}
+
+
 
 export async function auth(req,res) {
   if( await checkJWT(req)){
