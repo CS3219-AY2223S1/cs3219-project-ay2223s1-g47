@@ -41,7 +41,7 @@ io.on("connection", (socket: Socket) => {
             const match2 = await match(match1);
             if (match2) {
                 const users = [userId, match2.userId];
-                const room = await createRoom(users);
+                const room = await createRoom(users, difficulty);
                 socket.to(socketId).emit("matchSuccess", room._id);
                 socket.to(match2.socketId).emit("matchSuccess", room._id);
             }

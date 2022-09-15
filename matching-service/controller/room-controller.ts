@@ -12,7 +12,7 @@ const validators = [
     validateUsers,
 ]
 
-export async function createRoom(users: string[]) {
+export async function createRoom(users: string[], difficulty: number) {
     checkValidators(users, validators);
-    return await _createRoom(users);
+    return await _createRoom(users, difficulty);
 }
