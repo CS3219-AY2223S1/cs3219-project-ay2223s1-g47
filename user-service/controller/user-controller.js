@@ -2,6 +2,7 @@ import { ormCreateUser as _createUser } from '../model/user-orm.js'
 import { ormLogin as _login } from '../model/user-orm.js'
 import { ormDeleteUser as _delete } from '../model/user-orm.js'
 import { ormChangePassword as _changePassword } from '../model/user-orm.js'
+import { ormGetId as _getId } from '../model/user-orm.js'
 import { SignJWT, jwtVerify, generateKeyPair, } from 'jose'
 import {unauthorized,databaseError} from './response.js'
 import bcrypt from 'bcrypt'
@@ -78,7 +79,9 @@ export async function login(req, res) {
       .sign(privateKey)
     res.cookie('JWT', jwt_cookie, { httpOnly: true, secure: process.env.ENV == "PROD" });
     res.cookie('cookie2', 'value')
-    return res.status(201).json({ message: `Successful login as ${username} !` });
+
+    let userId = await _getId(username)
+    return res.status(201).json({ message: `Successful login as ${username} !`, userId : userId });
 
   } catch (err) {
     console.log(err)

@@ -42,3 +42,8 @@ export async function existsUser(params) {
   // _id if exists, null if false --> true if exists, false if not
   return Boolean(await UserModel.exists({ username: params.username }))
 }
+
+export async function getUserId(params) {
+  // _id if exists, null if false --> true if exists, false if not
+  return (await UserModel.findOne({ username: params.username }))._id
+}
