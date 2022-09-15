@@ -8,6 +8,10 @@ import {
 import { useContext, useState } from "react";
 import { UserContext, UserContextType } from "../../contexts/UserContext";
 import useIsMobile from "../../hooks/useIsMobile";
+import { io } from "socket.io-client";
+
+const serverUri = process.env.MATCHING_SERVICE_URI || "http://localhost:8001";
+const socket = io(serverUri, {});
 
 function MatchingPage() {
   // ====== State management ======
@@ -58,18 +62,28 @@ function MatchingPage() {
           "Easy",
           "Choose this if you're new to programming",
           () => {
-            /* Event handler for clicking difficulty*/
+            socket.emit("match", {
+              userId: user.userId,
+              difficulty: 0,
+            })
           }
         )}
       </Grid>
       <Grid item xs={12} md={4}>
         {matchOptionCard("Medium", "For most people.", () => {
-          /* Event handler for clicking difficulty*/
+            console.log("match");
+          socket.emit("match", {
+            userId: user.userId,
+            difficulty: 1,
+          })
         })}
       </Grid>
       <Grid item xs={12} md={4}>
         {matchOptionCard("Hard", "Dark Souls, but for programmers", () => {
-          /* Event handler for clicking difficulty*/
+          socket.emit("match", {
+            userId: user.userId,
+            difficulty: 2,
+          })
         })}
       </Grid>
     </Grid>
