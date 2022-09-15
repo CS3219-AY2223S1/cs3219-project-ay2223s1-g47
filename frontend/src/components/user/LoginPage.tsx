@@ -1,13 +1,6 @@
 import {
   Box,
   Button,
-  colors,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-  Grid,
   Link,
   Paper,
   Snackbar,
@@ -15,50 +8,51 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
+import { useContext, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import useIsMobile from "../../hooks/useIsMobile";
+import { validateUsername } from "./utils";
 import MuiAlert from "@mui/material/Alert";
-import { Link as RouterLink, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import { handleSignupApi } from "../../api/userServiceApi";
+import { UserContext, UserContextType } from "../../contexts/UserContext";
 
-const USERNAME_REGEX = "^[a-zA-Z0-9_]{3,20}$";
-
-function SignupPage() {
+function LoginPage() {
   // =============== State management ===============
   // user input data
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [reenteredPassword, setReenteredPassword] = useState("");
-
-  // UI states
-  const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState(false);
-  const [errorSnackBarContent, setErrorSnackbarContent] = useState("");
   const [isUsernameError, setIsUsernameError] = useState(false);
   const [isPasswordError, setIsPasswordError] = useState(false);
+
+  // UI states
+  const isMobile = useIsMobile();
+  const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState(false);
+  const [errorSnackBarContent, setErrorSnackbarContent] = useState("");
 
   // history
   const navigate = useNavigate();
 
-  // =============== Event handlers ===============
+  // contexts
+  const { login } = useContext(UserContext) as UserContextType;
+
+  // ================== Event handlers ==================
   /**
-   * Makes the API call to sign up.
+   * Makes the API call to login.
    */
-  const handleSignup = async () => {
+  const handleLogin = async () => {
     // check and validate inputs
     if (!validateUsernameAndPassword()) {
       return;
     }
 
-    // try to sign up in the backend
-    await handleSignupApi(username, password).then((response) => {
+    // try to login in the backend
+    await login(username, password).then((response) => {
       if (response.status === 200) {
-        navigate("/login");
+        navigate("/");
       } else {
-        const messageFromBackend: string = response.data.message;
-        setErrorSnackbarContent(
-          messageFromBackend
-            ? messageFromBackend
-            : "Something went wrong! Please try again later."
-        );
+        const errorMessage: string =
+          response.data.message ??
+          "Something went wrong! Please try again later.";
+        setErrorSnackbarContent(errorMessage);
       }
       setIsErrorSnackbarOpen(true);
     });
@@ -73,27 +67,28 @@ function SignupPage() {
     setIsUsernameError(!usernameIsValid);
 
     // validate password
-    const passwordIsValid = validatePassword(password, reenteredPassword);
+    const passwordIsValid = password.length > 0;
     setIsPasswordError(!passwordIsValid);
     return usernameIsValid && passwordIsValid;
   };
 
+  // ================== UI components ================
   /**
-   * Validates the username input.
+   * Renders the login form.
    */
-  const validateUsername = (username: string) => {
-    const re: RegExp = new RegExp(USERNAME_REGEX);
-    return username.length > 0 && re.test(username);
-  };
-
-  /**
-   * Validates the password input.
-   */
-  const validatePassword = (password: string, reenteredPassword: string) => {
-    return password.length > 0 && password === reenteredPassword;
-  };
-
-  // =============== UI rendering ===============
+  const loginFormButtons = (
+    <Box>
+      <Button
+        style={{ width: "100%", textTransform: "none" }}
+        variant="contained"
+        onClick={handleLogin}
+      >
+        <Typography align="center" variant="subtitle1">
+          Log in
+        </Typography>
+      </Button>
+    </Box>
+  );
 
   const loginFormInputFields = (
     <Stack>
@@ -117,38 +112,17 @@ function SignupPage() {
         type="password"
         value={password}
         error={isPasswordError}
-        helperText={isPasswordError && "Passwords must match!"}
+        helperText={isPasswordError && "Password cannot be empty!"}
         onChange={(e) => setPassword(e.target.value)}
         sx={{ marginBottom: "2rem" }}
       />
-      <TextField
-        label="Confirm Password"
-        variant="outlined"
-        type="password"
-        value={reenteredPassword}
-        onChange={(e) => setReenteredPassword(e.target.value)}
-        error={isPasswordError}
-        helperText={isPasswordError && "Passwords must match!"}
-        sx={{ marginBottom: "1rem" }}
-      />
-      <Link href="/login" underline="always" sx={{ marginBottom: "2rem" }}>
+
+      <Link href="/signup" underline="always" sx={{ marginBottom: "2rem" }}>
         <Typography noWrap={true} variant={"subtitle2"}>
-          Already have an account?
+          Don't have an account?
         </Typography>
       </Link>
     </Stack>
-  );
-
-  const loginFormButtons = (
-    <Box>
-      <Button
-        style={{ width: "100%" }}
-        variant="contained"
-        onClick={handleSignup}
-      >
-        <Typography align="center">Sign up</Typography>
-      </Button>
-    </Box>
   );
 
   /**
@@ -183,15 +157,15 @@ function SignupPage() {
       <Paper
         elevation={24}
         style={{
-          width: "30rem",
+          width: isMobile ? "90%" : "30rem",
           paddingTop: "40px",
-          paddingLeft: "20px",
-          paddingRight: "20px",
+          paddingLeft: isMobile ? "0px" : "20px",
+          paddingRight: isMobile ? "0px" : "20px",
           paddingBottom: "40px",
         }}
       >
         <Typography variant={"h2"} marginBottom={"2rem"} textAlign={"center"}>
-          Sign Up
+          Log in
         </Typography>
         {loginForm}
         {errorSnackbar}
@@ -200,4 +174,4 @@ function SignupPage() {
   );
 }
 
-export default SignupPage;
+export default LoginPage;

@@ -8,6 +8,10 @@ let RoomModelSchema = new Schema({
     userIds: {
         type: [ObjectId],
         required: true
+    },
+    difficulty: {
+        type: Number,
+        required: true,
     }
 })
 
