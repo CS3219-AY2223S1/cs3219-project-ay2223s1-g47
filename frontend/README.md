@@ -35,7 +35,9 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 <br/>
 <summary><b>Use of TypeScript</b> </summary>
 <br>
-Some concent
+
+Long story short, TypeScript is a superset of JavaScript that provides useful features like type checking. It is compiled to `.js` and run by the JavaScript runtime. For more details, [this](https://mattermost.com/blog/using-react-with-typescript/) is a pretty useful reading.
+
 </details>
 
 ## Some key concepts

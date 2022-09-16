@@ -6,11 +6,15 @@ const ObjectId = Schema.Types.ObjectId;
 let PendingMatchModelSchema = new Schema({
     userId: {
         type: ObjectId,
-        required: true
+        required: true,
     },
     socketId: {
         type: String,
-        required: true
+        required: true,
+    },
+    difficulty: {
+        type: Number,
+        required: true,
     }
 })
 
