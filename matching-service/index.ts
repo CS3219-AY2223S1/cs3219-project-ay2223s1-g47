@@ -10,7 +10,7 @@ const frontendUri = process.env.FRONTEND_URI || "http://localhost:3000";
 
 const app = express();
 const httpServer = createServer(app);
-const io = require("socket.io")(httpServer, {
+export const io = require("socket.io")(httpServer, {
     cors: {
       origin: frontendUri,
     }
@@ -36,28 +36,20 @@ const listenForMatches = async () => {
         ) => {
             const { difficulty } = args;
             try {
-                const msg: TPendingMatch = {
-                    socket,
+                console.log("match");
+                const data: TPendingMatch = {
+                    createdAt: new Date(),
+                    socketId: socket.id,
                     ...args,
                 }
-                channel.sendToQueue(QUEUES[difficulty], Buffer.from(JSON.stringify(msg)));
+                channel.sendToQueue(QUEUES[difficulty], Buffer.from(JSON.stringify(data)));
             } catch (err) {
-                console.log(err);
-            }
-        });
-    
-        socket.timeout(MATCH_TIMEOUT).emit("timeout", (err: any) => {
-            if (err) {
                 console.log(err);
             }
         });
     
         socket.on("matchSuccess", async (pendingMatch) => {
             console.log("room created: ", pendingMatch);
-        });
-    
-        socket.on("timeout", async () => {
-            console.log("user timeout");
         });
     
         socket.on("disconnect", async () => {

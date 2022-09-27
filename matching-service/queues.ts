@@ -1,4 +1,6 @@
 import amqp, { ConsumeMessage } from "amqplib";
+import { Socket } from "socket.io";
+import { io } from ".";
 import { TPendingMatch } from "./types";
 
 export const QUEUES = ["easy", "medium", "hard"];
@@ -12,7 +14,7 @@ export const initQueues = async () => {
         consumerChannel.assertQueue(queue, {
             durable: false
         });
-        consumerChannel.consume(queue, (msg) => handleMessage);
+        consumerChannel.consume(queue, handleMessage);
         producerChannel.assertQueue(queue, {
             durable: false
         });
@@ -20,22 +22,33 @@ export const initQueues = async () => {
     return producerChannel;
 }
 
-const handleMessage = (msg: ConsumeMessage) => {
+const handleMessage = (msg: ConsumeMessage | null) => {
+    if (!msg) return;
+    console.log(JSON.parse(msg.content.toString()));
     const pendingMatch: TPendingMatch = JSON.parse(msg.content.toString());
-    const { difficulty, socket } = pendingMatch;
+    const { difficulty} = pendingMatch;
     const waiting = WAITERS[difficulty];
+    console.log("booo", waiting?.socketId);
+    const waitingSocket = waiting && io.sockets.sockets.get(waiting.socketId);
     console.log(" [x] Received %s", pendingMatch.toString());
 
-    if (!waiting || !waiting.socket.connected) {
+    if (!waiting || !waitingSocket || !waitingSocket.connected) {
         WAITERS[difficulty] = pendingMatch;
     }
     else {
-        match(pendingMatch, waiting as TPendingMatch);
-        socket.to(socket.id).emit("matchSuccess", pendingMatch);
-        socket.to(waiting.socket.id).emit("matchSuccess", waiting);
+        match(pendingMatch, waiting);
+        onMatch(pendingMatch, waiting);
         WAITERS[difficulty] = null;
         console.log("match");
     }
+}
+
+const onMatch = (match1: TPendingMatch, match2: TPendingMatch) => {
+    const socket1: Socket = io.sockets.sockets.get(match1.socketId);
+    const socket2: Socket = io.sockets.sockets.get(match2.socketId);
+    if (socket1) socket1.to(match1.socketId).emit("matchSuccess", match1);
+    if (socket2) socket2.to(match2.socketId).emit("matchSuccess", match2);
+    console.log("matchSuccess");
 }
 
 const match = (msg1: TPendingMatch, msg2: TPendingMatch) => {

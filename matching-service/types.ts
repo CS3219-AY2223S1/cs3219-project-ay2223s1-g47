@@ -1,8 +1,9 @@
 import { Types } from "mongoose"
-import { Socket } from "socket.io";
+import { SocketId } from "socket.io-adapter";
 
 export type TPendingMatch = {
     userId: Types.ObjectId;
     difficulty: number;
-    socket: Socket;
+    socketId: SocketId;
+    createdAt: Date;
 }
