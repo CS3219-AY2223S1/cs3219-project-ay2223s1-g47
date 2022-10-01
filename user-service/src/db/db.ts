@@ -1,5 +1,10 @@
 import mongoose, { CallbackError, ConnectOptions } from "mongoose";
-import { DB_URI, ENV_IS_DEV } from "../constants";
+import {
+  DB_URI,
+  ENV_IS_DEV,
+  DB_LOCAL_JSON_PATH,
+  DB_TABLES,
+} from "../constants";
 // =================== database ==================
 
 // initialization CRUD handler
@@ -10,8 +15,8 @@ const initDb = () => {
   if (ENV_IS_DEV) {
     // set up
     const fileSystem = require("fs");
-    const devDataFilePath = "./dev-data.json";
-    const tables = ["users"];
+    const devDataFilePath = DB_LOCAL_JSON_PATH;
+    const tables = DB_TABLES;
 
     try {
       // clear db
