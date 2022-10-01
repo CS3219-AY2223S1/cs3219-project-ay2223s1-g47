@@ -8,6 +8,9 @@ import {
   logout,
 } from "./controller/user-controller";
 
+// ======= initialize stuff with require ========
+require("./db/db");
+
 // ============== start the app =================
 const app: Express = express();
 const PORT = process.env.PORT || DEFAULT_PORT;
@@ -21,35 +24,33 @@ app.use(cors(CORS_OPTIONS)); // use and set cors config
 
 // =================== routing ==================
 
-const router: Router = express.Router();
-
 /**
  * Basic hello world ping.
  */
-router.get("/", (request: Request, response: Response) =>
+app.get("/", (request: Request, response: Response) =>
   response.send("Hello World from user-service")
 );
 
 /**
  * Endpoint to create a new user.
  */
-router.post("/new", handleCreateUser);
+app.post("/new", handleCreateUser);
 
 /**
  * Endpoint to login.
  */
-router.post("/login", login);
+app.post("/login", login);
 
 /**
  * Endpoint to logout.
  */
-router.post("/logout", logout);
+app.post("/logout", logout);
 
 /**
  * Endpoint to ping for authentication. Assumes that the user has cookies
  * to use for authentication.
  */
-router.get("/auth", auth);
+app.get("/auth", auth);
 
 // listen
 app.listen(PORT, () => console.log("user-service listening on port 8000"));

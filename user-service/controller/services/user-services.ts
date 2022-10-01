@@ -1,3 +1,4 @@
+import { randomUUID } from "crypto";
 import { LoginDetails, SignUpDetails } from "../../interfaces/login-details";
 import { User } from "../../interfaces/user";
 import UserModel from "../../models/user-model";
@@ -16,13 +17,17 @@ export async function createUser(signupDetails: SignUpDetails) {
     }
 
     // 2. if user does not exist, we create and save the user
-    const userModel = await new UserModel(signupDetails).save();
+    const userModel = await new UserModel({
+      username: signupDetails.username,
+      password: signupDetails.password,
+      id: randomUUID(),
+    }).save();
 
     // 3. then we return the user as an interface
     const user: User = {
       username: userModel.username,
       password: userModel.password,
-      id: userModel._id.toString(),
+      id: userModel.id,
     };
     return user;
   } catch (error) {
@@ -37,20 +42,23 @@ export async function userWithUsernameExists(username: string) {
   return Boolean(await UserModel.exists({ username: username }));
 }
 
+export async function userWithIdExists(id: string) {
+  return Boolean(await UserModel.exists({ id: id }));
+}
 /**
  * Tries to delete a user with the specified username.
  */
-export async function deleteUser(username: string) {
+export async function deleteUser(userId: string) {
   try {
     // 1. check if user exists
-    if (!(await userWithUsernameExists(username))) {
+    if (!(await userWithIdExists(userId))) {
       throw new DbWriteException(
         "User does not exist, but we are trying to delete them."
       );
     }
 
     // 2. delete user
-    await UserModel.deleteOne({ username: username });
+    await UserModel.deleteOne({ id: userId });
   } catch (error) {
     throw new DbWriteException("Error deleting user!");
   }

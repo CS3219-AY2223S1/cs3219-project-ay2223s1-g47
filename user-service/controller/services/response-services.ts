@@ -22,7 +22,7 @@ export function createDatabaseErrorResponse(
 
 export function createInternalServerErrorResponse(
   response: Response,
-  statusCode: number,
+  statusCode?: number,
   message?: string
 ) {
   return response

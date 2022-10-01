@@ -22,23 +22,22 @@ export async function handleCreateUser(request: Request, response: Response) {
     const password = signupDetails.password;
 
     // 2. salt the password
-    console.debug("Salting password: " + PW_SALT + " ," + password);
+    console.debug("Salting password: " + PW_SALT + ", " + password);
     const saltedPassword = bcrypt.hashSync(password, PW_SALT);
 
     // 3. create user
     console.debug("Creating user: " + username + " ," + saltedPassword);
-    const user = createUser({ username, password: saltedPassword });
+    const user = await createUser({ username, password: saltedPassword });
 
     response.json(user);
   } catch (error) {
     console.error(error);
-    if (error instanceof UserServiceException) {
-      createInternalServerErrorResponse(
-        response,
-        error.statusCode,
-        error.message
-      );
-    }
+    console.log("here");
+    const message =
+      error instanceof UserServiceException ? error.message : undefined;
+    const statusCode =
+      error instanceof UserServiceException ? error.statusCode : undefined;
+    return createInternalServerErrorResponse(response, statusCode, message);
   }
 }
 
