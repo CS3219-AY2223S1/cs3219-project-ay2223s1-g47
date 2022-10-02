@@ -34,7 +34,7 @@ app.get("/", (request: Request, response: Response) =>
 /**
  * Endpoint to create a new user.
  */
-app.post("/new", handleCreateUser);
+app.post("/signup", handleCreateUser);
 
 /**
  * Endpoint to login.

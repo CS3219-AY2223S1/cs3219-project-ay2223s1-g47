@@ -7,8 +7,8 @@ import {
 } from "../constants";
 
 export interface UserInfoApiResponseData {
-  userId: string;
-  username: string;
+  id?: string;
+  username?: string;
   message?: string;
 }
 
@@ -22,25 +22,27 @@ export const apiCallUserSignup: (
   username: string,
   password: string
 ) => {
-  //   const respose = await axios
-  //     .post(USER_SERVICE_SIGNUP_URL, {
-  //       username,
-  //       password,
-  //     })
-  //     .catch((error: Error | AxiosError) => {
-  //       if (axios.isAxiosError(error)) {
-  //         return error.response?.data; // return response data from backend
-  //       } else {
-  //         console.error(error);
-  //         return error; // propagate up the call stack
-  //       }
-  //     });
+  const response = axios
+    .post(USER_SERVICE_SIGNUP_URL, {
+      username,
+      password,
+    })
+    .catch((error: Error | AxiosError) => {
+      if (axios.isAxiosError(error)) {
+        return error.response?.data; // return response data from backend
+      } else {
+        console.error(error);
+        return error; // propagate up the call stack
+      }
+    }) as Promise<{ status: number; data: UserInfoApiResponseData }>;
 
-  // dummy success response
-  return {
-    status: 200,
-    data: { username: "test", userId: "test" },
-  };
+  return response;
+
+  // // dummy success response
+  // return {
+  //   status: 200,
+  //   data: { username: "test", userId: "test" },
+  // };
   // // dummy error response
   // return {
   //   status: 500,
@@ -58,24 +60,26 @@ export const apiCallUserLogin: (
   username: string,
   password: string
 ) => {
-  //   const respose = await axios
-  //     .post(USER_SERVICE_LOGIN_URL, {
-  //       username,
-  //       password,
-  //     })
-  //     .catch((error: Error | AxiosError) => {
-  //       if (axios.isAxiosError(error)) {
-  //         return error.response?.data; // return response data from backend
-  //       } else {
-  //         console.error(error);
-  //         return error; // propagate up the call stack
-  //       }
-  //     });
-  // dummy success response
-  return {
-    status: 200,
-    data: { username: "test", userId: "test" },
-  };
+  const response = axios
+    .post(USER_SERVICE_LOGIN_URL, {
+      username,
+      password,
+    })
+    .catch((error: Error | AxiosError) => {
+      if (axios.isAxiosError(error)) {
+        return error.response?.data; // return response data from backend
+      } else {
+        console.error(error);
+        return error; // propagate up the call stack
+      }
+    }) as Promise<{ status: number; data: UserInfoApiResponseData }>;
+
+  return response;
+  // // dummy success response
+  // return {
+  //   status: 200,
+  //   data: { username: "test", id: "test" },
+  // };
   // // dummy error response
   // return {
   //   status: 500,
@@ -118,24 +122,26 @@ export const apiCallUserAuthentication: () => Promise<{
   status: number;
   data: UserInfoApiResponseData;
 }> = async () => {
-  //   const respose = await axios
-  //     .get(USER_SERVICe_AUTHENTICATE_URL, {})
-  //     .catch((error: Error | AxiosError) => {
-  //       if (axios.isAxiosError(error)) {
-  //         return error.response?.data; // return response data from backend
-  //       } else {
-  //         console.error(error);
-  //         return error; // propagate up the call stack
-  //       }
-  //     });
+  const response = axios
+    .get(USER_SERVICE_AUTHENTICATE_URL)
+    .catch((error: Error | AxiosError) => {
+      if (axios.isAxiosError(error)) {
+        return error.response?.data; // return response data from backend
+      } else {
+        console.error(error);
+        return error; // propagate up the call stack
+      }
+    }) as Promise<{ status: number; data: UserInfoApiResponseData }>;
+
+  return response;
   // // dummy success response
   // return {
   //   status: 200,
   //   data: { username: "test", userId: "test" },
   // };
-  // dummy error response
-  return {
-    status: 401,
-    data: { username: "test", userId: "test", message: "Not logged in!" },
-  }; // dummy data for now
+  // // dummy error response
+  // return {
+  //   status: 401,
+  //   data: { username: "test", id: "test", message: "Not logged in!" },
+  // }; // dummy data for now
 };

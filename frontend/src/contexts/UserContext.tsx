@@ -51,13 +51,15 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
   useEffect(() => {
     apiCallUserAuthentication().then((response) => {
       // if ok, set the user state
-      if (response.status === 200) {
-        const user: User = {
-          username: response.data.username,
-          userId: response.data.userId,
-          loggedIn: true,
-        };
-        setUser(user);
+      if (response.status >= 200 && response.status < 300) {
+        if (response.data.username && response.data.id) {
+          const user: User = {
+            username: response.data.username,
+            userId: response.data.id,
+            loggedIn: true,
+          };
+          setUser(user);
+        }
       }
 
       // else, do nothing
@@ -70,13 +72,15 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
   const login = async (username: string, password: string) => {
     const response = await apiCallUserLogin(username, password);
     // if ok, set the user state
-    if (response.status === 200) {
-      const user: User = {
-        username: response.data.username,
-        userId: response.data.userId,
-        loggedIn: true,
-      };
-      setUser(user);
+    if (response.status >= 200 && response.status < 300) {
+      if (response.data.username && response.data.id) {
+        const user: User = {
+          username: response.data.username,
+          userId: response.data.id,
+          loggedIn: true,
+        };
+        setUser(user);
+      }
     }
     return response; // in either case, return data to caller
   };

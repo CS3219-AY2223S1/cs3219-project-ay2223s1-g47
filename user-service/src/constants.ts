@@ -10,6 +10,11 @@ assert(
   process.env.DB_LOCAL_URI || process.env.DB_CLOUD_URI,
   "db uri not set in .env"
 );
+assert(
+  process.env.JWT_PRIVATE_KEY_FILE,
+  "JWT_PRIVATE_KEY_FILE not set in .env"
+);
+assert(process.env.JWT_PUBLIC_KEY_FILE, "JWT_PUBLIC_KEY_FILE not set in .env");
 
 // =========== environment =================
 export const ENV_IS_DEV = process.env.ENV == "DEV";
@@ -40,3 +45,20 @@ export const DB_URI =
 export const DB_LOCAL_JSON_PATH = "./src/dev-data.json";
 
 export const DB_TABLES = ["users"];
+
+// ========== JWT ==========================
+export const JWT_PRIVATE_KEY_FILE = process.env.JWT_PRIVATE_KEY_FILE;
+export const JWT_PUBLIC_KEY_FILE = process.env.JWT_PUBLIC_KEY_FILE;
+export const JWT_EXPIRES_IN = "12h";
+export const JWT_ISSUER = "user-service";
+// jwt secret key, which we hash into a key
+export const GET_JWT_SECRET_KEY = async () => {
+  const privateKey = await crypto.subtle.importKey(
+    "raw",
+    new TextEncoder().encode(process.env.JWT_SECRET_KEY),
+    { name: "HMAC", hash: "SHA-256" },
+    false, //extractable
+    ["sign", "verify"] //uses
+  );
+  return privateKey;
+};

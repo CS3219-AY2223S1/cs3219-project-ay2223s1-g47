@@ -11,9 +11,7 @@ export async function createUser(signupDetails: SignUpDetails) {
     // 1. check if user exists
     const username = signupDetails.username;
     if (await userWithUsernameExists(username)) {
-      throw new DbWriteException(
-        "User already exists, but we are trying to create a user."
-      );
+      throw new DbWriteException("User already exists.");
     }
 
     // 2. if user does not exist, we create and save the user
@@ -70,7 +68,12 @@ export async function deleteUser(userId: string) {
  */
 export async function loginUser(loginDetails: LoginDetails) {
   try {
-    const user = await UserModel.findOne(loginDetails);
+    console.debug("Called loginUser, " + loginDetails.username);
+    const user = await UserModel.findOne({
+      username: loginDetails.username,
+      password: loginDetails.password,
+    }).exec();
+    console.debug("Found user: " + user);
     if (!user) {
       return undefined;
     }

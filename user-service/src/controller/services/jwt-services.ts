@@ -1,6 +1,14 @@
 // import { Request, Response } from "express";
 // import { User } from "../../interfaces/user";
 
+import { SignJWT } from "jose";
+import {
+  GET_JWT_SECRET_KEY,
+  JWT_EXPIRES_IN,
+  JWT_ISSUER,
+} from "../../constants";
+import { User } from "../../interfaces/user";
+
 // async function checkJWT(request: Request) {
 //   //handles checking for expiry
 //   if (!req.headers.cookie) {
@@ -26,12 +34,18 @@
 //   }
 // }
 
-// async function signJWT(user: User) {
-//   const jwt = await new SignJWT({ username: user.username })
-//     .setProtectedHeader({ alg: "RS256" })
-//     .setIssuedAt()
-//     .setIssuer("user-service")
-//     .setExpirationTime("2h")
-//     .sign(privateKey);
-//   return jwt;
-// }
+export const signJWT = async (user: User) => {
+  console.debug("Signing JWT for user: " + user);
+  const jwt = await new SignJWT({
+    user: user.id,
+    username: user.username,
+    password: user.password,
+  })
+    .setProtectedHeader({ alg: "RS256" })
+    .setIssuedAt()
+    .setIssuer(JWT_ISSUER)
+    .setExpirationTime(JWT_EXPIRES_IN)
+    .sign(await GET_JWT_SECRET_KEY());
+  console.debug("Signed JWT: " + jwt);
+  return jwt;
+};

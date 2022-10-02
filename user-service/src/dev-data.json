@@ -8,7 +8,7 @@
         {
             "id": 2,
             "username": "admin",
-            "password": "admin"
+            "password": "$2b$10$zzlQzTUZKmvPuIejOTr0KeXW6U1VYp4fUSlEr9XJB35rIAT5LShNK"
         }
     ]
 }
