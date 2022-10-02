@@ -1,6 +1,10 @@
 import { ENV_IS_PROD, PW_SALT } from "../constants";
 import { LoginDetails, SignUpDetails } from "../interfaces/login-details";
-import { createUser, loginUser } from "./services/user-services";
+import {
+  createUser,
+  loginUser,
+  userWithIdExists,
+} from "./services/user-services";
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import {
@@ -8,7 +12,8 @@ import {
   createOkResponse,
   createUnauthorizedResponse,
 } from "./services/response-services";
-import { signJWT } from "./services/jwt-services";
+import { checkJWT, signJWT } from "./services/jwt-services";
+import { User } from "../interfaces/user";
 
 /**
  * Handles a POST request to create a user.
@@ -74,8 +79,13 @@ export async function login(request: Request, response: Response) {
 
     // 4. jwt the user, add the jwt as http only cookie
     const jwt = await signJWT(user);
+
     response.cookie("JWT", jwt, { httpOnly: true, secure: ENV_IS_PROD });
-    return createOkResponse(response, user);
+    console.debug("Cookie set: " + jwt);
+
+    response = createOkResponse(response, user);
+    console.debug(response);
+    return response;
   } catch (error) {
     console.error(error);
     if (error instanceof UserServiceException) {
@@ -93,12 +103,10 @@ export async function login(request: Request, response: Response) {
  */
 export async function logout(request: Request, response: Response) {
   // 1. clear cookie
-  // TOOD: for now no jwt, so no difference
-  // res.cookie("JWT", "", { httpOnly: true, secure: process.env.ENV == "PROD" });
+  response.cookie("JWT", "", { httpOnly: true, secure: ENV_IS_PROD });
 
   // 2. 200 ok
-
-  return response.status(200).json({ message: "Logged out" });
+  return createOkResponse(response, { message: "Logged out." });
 }
 
 /**
@@ -106,13 +114,22 @@ export async function logout(request: Request, response: Response) {
  */
 export async function auth(request: Request, response: Response) {
   console.debug("Called auth");
-  // // 1. check jwt
-  // const jwtValidNotExpired = true;
-  // const user: User = // from jwt decoded
+  // 1. check jwt
+  console.log(request.headers);
+  console.log(request.cookies.JWT);
+  const jwtPayload = (await checkJWT(request)) as unknown as User;
+  console.log(jwtPayload);
+  if (!jwtPayload) {
+    return createUnauthorizedResponse(response, "Invalid JWT");
+  }
 
-  // // 2. if valid and not expired, return user details
-  // return response.status(200).json(user);
+  // 2. check user exists
+  const id = jwtPayload.id ?? "";
+  const exists = await userWithIdExists(id);
+  if (!exists) {
+    return createUnauthorizedResponse(response, "Invalid JWT");
+  }
 
-  // 3. else return 401
-  return createUnauthorizedResponse(response, "Not logged in.");
+  // 3. return user
+  return createOkResponse(response, jwtPayload);
 }

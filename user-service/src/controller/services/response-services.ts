@@ -19,7 +19,9 @@ export function createDatabaseErrorResponse(
   response: Response,
   message?: string
 ) {
-  return response.status(500).json({ message: message ?? "Database failure" });
+  return response
+    .status(500)
+    .json({ data: { message: message ?? "Database failure" } });
 }
 
 export function createInternalServerErrorResponse(
@@ -32,6 +34,6 @@ export function createInternalServerErrorResponse(
     .json({ message: message ?? "Internal server error." });
 }
 
-export function createOkResponse(response: Response, data: unknown) {
-  return response.status(200).json({ data: data });
+export function createOkResponse(response: Response, data?: unknown) {
+  return response.status(200).json(data);
 }

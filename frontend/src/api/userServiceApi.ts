@@ -61,10 +61,14 @@ export const apiCallUserLogin: (
   password: string
 ) => {
   const response = axios
-    .post(USER_SERVICE_LOGIN_URL, {
-      username,
-      password,
-    })
+    .post(
+      USER_SERVICE_LOGIN_URL,
+      {
+        username,
+        password,
+      },
+      { withCredentials: true }
+    )
     .catch((error: Error | AxiosError) => {
       if (axios.isAxiosError(error)) {
         return error.response?.data; // return response data from backend
@@ -123,7 +127,13 @@ export const apiCallUserAuthentication: () => Promise<{
   data: UserInfoApiResponseData;
 }> = async () => {
   const response = axios
-    .get(USER_SERVICE_AUTHENTICATE_URL)
+    .get(USER_SERVICE_AUTHENTICATE_URL, {
+      withCredentials: true,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+      },
+    })
     .catch((error: Error | AxiosError) => {
       if (axios.isAxiosError(error)) {
         return error.response?.data; // return response data from backend

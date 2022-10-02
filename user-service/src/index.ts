@@ -7,6 +7,7 @@ import {
   auth,
   logout,
 } from "./controller/user-controller";
+const CookieParser = require("cookie-parser");
 
 // ======= initialize stuff with require ========
 require("./db/db");
@@ -21,6 +22,7 @@ const PORT = process.env.PORT || DEFAULT_PORT;
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); // parses incoming json and puts parsed data in req.body. See
 app.use(cors(CORS_OPTIONS)); // use and set cors config
+app.use(CookieParser()); // for parsing cookies
 
 // =================== routing ==================
 

@@ -1,51 +1,46 @@
-// import { Request, Response } from "express";
-// import { User } from "../../interfaces/user";
+import { Request } from "express";
 
-import { SignJWT } from "jose";
-import {
-  GET_JWT_SECRET_KEY,
-  JWT_EXPIRES_IN,
-  JWT_ISSUER,
-} from "../../constants";
-import { User } from "../../interfaces/user";
+import { jwtVerify, SignJWT } from "jose";
+import { JWT_SECRET_KEY, JWT_EXPIRES_IN, JWT_ISSUER } from "../../constants";
 
-// async function checkJWT(request: Request) {
-//   //handles checking for expiry
-//   if (!req.headers.cookie) {
-//     return false;
-//   }
-//   let cookies = req.headers.cookie
-//     .split("; ")
-//     // .filter((x) => x.startsWith("JWT="));
-//   if (cookies.length != 1) {
-//     return false;
-//   }
-//   let jwt_received = cookies[0].split("=")[1];
-//   try {
-//     const { payload, protectedHeader } = await jwtVerify(
-//       jwt_received,
-//       publicKey,
-//       { issuer: "user-service" }
-//     );
-//     return payload;
-//   } catch (err) {
-//     console.log("invalid jwt");
-//     return false;
-//   }
-// }
+/**
+ * Decodes a JWT and returns the payload.
+ */
+export const checkJWT = async (request: Request) => {
+  console.debug("Called checkJWT");
+  // 1. check that the request has a JWT
+  const jwtCookie = request.cookies.JWT;
+  console.debug(jwtCookie);
+  console.debug(request.cookies);
+  if (!jwtCookie) {
+    return false; // missing cookie
+  }
 
-export const signJWT = async (user: User) => {
-  console.debug("Signing JWT for user: " + user);
-  const jwt = await new SignJWT({
-    user: user.id,
-    username: user.username,
-    password: user.password,
-  })
-    .setProtectedHeader({ alg: "RS256" })
+  // 2. check that the JWT is valid
+  try {
+    const { payload, protectedHeader } = await jwtVerify(
+      jwtCookie,
+      JWT_SECRET_KEY,
+      { issuer: JWT_ISSUER, maxTokenAge: JWT_EXPIRES_IN }
+    );
+    return payload;
+  } catch (err) {
+    console.log("Invalid JWT");
+    return false;
+  }
+};
+
+/**
+ * Converts a payload into a JWT and returns the token.
+ */
+export const signJWT = async (payload: any) => {
+  console.debug("Signing JWT for payload: " + payload);
+  const jwt = await new SignJWT({ ...payload })
+    .setProtectedHeader({ alg: "HS256" })
     .setIssuedAt()
     .setIssuer(JWT_ISSUER)
     .setExpirationTime(JWT_EXPIRES_IN)
-    .sign(await GET_JWT_SECRET_KEY());
+    .sign(JWT_SECRET_KEY);
   console.debug("Signed JWT: " + jwt);
   return jwt;
 };

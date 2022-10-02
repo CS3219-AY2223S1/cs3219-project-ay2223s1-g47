@@ -52,6 +52,7 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
     apiCallUserAuthentication().then((response) => {
       // if ok, set the user state
       if (response.status >= 200 && response.status < 300) {
+        console.log(response);
         if (response.data.username && response.data.id) {
           const user: User = {
             username: response.data.username,
@@ -82,6 +83,7 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
         setUser(user);
       }
     }
+
     return response; // in either case, return data to caller
   };
 

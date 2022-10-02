@@ -80,7 +80,7 @@ export async function loginUser(loginDetails: LoginDetails) {
     const userDetails: User = {
       username: user.username,
       password: user.password,
-      id: user._id.toString(),
+      id: user.id,
     };
     return userDetails;
   } catch (error) {
