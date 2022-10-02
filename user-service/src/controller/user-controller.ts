@@ -14,6 +14,7 @@ import {
 } from "./services/response-services";
 import { checkJWT, signJWT } from "./services/jwt-services";
 import { User } from "../interfaces/user";
+import { UserServiceException } from "../exceptions";
 
 /**
  * Handles a POST request to create a user.
@@ -38,7 +39,6 @@ export async function handleCreateUser(request: Request, response: Response) {
     response.json(user);
   } catch (error) {
     console.error(error);
-    console.log("here");
     const message =
       error instanceof UserServiceException ? error.message : undefined;
     const statusCode =
@@ -88,13 +88,11 @@ export async function login(request: Request, response: Response) {
     return response;
   } catch (error) {
     console.error(error);
-    if (error instanceof UserServiceException) {
-      createInternalServerErrorResponse(
-        response,
-        error.statusCode,
-        error.message
-      );
-    }
+    const message =
+      error instanceof UserServiceException ? error.message : undefined;
+    const statusCode =
+      error instanceof UserServiceException ? error.statusCode : undefined;
+    return createInternalServerErrorResponse(response, statusCode, message);
   }
 }
 

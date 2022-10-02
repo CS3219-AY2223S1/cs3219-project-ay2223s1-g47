@@ -1,5 +1,5 @@
 FROM node:alpine
-WORKDIR /usr/userService
-COPY package.json .
+WORKDIR /usr/user-service
+COPY . /usr/user-service
 RUN npm install --quiet
- CMD [ "npm", "run", "dev" ]
+CMD [ "npm", "run", "dev" ] 

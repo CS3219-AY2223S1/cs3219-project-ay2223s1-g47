@@ -1,7 +1,7 @@
 /**
  * Generic exception class used within the user service.
  */
-class UserServiceException extends Error {
+export class UserServiceException extends Error {
   statusCode: number;
 
   constructor(message: string, statusCode?: number) {
@@ -16,7 +16,7 @@ class UserServiceException extends Error {
 /**
  * Exception thrown when there is an error writing to the database.
  */
-class DbWriteException extends UserServiceException {
+export class DbWriteException extends UserServiceException {
   constructor(message: string) {
     super(message);
 
@@ -28,7 +28,7 @@ class DbWriteException extends UserServiceException {
 /**
  * Exception thrown when there is an error reading from the database.
  */
-class DbReadException extends UserServiceException {
+export class DbReadException extends UserServiceException {
   constructor(message: string) {
     super(message);
 
@@ -41,7 +41,7 @@ class DbReadException extends UserServiceException {
  * Exception thrown when there is an illegal access to the db. (e.g. a user trying to
  * delete another user's account)
  */
-class DbPermissionDeniedException extends UserServiceException {
+export class DbPermissionDeniedException extends UserServiceException {
   constructor(message: string) {
     super(message);
 
