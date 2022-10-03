@@ -2,6 +2,7 @@ import { randomUUID } from "crypto";
 import { LoginDetails, SignUpDetails } from "../../interfaces/login-details";
 import { User } from "../../interfaces/user";
 import UserModel from "../../models/user-model";
+import {DbWriteException,DbReadException,DbPermissionDeniedException} from "../../exceptions";
 
 /**
  * Creates and saves the user in db, and returns a backend interface of the user.
