@@ -113,10 +113,7 @@ export async function logout(request: Request, response: Response) {
 export async function auth(request: Request, response: Response) {
   console.debug("Called auth");
   // 1. check jwt
-  console.log(request.headers);
-  console.log(request.cookies.JWT);
   const jwtPayload = (await checkJWT(request)) as unknown as User;
-  console.log(jwtPayload);
   if (!jwtPayload) {
     return createUnauthorizedResponse(response, "Invalid JWT");
   }

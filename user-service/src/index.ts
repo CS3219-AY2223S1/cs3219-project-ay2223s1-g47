@@ -55,4 +55,4 @@ app.post("/logout", logout);
 app.get("/auth", auth);
 
 // listen
-app.listen(PORT, () => console.log("user-service listening on port 8000"));
+app.listen(PORT, () => console.log("user-service listening on port " + PORT));

@@ -25,10 +25,10 @@ const initDb = () => {
         db.collection(table)
           .drop()
           .catch((error) => {
-            console.log(
+            console.error(
               "Tried to drop table " + table + " but it doesn't exist."
             );
-            console.log(error);
+            console.error(error);
           });
       });
 
@@ -44,7 +44,6 @@ const initDb = () => {
       tables.forEach((table: string) => {
         console.log("Reading table: " + table);
         const entries = devData[table];
-        console.log(entries);
         db.collection(table).insertMany(entries);
       });
     } catch (error) {

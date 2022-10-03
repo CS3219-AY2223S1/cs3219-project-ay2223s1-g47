@@ -50,7 +50,6 @@ function LoginPage() {
         if (response.status === 200) {
           navigate("/");
         } else {
-          console.log(response);
           const errorMessage: string =
             response.data.message ??
             "Something went wrong! Please try again later.";
