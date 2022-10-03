@@ -31,6 +31,7 @@ const listenForMatches = async () => {
 
     io.on("connection", (socket: Socket) => {
         console.log("a user connected");
+
         socket.on("match", async (
             args: { difficulty: number, userId: Types.ObjectId }
         ) => {
@@ -54,6 +55,13 @@ const listenForMatches = async () => {
     
         socket.on("disconnect", async () => {
             console.log("user disconnected");
+        });
+
+        socket.timeout(MATCH_TIMEOUT).emit("timeout", (err: any) => {
+            if (err) {
+              // the other side did not acknowledge the event in the given delay
+            }
+            socket.disconnect();
         });
     });
 }

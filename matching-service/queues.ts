@@ -28,7 +28,7 @@ const handleMessage = (msg: ConsumeMessage | null) => {
     const pendingMatch: TPendingMatch = JSON.parse(msg.content.toString());
     const { difficulty} = pendingMatch;
     const waiting = WAITERS[difficulty];
-    console.log("booo", waiting?.socketId);
+    console.log("Waiting socket", waiting?.socketId);
     const waitingSocket = waiting && io.sockets.sockets.get(waiting.socketId);
     console.log(" [x] Received %s", pendingMatch.toString());
 
@@ -51,6 +51,6 @@ const onMatch = (match1: TPendingMatch, match2: TPendingMatch) => {
     console.log("matchSuccess");
 }
 
-const match = (msg1: TPendingMatch, msg2: TPendingMatch) => {
+const match = (match1: TPendingMatch, match2: TPendingMatch) => {
     // Send data to collab service
 }
