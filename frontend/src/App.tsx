@@ -7,6 +7,7 @@ import Home from "./components/Home";
 import { useContext } from "react";
 import { UserContext, UserContextType } from "./contexts/UserContext";
 import MatchingPage from "./components/matching/MatchingPage";
+import CollaborationPage from "./components/collaboration/CollaborationPage";
 
 function App() {
   // =============== State management ===============
@@ -38,6 +39,16 @@ function App() {
                   redirectPath={"/"}
                   isAllowed={loggedIn}
                   children={<MatchingPage />}
+                />
+              }
+            />
+            <Route
+              path="/match"
+              element={
+                <ProtectedRoute
+                  redirectPath={"/"}
+                  isAllowed={loggedIn}
+                  children={<CollaborationPage />}
                 />
               }
             />
