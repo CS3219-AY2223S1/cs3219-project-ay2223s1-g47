@@ -11,6 +11,7 @@ import {
 const initDb = () => {
   const db = mongoose.connection;
 
+  return; // let tests populate the DB
   // 1. if dev, populate
   if (ENV_IS_DEV) {
     // set up

@@ -54,5 +54,8 @@ app.post("/logout", logout);
  */
 app.get("/auth", auth);
 
-// listen
-app.listen(PORT, () => console.log("user-service listening on port " + PORT));
+// listen only if launched directly
+if (require.main === module) {
+  app.listen(PORT, () => console.log("user-service listening on port " + PORT));
+}
+export default app;
