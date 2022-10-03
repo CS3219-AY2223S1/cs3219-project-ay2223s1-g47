@@ -7,7 +7,7 @@ mongoose.connect(process.env.DB_LOCAL_URI, () => {
 });
 
 // Get one question by difficulty, and not in the question history 
-const get_one_by_difficulty = (req, res) => {
+const get_one_by_difficulty = (req: any, res: any) => {
     const difficulty : string = req.params.difficulty;
     const past_qns : string[] = req.body.questionIds;
 
