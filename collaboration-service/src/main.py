@@ -1,7 +1,7 @@
-from fastapi import FastAPI, WebSocket, WebSocketDisconnect
+from fastapi import FastAPI, WebSocket, WebSocketDisconnect, APIRouter
 from fastapi.middleware.cors import CORSMiddleware
+from src.crud.routes.crud_routes import router as crud_router
     
-# ============ Initialize app ============
 # app
 app = FastAPI()
 
@@ -13,4 +13,10 @@ app.add_middleware(
         allow_methods=["*"],
         allow_headers=["*"],
     )
+
+# add routers
+app.include_router(
+    crud_router,
+    prefix="/crud",
+)
 
