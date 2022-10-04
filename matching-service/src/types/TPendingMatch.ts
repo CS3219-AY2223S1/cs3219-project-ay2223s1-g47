@@ -5,5 +5,4 @@ export type TPendingMatch = {
     userId: Types.ObjectId;
     difficulty: number;
     socketId: SocketId;
-    createdAt: Date;
 }
