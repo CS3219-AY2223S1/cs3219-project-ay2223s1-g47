@@ -1,3 +1,4 @@
+from src.constants import QUESTION_SERVICE_GET_QUESTION_ENDPOINT
 from src.collaboration.interfaces.question import Question
 import requests
 
@@ -18,7 +19,7 @@ class QuestionServiceApiHandler:
         """
         Gets a question from the question service.
         """
-        response = await self._get(endpoint="/question", params={"difficulty": difficulty})
+        response = await self._get(endpoint=QUESTION_SERVICE_GET_QUESTION_ENDPOINT, params={"difficulty": difficulty})
         return Question(**response)
     
 
