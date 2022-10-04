@@ -1,3 +1,4 @@
+from src.collaboration.interfaces.question import Question
 import requests
 
 class QuestionServiceApiHandler:
@@ -5,11 +6,20 @@ class QuestionServiceApiHandler:
     def __init__(self, api_base_url: str):
         self.api_base_url = api_base_url
 
-    def get(self, endpoint: str, params: dict = None):
+    async def _get(self, endpoint: str, params: dict = None):
+        """
+        Handles get API call to question service
+        """
         url = self.api_base_url + endpoint
         response = requests.get(url, params=params)
         return response.json()
 
+    async def get_question(self, difficulty: int) -> Question:
+        """
+        Gets a question from the question service.
+        """
+        response = await self._get(endpoint="/question", params={"difficulty": difficulty})
+        return Question(**response)
     
 
     

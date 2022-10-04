@@ -29,3 +29,6 @@ ROOM_TABLE_NAME = "rooms"
 MONGODB_TABLES = [
     ROOM_TABLE_NAME
 ]
+
+# room service
+CLEANUP_TIMEOUT_IN_SECONDS = 300 # 5 minutes

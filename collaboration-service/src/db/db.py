@@ -1,7 +1,8 @@
+from src.collaboration.exceptions import DatabaseException, DatabaseItemNotFoundException
 from src.db.interfaces import DatabaseIndexWrapper
 from pymongo import MongoClient
 from src.constants import ENV_IS_DEV, MONGODB_COLLABORATION_DATABASE_NAME, MONGODB_JSON_PATH, MONGODB_TABLES, MONGODB_URI
-from typing import Dict, List
+from typing import Any, Dict, List, Mapping
 import logging
 
 
@@ -39,6 +40,34 @@ class DatabaseWrapper:
             name=index_specifications.index_name,
             sparse=index_specifications.sparse
         )
+
+    def insert(self, table: str, data: object):
+        """
+        Inserts data into a table.
+        """
+        self.db[table].insert_one(data)
+
+    def get_items(self, table:str, index_keys: List[Dict[str, str]]) -> List[Mapping[str, Any]]:
+        """
+        Gets an item from a table.
+        """
+        return self.db[table].find(index_keys)
+
+    def update_item(self, table: str, index_keys: List[Dict[str, str]], data: Mapping[str, Any]):
+        """
+        Updates an item in a table.
+        
+        """
+        find = self.db[table].find(index_keys)
+        if len(find) == 0:
+            raise DatabaseItemNotFoundException(f"Could not find item in table {table} with index keys {index_keys}")
+        elif len(find) > 1:
+            raise DatabaseException(f"Found multiple items in table {table} with index keys {index_keys}, but trying to update one.")
+
+        result = self.db[table].update_one(index_keys, data)
+        if result.modified_count == 0:
+            raise DatabaseException("Could not update item in table")
+        
 
 db = DatabaseWrapper()
 if ENV_IS_DEV:

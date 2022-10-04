@@ -1,6 +1,7 @@
 import logging
 from typing import Dict, List
 
+from src.constants import CLEANUP_TIMEOUT_IN_SECONDS
 from src.collaboration.interfaces.user import User
 from src.collaboration.interfaces.room_state import RoomState
 from src.collaboration.interfaces.room import Room
@@ -67,7 +68,7 @@ class RoomConnectionManager:
         self.room.num_in_room -= 1
         if self.room.num_in_room == 0: # empty room
             # start async worker to close room in timeout
-            self.handle_cleanup(self.room, self.room.timeout_in_seconds)
+            self.handle_cleanup(CLEANUP_TIMEOUT_IN_SECONDS)
 
         # 3. push to db
         self.crud_service.update_room(self.room)
@@ -88,8 +89,9 @@ class RoomConnectionManager:
     
     async def handle_cleanup(self, timeout_in_seconds: int):
         """
-        Sleeps, then checks if the room is empty. If it is, it closes the room. 
+        Handles the cleanup of the room after a timeout.
         """
+        
         # sleep for timeout_in_seconds
         time.sleep(timeout_in_seconds)
 
