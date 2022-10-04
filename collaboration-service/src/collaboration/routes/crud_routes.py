@@ -12,6 +12,7 @@ async def create_room(user1_id: str, user2_id: str, difficulty: int) -> RoomInRe
     room = await manager.create_room(user1_id, user2_id, difficulty)
 
     # 2. convert to exposable interface
+    return RoomInResponse.from_room(room)
 
 
 router.get("/get_room_history", dependencies=[]) # TODO: add auth in dependencies
@@ -21,5 +22,6 @@ async def get_room_history(user_id: str) -> List[RoomInResponse]:
     room_history = await manager.get_room_history(user_id)
 
     # 2. convert to exposable interface
+    return [RoomInResponse.from_room(room) for room in room_history]
 
     

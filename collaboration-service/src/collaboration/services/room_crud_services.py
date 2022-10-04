@@ -58,7 +58,7 @@ class RoomCrudService:
         RoomCrudService.handle_room_cleanup(timeout_in_seconds=CLEANUP_TIMEOUT_IN_SECONDS, room_id=room_model.room_id, db=self.db)
 
         # 5. return room object
-        room = Room(**room_model.dict())
+        room = Room.from_room_model(room_model)
         return room
 
 
@@ -127,10 +127,10 @@ class RoomCrudService:
         Given the user id, returns a history of rooms up to a certain date.
         """
         # 1. query db, using userid as index as user1
-        rooms = [Room(**i) for i in self.db.get_items(self.table, dict(user1_id=user_id))]
+        rooms = [Room.from_room_model(RoomModel(**i)) for i in self.db.get_items(self.table, dict(user1_id=user_id))]
 
         # 2. query db, using userid as index as user2
-        rooms += [Room(**i) for i in self.db.get_items(self.table, dict(user2_id=user_id))]
+        rooms += [Room.from_room_model(RoomModel(**i)) for i in self.db.get_items(self.table, dict(user2_id=user_id))]
 
         # 3. join the two results
         return rooms
