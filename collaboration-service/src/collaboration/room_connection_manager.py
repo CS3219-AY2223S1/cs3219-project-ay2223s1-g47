@@ -1,3 +1,4 @@
+import logging
 from typing import Dict, List
 
 from src.collaboration.interfaces.user import User
@@ -85,7 +86,7 @@ class RoomConnectionManager:
         for connection in self.active_connections:
             connection.send_json(room_state.dict())    
     
-    def handle_cleanup(self, timeout_in_seconds: int):
+    async def handle_cleanup(self, timeout_in_seconds: int):
         """
         Sleeps, then checks if the room is empty. If it is, it closes the room. 
         """
@@ -95,6 +96,8 @@ class RoomConnectionManager:
         # check if room is empty. if empty, close. else, do nothing.
         if self.room.num_in_room == 0 and not self.room.is_closed and len(self.active_connections) == 0:
             self.room.is_closed = True
-            self.crud_service.update_room(self.room)
+            await self.crud_service.update_room(self.room)
+            logging.debug(f"Room {self.room.id} closed.")
+        del self # cleanup
 
 global_room_connection_store: Dict[str, RoomConnectionManager] = dict() # room id -> room connection manager

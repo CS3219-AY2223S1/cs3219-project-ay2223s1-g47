@@ -1,7 +1,7 @@
 from typing import List
-from src.crud.interfaces.room import RoomInResponse
+from src.collaboration.interfaces.room import RoomInResponse
 from fastapi import APIRouter
-from src.crud.crud_manager import CrudManager
+from src.collaboration.crud_manager import CrudManager
 
 router = APIRouter()
 

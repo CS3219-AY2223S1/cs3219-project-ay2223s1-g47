@@ -1,7 +1,6 @@
 from src.db.interfaces import DatabaseIndexWrapper
-from pydantic import BaseModel
 from pymongo import MongoClient
-from src.constants import MONGODB_COLLABORATION_COLLECTION_NAME, MONGODB_COLLABORATION_DATABASE_NAME, MONGODB_TABLES, MONGODB_URI
+from src.constants import ENV_IS_DEV, MONGODB_COLLABORATION_DATABASE_NAME, MONGODB_JSON_PATH, MONGODB_TABLES, MONGODB_URI
 from typing import Dict, List
 import logging
 
@@ -42,3 +41,12 @@ class DatabaseWrapper:
         )
 
 db = DatabaseWrapper()
+if ENV_IS_DEV:
+    # read data from json
+    logging.debug("Reading dev data from json...")
+    import json
+    with open(MONGODB_JSON_PATH, "r") as f:
+        table_to_items_map = json.load(f)
+        db.populate_database(table_to_items_map)
+
+    

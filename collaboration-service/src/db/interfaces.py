@@ -1,4 +1,3 @@
-from src.db.db import DatabaseWrapper
 from pydantic import BaseModel
 from typing import List
 

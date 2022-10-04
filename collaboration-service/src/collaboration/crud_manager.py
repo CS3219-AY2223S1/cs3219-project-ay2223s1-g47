@@ -32,7 +32,7 @@ class CrudManager:
 
 
 
-    def get_room_history(user_id: str) -> List[Room]:
+    async def get_room_history(user_id: str) -> List[Room]:
         """
         Given the user id, returns a history of rooms up to a certain date.
         """
