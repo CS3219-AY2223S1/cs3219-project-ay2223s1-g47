@@ -19,3 +19,5 @@ app.use(questionRoutes)
 
 const httpServer = createServer(app);
 httpServer.listen(process.env.PORT || 8002, () => console.log('question-service listening on port 8002'));
+
+module.exports = app

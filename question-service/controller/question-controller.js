@@ -13,13 +13,19 @@ mongoose_1.default.connect(process.env.DB_LOCAL_URI, () => {
 const get_one_by_difficulty = (req, res) => {
     const difficulty = req.params.difficulty;
     const past_qns = req.body.questionIds;
+    if (past_qns == null) {
+        res.status(404).send({ "message": "Wrong format for POST request body" });
+    }
     Question_js_1.default.findOne()
         .where("difficulty")
         .equals(difficulty)
         .where("_id")
         .nin(past_qns)
         .then((question) => {
-        res.send(question);
+        if (question == null) {
+            res.status(404).send({ "message": "No questions found" });
+        }
+        return res.send(question);
     })
         .catch((err) => {
         console.log(err);
