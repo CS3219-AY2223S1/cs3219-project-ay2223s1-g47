@@ -25,7 +25,7 @@ MONGODB_URI = MONGODB_CLOUD_URI if ENV_IS_PROD else MONGODB_LOCAL_URI
 MONGODB_COLLABORATION_DATABASE_NAME = "collaboration-service"
 
 # mongodb tables
-MONGODB_JSON_PATH = str(Path("./src/dev-data.json").absolute())
+MONGODB_JSON_PATH = str(Path("/home/tannaaman/NUS/CS3219/cs3219-project-ay2223s1-g47/collaboration-service/src/dev-data.json").resolve())
 ROOM_TABLE_NAME = "rooms"
 MONGODB_TABLES = [
     ROOM_TABLE_NAME

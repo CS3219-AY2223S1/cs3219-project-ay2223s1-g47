@@ -1,3 +1,4 @@
+from typing import Optional
 from src.collaboration.models.room import RoomModel
 from src.collaboration.interfaces.room_state import RoomState
 from src.collaboration.interfaces.question import Question
@@ -11,7 +12,7 @@ class RoomMetadata(BaseModel):
 
     room_id: str # room id
     created_at: str # created at
-    closed_at: str # closed at
+    closed_at: Optional[str] = None # closed at
     is_closed: bool # is closed
     state: RoomState # state of room
     num_in_room: int # number in room

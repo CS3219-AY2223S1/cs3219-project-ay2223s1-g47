@@ -8,9 +8,12 @@ import logging
 
 class DatabaseWrapper:
 
-    def __init__(self, _moongodb_uri: str = None, _collection_name: str = None):
+    def __init__(self, _moongodb_uri: str = None, _collection_name: str = None, _client: MongoClient = None):
         # initialize db and collection being referenced
-        self.db = MongoClient(MONGODB_URI if _moongodb_uri is None else _moongodb_uri)[MONGODB_COLLABORATION_DATABASE_NAME]
+        
+        self.client = _client or MongoClient(MONGODB_URI if _moongodb_uri is None else _moongodb_uri)
+        self.db = self.client[MONGODB_COLLABORATION_DATABASE_NAME]
+
 
     def populate_database(self, table_to_items_map: Dict[str, List[object]]): 
         """
@@ -34,37 +37,37 @@ class DatabaseWrapper:
         Creates an index for a certain access pattern specified. 
         For more details, see https://pymongo.readthedocs.io/en/stable/api/pymongo/collection.html#pymongo.collection.Collection.create_index
         """
-        
+        print(index_specifications)
         self.db[index_specifications.collection_name].create_index(
             index_specifications.index_fields,
             name=index_specifications.index_name,
             sparse=index_specifications.sparse
         )
 
-    def insert(self, table: str, data: object):
+    def insert(self, table: str, data: Dict[str, Any]):
         """
         Inserts data into a table.
         """
         self.db[table].insert_one(data)
 
-    def get_items(self, table:str, index_keys: List[Dict[str, str]]) -> List[Mapping[str, Any]]:
+    def get_items(self, table:str, index_keys: Dict[str, Any]) -> List[Dict[str, Any]]:
         """
         Gets an item from a table.
         """
         return self.db[table].find(index_keys)
 
-    def update_item(self, table: str, index_keys: List[Dict[str, str]], data: Mapping[str, Any]):
+    def update_item(self, table: str, index_keys: Dict[str, Any], data: Dict[str, Any]):
         """
         Updates an item in a table.
         
         """
-        find = self.db[table].find(index_keys)
+        find = [r for r in self.db[table].find(index_keys)]
         if len(find) == 0:
             raise DatabaseItemNotFoundException(f"Could not find item in table {table} with index keys {index_keys}")
         elif len(find) > 1:
             raise DatabaseException(f"Found multiple items in table {table} with index keys {index_keys}, but trying to update one.")
 
-        result = self.db[table].update_one(index_keys, data)
+        result = self.db[table].replace_one(index_keys, data, upsert=False)
         if result.modified_count == 0:
             raise DatabaseException("Could not update item in table")
         

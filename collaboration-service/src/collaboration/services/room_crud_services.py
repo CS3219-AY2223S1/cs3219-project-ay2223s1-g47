@@ -26,7 +26,7 @@ class RoomCrudService:
         self.db = _db if _db is not None else db
         self.table = ROOM_TABLE_NAME
 
-    async def create_room(self, user1_id: str, user2_id: str, question: Question) -> Room:
+    def create_room(self, user1_id: str, user2_id: str, question: Question, _room_id: str = None) -> Room:
         """
         Creates a new room in db and sets a worker to close the room after some predefined time.
         """
@@ -38,7 +38,7 @@ class RoomCrudService:
             chat_history = [] # no history
         )
         room_model = RoomModel(
-            room_id = str(uuid4()),
+            room_id = _room_id or str(uuid4()),
             created_at = str(datetime.now()),
             closed_at = None,
             is_closed = False,
@@ -50,8 +50,12 @@ class RoomCrudService:
             question_id=question.question_id
         )
 
+        # 2. check that object isn't inside
+        if len([r for r in self.db.get_items(self.table, dict(room_id=room_model.room_id))]) > 0:
+            raise CrudException("Room already exists in db.")
+
         # 3. insert into db
-        self.db.insert(self.table, room_model)
+        self.db.insert(self.table, room_model.dict())
 
         # 4. schedule an async cleanup job
         logging.debug("Scheduling cleanup ...")
@@ -94,22 +98,22 @@ class RoomCrudService:
             logging.debug("Room is not empty. Doing nothing.")
         
 
-    async def get_room_by_id(self, room_id:str) -> Room:
+    def get_room_by_id(self, room_id:str) -> Room:
         """
         Given the room id, returns the room object.
         """
         # 1. query db, using room_id as index
-        room = self.db.get_items(self.table, dict(room_id=room_id))
-        if len(room) == 0:
+        rooms = [r for r in self.db.get_items(self.table, dict(room_id=room_id))]
+        if len(rooms) == 0:
             raise CrudException("Room not found in db.")
-        elif len(room) > 1:
+        elif len(rooms) > 1:
             raise CrudException("Multiple rooms found in db.")
-        room = room[0] # we have exactly one room (as expected)
+        room = rooms[0] # we have exactly one room (as expected)
         room = Room(**room)
         return room
 
 
-    async def update_room(self, room: Room):
+    def update_room(self, room: Room):
         """
         Updates the room state in the database.
         """
@@ -117,8 +121,8 @@ class RoomCrudService:
         room_as_model = RoomModel(**room.dict())
 
         # push to db
-        key = [dict(room_id=room.room_id)]
-        self.db.update_item(self.table, key, room_as_model)
+        key = dict(room_id=room.room_id)
+        self.db.update_item(self.table, key, room_as_model.dict())
         
 
 
