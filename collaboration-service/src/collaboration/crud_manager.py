@@ -1,8 +1,9 @@
 from typing import List
 
-from src.crud.interfaces.room import Room
+from src.collaboration.services.room_crud_services import RoomCrudService
+from src.api.question_service_api import QuestionServiceApiHandler
+from src.collaboration.interfaces.room import Room
 from src.constants import ROOM_TABLE_NAME
-from src.db.db import db, DatabaseWrapper
 
 
 class CrudManager:
@@ -11,9 +12,9 @@ class CrudManager:
     in the collaboration service database.
     """
 
-    def __init__(self, _db: DatabaseWrapper):
-        self.db = _db if _db is not None else db
-        self.table = ROOM_TABLE_NAME
+    def __init__(self, crud_service: RoomCrudService, question_service: QuestionServiceApiHandler):
+        self.crud_service = crud_service
+        self.question_service = question_service
 
     async def create_room(self, user1_id: str, user2_id: str, difficulty: int) -> Room:
         """

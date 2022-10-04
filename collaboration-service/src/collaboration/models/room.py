@@ -1,5 +1,6 @@
+from src.collaboration.interfaces.room_state import RoomState
 from src.db.interfaces import DatabaseIndexWrapper
-from src.crud.interfaces.question import Question
+from src.collaboration.interfaces.question import Question
 from src.db.db import db
 from pydantic import BaseModel
 
@@ -16,18 +17,20 @@ class RoomModel(BaseModel):
     created_at: str # created at
     closed_at: str # closed at
     is_closed: bool # is closed
+    state: RoomState # state of room
+    num_in_room: int # number in room
 
     # ====== user 1 ======
     user1_id: str
-    user1_in_room: bool # user 1 in room
     
     # ====== user 2 ======
     user2_id: str
-    user2_in_room: bool # user 2 in room
 
     # ====== question ======
     question_id: str # question id
     question: Question # question
+
+
 
 
 # ====== indices =======
