@@ -10,8 +10,6 @@ export const checkJWT = async (request: Request) => {
   console.debug("Called checkJWT");
   // 1. check that the request has a JWT
   const jwtCookie = request.cookies.JWT;
-  console.debug(jwtCookie);
-  console.debug(request.cookies);
   if (!jwtCookie) {
     return false; // missing cookie
   }
