@@ -1,9 +1,8 @@
-import { randomUUID } from 'crypto'
+import { randomUUID, sign } from 'crypto'
 import {
   DbPermissionDeniedException,
   DbReadException,
   DbWriteException
-  , DbWriteException, DbReadException, DbPermissionDeniedException
 } from '../../exceptions'
 import { LoginDetails, SignUpDetails } from '../../interfaces/login-details'
 import { User } from '../../interfaces/user'
@@ -33,6 +32,41 @@ export async function createUser (signupDetails: SignUpDetails) {
       password: userModel.password,
       id: userModel.id
     }
+    return user
+  } catch (error) {
+    throw new DbWriteException('Error creating user!')
+  }
+}
+
+/**
+ * Modifies the entry in DB
+ */
+
+export async function modifyUser (id: string, signupDetails: SignUpDetails) {
+  try {
+    // 1. check if user exists
+    if (!(await userWithIdExists(id))) {
+      throw new DbReadException('User does not exist.')
+    }
+
+    // 2. modify the entry in db
+    let user1
+    if (signupDetails.password != '') {
+      user1 = await UserModel.findOneAndUpdate({ id }, { password: signupDetails.password })
+    } else {
+      user1 = await UserModel.findOneAndUpdate({ id }, { username: signupDetails.username })
+    }
+
+    if (user1 == null) {
+      throw new DbReadException('User does not exist.')
+    }
+
+    const user: User = {
+      username: user1.username,
+      password: user1.password,
+      id: user1.id
+    }
+    // 3. then we return the user as an interface
     return user
   } catch (error) {
     throw new DbWriteException('Error creating user!')

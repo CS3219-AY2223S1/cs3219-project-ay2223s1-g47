@@ -5,7 +5,9 @@ import {
   handleCreateUser,
   login,
   auth,
-  logout
+  logout,
+  changeUsername,
+  changePassword
 } from './controller/user-controller'
 const CookieParser = require('cookie-parser')
 
@@ -42,6 +44,16 @@ app.post('/signup', handleCreateUser)
  * Endpoint to login.
  */
 app.post('/login', login)
+
+/**
+ * Endpoint to login.
+ */
+app.put('/changePassword', changePassword)
+
+/**
+ * Endpoint to login.
+ */
+app.put('/changeUsername', changeUsername)
 
 /**
  * Endpoint to logout.
