@@ -1,5 +1,6 @@
 from src.constants import QUESTION_SERVICE_GET_QUESTION_ENDPOINT
 from src.collaboration.interfaces.question import Question
+from tests.object_factories import create_question
 import requests
 
 class QuestionServiceApiHandler:
@@ -19,7 +20,9 @@ class QuestionServiceApiHandler:
         """
         Gets a question from the question service.
         """
-        response = await self._get(endpoint=QUESTION_SERVICE_GET_QUESTION_ENDPOINT, params={"difficulty": difficulty})
+        # TODO: unmock this when question service is implemented
+        # response = await self._get(endpoint=QUESTION_SERVICE_GET_QUESTION_ENDPOINT, params={"difficulty": difficulty})
+        response = create_question().dict()
         return Question(**response)
     
 

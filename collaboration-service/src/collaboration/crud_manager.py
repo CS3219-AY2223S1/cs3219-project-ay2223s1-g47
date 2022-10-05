@@ -26,6 +26,12 @@ class CrudManager:
         room = self.crud_service.create_room(user1_id, user2_id, question)
 
         return room
+    
+    def get_room(self, room_id: str) -> Room:
+        """
+        Given the room id, returns the room object.
+        """
+        return self.crud_service.get_room_by_id(room_id)
 
 
     def get_room_history(self, user_id: str) -> List[Room]:

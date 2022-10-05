@@ -85,7 +85,7 @@ class RoomConnectionManager:
 
         # publish to all sockets
         for connection in self.active_connections:
-            connection.send_json(room_state.dict())    
+            connection.send_json(self.room.dict())    
     
     async def handle_cleanup(self, timeout_in_seconds: int):
         """

@@ -4,15 +4,14 @@ from src.db.db import db
 from src.collaboration.interfaces.room_state import RoomState
 from src.collaboration.interfaces.user import User
 from src.collaboration.room_connection_manager import RoomConnectionManager, global_room_connection_store
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query, Header, Depends
 
 import logging
 
 router = APIRouter()
 
 router.websocket("/room/")
-async def room_socket(websocket: WebSocket, user: User, room_id: str = Query(None)):
-
+async def room_socket(websocket: WebSocket, room_id: str = Query(default=""), user = Depends()): #TODO: add jwt auth
     logging.debug(f"User {user.id} trying to connect to room {room_id}")
 
     # 1. create connection manager

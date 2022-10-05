@@ -111,8 +111,6 @@ class TestRoomCrudService:
         # sort the rooms by room_id
         rooms.sort(key=lambda room: room.room_id)
         expected_rooms.sort(key=lambda room: room.room_id)
-        for r in rooms:
-            print(r.room_id, r.user1_id, r.user2_id)
         assert rooms == expected_rooms, f"Expected {len(expected_rooms)} rooms but got {len(rooms)} rooms"
 
         

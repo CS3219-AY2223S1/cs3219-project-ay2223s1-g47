@@ -30,4 +30,12 @@ def get_room_history(user_id: str) -> List[RoomInResponse]:
     # 2. convert to exposable interface
     return [RoomInResponse.from_room(room) for room in room_history]
 
-    
+
+router.get("/room", dependencies=[]) # TODO: add auth in dependencies  
+def get_room(room_id: str) -> RoomInResponse:
+    # 1. create manager and ask it to get room
+    manager = CrudManager()
+    room = manager.get_room(room_id)
+
+    # 2. convert to exposable interface
+    return RoomInResponse.from_room(room)
