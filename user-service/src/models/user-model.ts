@@ -1,4 +1,4 @@
-import mongoose, { Schema } from "mongoose";
+import mongoose, { Schema } from 'mongoose'
 
 /**
  * This schema defines the user we will save in db.
@@ -9,22 +9,22 @@ const UserModelSchema = new Schema(
       type: String,
       required: true,
       unique: true,
-      index: true,
+      index: true
     },
     username: {
       type: String,
       required: true,
       unique: true,
-      index: true,
+      index: true
     },
     password: {
       type: String,
-      required: true,
-    },
+      required: true
+    }
   },
   {
-    collection: "users",
+    collection: 'users'
   }
-);
+)
 
-export default mongoose.model("UserModel", UserModelSchema);
+export default mongoose.model('UserModel', UserModelSchema)
