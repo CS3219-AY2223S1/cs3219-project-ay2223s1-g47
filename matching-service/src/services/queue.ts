@@ -1,5 +1,4 @@
 import amqp, { ConsumeMessage } from "amqplib";
-import { io } from "..";
 import { TPendingMatch } from "../types/TPendingMatch";
 import { getSocket, onMatchSuccess } from "./socket";
 
