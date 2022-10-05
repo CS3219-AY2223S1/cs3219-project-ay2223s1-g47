@@ -2,9 +2,10 @@ import mongoose from "mongoose";
 import Question from "../Question.js";
 import 'dotenv/config'
 
-mongoose.connect(process.env.DB_LOCAL_URI, () => {
-    console.log("mongodb connected");
-});
+mongoose
+.connect(process.env.DB_DOCKER_URI)
+.then(()=>console.log("MongoDB Connected"))
+.catch((err)=>console.log(err));
 
 // Get one question by difficulty, and not in the question history 
 const get_one_by_difficulty = (req: any, res: any) => {
@@ -22,7 +23,7 @@ const get_one_by_difficulty = (req: any, res: any) => {
         .nin(past_qns)
         .then((question) => {
             if (question == null) {
-                res.status(404).send({"message" : "No questions found"})
+                return res.status(404).send({"message" : "No questions found"})
             }
             return res.send(question);
         })
