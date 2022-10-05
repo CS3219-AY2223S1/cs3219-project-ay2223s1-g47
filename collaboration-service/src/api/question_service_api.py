@@ -1,29 +1,25 @@
+from src.api.api_handler import ApiHandler
 from src.constants import QUESTION_SERVICE_GET_QUESTION_ENDPOINT
 from src.collaboration.interfaces.question import Question
 from tests.object_factories import create_question
-import requests
 
 class QuestionServiceApiHandler:
 
-    def __init__(self, api_base_url: str):
-        self.api_base_url = api_base_url
+    def __init__(self, _api_handler: ApiHandler):
+        self.handler = _api_handler or ApiHandler(QUESTION_SERVICE_BASE_URL)
 
-    async def _get(self, endpoint: str, params: dict = None):
-        """
-        Handles get API call to question service
-        """
-        url = self.api_base_url + endpoint
-        response = requests.get(url, params=params)
-        return response.json()
 
     async def get_question(self, difficulty: int) -> Question:
         """
         Gets a question from the question service.
         """
         # TODO: unmock this when question service is implemented
-        # response = await self._get(endpoint=QUESTION_SERVICE_GET_QUESTION_ENDPOINT, params={"difficulty": difficulty})
+        # response = await self._get(endpoint=QUESTION_SERVICE_GET_QUESTION_ROUTE, params={"difficulty": difficulty})
         response = create_question().dict()
         return Question(**response)
+    
+
+    
     
 
     

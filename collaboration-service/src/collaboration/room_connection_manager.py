@@ -1,6 +1,8 @@
 import logging
 from typing import Dict, List
 
+from src.collaboration.interfaces.events import ChatRoomEvent, ChatRoomEventType
+
 from src.constants import CLEANUP_TIMEOUT_IN_SECONDS
 from src.collaboration.interfaces.user import User
 from src.collaboration.interfaces.room_state import RoomState
@@ -21,7 +23,7 @@ class RoomConnectionManager:
         self.room_id = room_id
         self.room: Room = None
 
-    async def initialize(self, user: User):
+    async def initialize(self, user: User,  websocket: WebSocket):
         """
         Initilaizes the room connection manager. 
         - Checks if the room exists
@@ -35,13 +37,25 @@ class RoomConnectionManager:
                 raise RoomNotFoundException("Room does not exist")
 
         # check that user is allowed to join room
-        allowed_users_ids = set([self.room.user1_id, self.room.user2_id])
+        allowed_users_ids = [self.room.user1_id, self.room.user2_id]
         if user.id not in allowed_users_ids:
             raise RoomEntryNotAuthorizedException("User not allowed in room.")
 
         # check that room is not closed
         if self.room.is_closed:
             raise RoomConnectionException("Room already closed, cannot enter.", detail = self.room)
+
+        # add socket to room
+        await self.add_socket_to_room(websocket)
+
+        # send message 
+        connected_event = ChatRoomEvent(
+            user_ids = [user.id],
+            message = f"{user.username} has joined the room.",
+            event_type = ChatRoomEventType.USER_JOIN
+        )
+        for connection in self.active_connections:
+            connection.send_json(connected_event.dict())
 
     async def add_socket_to_room(self, websocket: WebSocket):
         """
@@ -56,6 +70,22 @@ class RoomConnectionManager:
 
         # save to db
         self.crud_service.update_room(self.room)
+
+    def disconnect_user(self, user: User, websocket: WebSocket):
+        """
+        Disconnects a user from the room.
+        """
+        # remove socket from room
+        self.remove_socket_from_room(websocket)
+
+        # send message 
+        disconnected_event = ChatRoomEvent(
+            user_ids = [user.id],
+            message = f"{user.username} has left the room.",
+            event_type = ChatRoomEventType.USER_LEFT
+        )
+        for connection in self.active_connections:
+            connection.send_json(disconnected_event.dict()) 
 
     def remove_socket_from_room(self, websocket: WebSocket):
         """

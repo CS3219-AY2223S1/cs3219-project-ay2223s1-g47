@@ -31,3 +31,8 @@ class DatabaseItemNotFoundException(CollaborationServiceException):
 class CrudException(CollaborationServiceException):
     def __init__(self, message: str, detail: dict = None):
         super().__init__(status_code=500, message=message, detail=detail)
+
+# ============Authentication/authorization ===============
+class AuthenticationException(CollaborationServiceException):
+    def __init__(self, message: str, detail: dict = None):
+        super().__init__(status_code=403, message=message, detail=detail)

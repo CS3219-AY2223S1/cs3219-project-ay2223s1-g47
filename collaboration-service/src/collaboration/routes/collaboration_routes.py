@@ -1,4 +1,5 @@
 
+from src.collaboration.routes.route_dependencies import jwt_auth
 from src.collaboration.services.room_crud_services import RoomCrudService
 from src.db.db import db
 from src.collaboration.interfaces.room_state import RoomState
@@ -11,7 +12,11 @@ import logging
 router = APIRouter()
 
 router.websocket("/room/")
-async def room_socket(websocket: WebSocket, room_id: str = Query(default=""), user = Depends()): #TODO: add jwt auth
+async def room_socket(websocket: WebSocket, room_id: str = Query(default=""), user = Depends(jwt_auth)):
+    
+    # jwt auth is async. need to yield
+    # see https://fastapi.tiangolo.com/tutorial/dependencies/dependencies-with-yield/
+    yield user 
     logging.debug(f"User {user.id} trying to connect to room {room_id}")
 
     # 1. create connection manager
@@ -20,11 +25,8 @@ async def room_socket(websocket: WebSocket, room_id: str = Query(default=""), us
         room_manager = RoomConnectionManager(room_id, RoomCrudService(db))
         global_room_connection_store[room_id] = room_manager
 
-    # authenticate user 
-    await room_manager.initialize(user)
-    
-    # add user to room (same socket connection)
-    room_manager.add_socket_to_room(websocket)
+    # iinitialize 
+    await room_manager.initialize(user, websocket)
 
     # 2. loop
     while True:
@@ -42,7 +44,7 @@ async def room_socket(websocket: WebSocket, room_id: str = Query(default=""), us
         except WebSocketDisconnect:
             logging.debug(f"User {user.id} disconnected from room {room_id}")
             # disconnect user from room
-            room_manager.remove_socket_from_room(websocket)
+            room_manager.disconnect_user(user, websocket)
             break
     logging.debug("Closing websocket.")
     websocket.close()
