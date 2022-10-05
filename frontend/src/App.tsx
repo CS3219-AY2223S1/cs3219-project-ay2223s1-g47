@@ -41,8 +41,26 @@ function App() {
                 />
               }
             />
-            <Route path="/signup" element={<SignupPage />} />
-            <Route path="/login" element={<LoginPage />} />
+            <Route
+              path="/signup"
+              element={
+                <ProtectedRoute
+                  redirectPath={"/"}
+                  isAllowed={!loggedIn} // if logged in, redirect to home
+                  children={<SignupPage />}
+                />
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <ProtectedRoute
+                  redirectPath={"/"}
+                  isAllowed={!loggedIn} // if logged in, redirect to home
+                  children={<LoginPage />}
+                />
+              }
+            />
           </Routes>
         </Router>
       </Box>
