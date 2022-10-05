@@ -22,6 +22,10 @@ function MatchingPage() {
   // contexts
   const { user, socket, createSocket } = useContext(UserContext) as UserContextType;
 
+  socket?.on("matchSuccess", (room: any) => {
+    console.log("room: ", room);
+  })
+
   useEffect(() => {
     createSocket(serverUri);
   }, []);

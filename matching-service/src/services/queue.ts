@@ -1,4 +1,6 @@
 import amqp, { ConsumeMessage } from "amqplib";
+import axios from "axios";
+import { Types } from "mongoose";
 import { TPendingMatch } from "../types/TPendingMatch";
 import { getSocket, onMatchSuccess } from "./socket";
 
@@ -26,7 +28,8 @@ export const initQueues = async () => {
 const handleMessage = (msg: ConsumeMessage | null) => {
     if (!msg) return;
     const pendingMatch: TPendingMatch = JSON.parse(msg.content.toString());
-    const { difficulty } = pendingMatch;
+    const { difficulty, userId, socketId } = pendingMatch;
+    const pendingSocket = getSocket(socketId);
     const waiting = WAITERS[difficulty];
     const waitingSocket = waiting && getSocket(waiting.socketId);
 
@@ -39,12 +42,21 @@ const handleMessage = (msg: ConsumeMessage | null) => {
         WAITERS[difficulty] = pendingMatch;
     }
     else {
-        createRoom(pendingMatch, waiting);
-        onMatchSuccess(pendingMatch, waiting);
+        // const room = createRoom(userId, waiting.userId);
+        const room = { roomId: "roomId" };
+        onMatchSuccess(pendingSocket, waitingSocket, room);
         WAITERS[difficulty] = null;
     }
 }
 
-const createRoom = (match1: TPendingMatch, match2: TPendingMatch) => {
-    // Send data to collab service
+// Send data to collab service
+const createRoom = async (userId1: Types.ObjectId, userId2: Types.ObjectId) => {
+    const collabUri = "localhost:3000";
+    const res = await axios.post(collabUri, {
+        userIds: [userId1, userId2],
+    });
+    if (res.status == 200) {
+        return res.data;
+    }
+    return;
 }

@@ -1,4 +1,4 @@
-import e from "express";
+import axios from "axios";
 import { Types } from "mongoose";
 import { Socket } from "socket.io";
 import { SocketId } from "socket.io-adapter";
@@ -8,17 +8,6 @@ import { checkValidators } from "../utils/validator";
 import { initQueues, QUEUES } from "./queue";
 
 const MATCH_TIMEOUT = 60000; // Pending match duration
-
-// const cullDuplicateConnection = async ({ socket }: { socket: Socket }) => {
-//     const latestSocketId = "latestSocketId";
-//     const latestSocket = getSocket(latestSocketId);
-//     if (latestSocket && latestSocketId != socket.id && latestSocket.connected) {
-//         socket.disconnect();
-//     }
-//     else {
-//         // apicall to user service that updates latest socket id
-//     }
-// }
 
 const cullDuplicateConnection = async ({ socket }: { socket: Socket }) => {
     const sockets: Socket[] = Array.from(io.sockets.sockets.values());
@@ -33,8 +22,24 @@ const cullDuplicateConnection = async ({ socket }: { socket: Socket }) => {
     }
 }
 
+const validateUser = async ({ socket }: { socket: Socket }) => {
+    const userServiceUri = "localhost:5000";
+    const headers = socket.handshake.headers;
+    const res = await axios.post(userServiceUri, headers);
+    if (res.status == 200 && res.data) {
+        const currentUserId = res.data;
+        if (currentUserId != socket.handshake.query.userId) {
+            throw new Error("wrong user!");
+        }
+    }
+    else {
+        // throw new Error("user does not exist");
+    }
+}
+
 const connectionValidators = [
     cullDuplicateConnection,
+    // validateUser,
 ];
 
 export const listenForMatches = async () => {
@@ -63,8 +68,8 @@ export const listenForMatches = async () => {
             }
         });
     
-        socket.on("matchSuccess", async (pendingMatch) => {
-            console.log("room created: ", pendingMatch);
+        socket.on("matchSuccess", async (room) => {
+            console.log("room created: ", room);
         });
     
         socket.on("disconnect", async () => {
@@ -84,10 +89,10 @@ export const getSocket = (socketId: SocketId) => {
     return io.sockets.sockets.get(socketId);
 }
 
-export const onMatchSuccess = (match1: TPendingMatch, match2: TPendingMatch) => {
-    const socket1: Socket = io.sockets.sockets.get(match1.socketId);
-    const socket2: Socket = io.sockets.sockets.get(match2.socketId);
-    if (socket1) socket1.to(match1.socketId).emit("matchSuccess", match1);
-    if (socket2) socket2.to(match2.socketId).emit("matchSuccess", match2);
+export const onMatchSuccess = (socket1: Socket, socket2: Socket, room: any) => {
+    if (socket1 && socket2) {
+        socket1.to(socket1.id).emit("matchSuccess", room);
+        socket2.to(socket2.id).emit("matchSuccess", room);
+    }
     console.log("matchSuccess");
 }
