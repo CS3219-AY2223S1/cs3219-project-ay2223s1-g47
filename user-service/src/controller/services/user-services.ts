@@ -1,4 +1,9 @@
 import { randomUUID } from "crypto";
+import {
+  DbPermissionDeniedException,
+  DbReadException,
+  DbWriteException,
+} from "../../exceptions";
 import { LoginDetails, SignUpDetails } from "../../interfaces/login-details";
 import { User } from "../../interfaces/user";
 import UserModel from "../../models/user-model";
