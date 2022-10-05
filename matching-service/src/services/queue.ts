@@ -34,7 +34,8 @@ const handleMessage = (msg: ConsumeMessage | null) => {
     console.log("Waiting socket", waiting?.socketId);
     console.log(" [x] Received %s", pendingMatch.toString());
 
-    if (!waiting || !waitingSocket || !waitingSocket.connected) {
+    if (!waiting || !waitingSocket || !waitingSocket.connected
+            || waiting.userId == pendingMatch.userId) {
         WAITERS[difficulty] = pendingMatch;
     }
     else {
