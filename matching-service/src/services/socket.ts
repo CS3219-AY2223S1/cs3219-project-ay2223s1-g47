@@ -23,10 +23,12 @@ const MATCH_TIMEOUT = 60000; // Pending match duration
 const cullDuplicateConnection = async ({ socket }: { socket: Socket }) => {
     const sockets: Socket[] = Array.from(io.sockets.sockets.values());
     const existing = sockets.find((s: Socket) => {
-        return s.handshake.query.userId == socket.handshake.query.userId
+        return s.handshake.query.userId
+                && s.handshake.query.userId !== socket.handshake.query.userId
                 && s.connected;
     });
     if (existing) {
+        console.log("existing socket: ", existing.id);
         socket.disconnect();
     }
 }
