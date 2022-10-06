@@ -1,11 +1,5 @@
-import mongoose from "mongoose";
 import Question from "../Question.js";
 import 'dotenv/config'
-
-mongoose
-.connect(process.env.DB_DOCKER_URI)
-.then(()=>console.log("MongoDB Connected"))
-.catch((err)=>console.log(err));
 
 // Get one question by difficulty, and not in the question history 
 const get_one_by_difficulty = (req: any, res: any) => {
@@ -13,7 +7,7 @@ const get_one_by_difficulty = (req: any, res: any) => {
     const past_qns : string[] = req.body.questionIds;
 
     if (past_qns == null) {
-        res.status(404).send({"message" : "Wrong format for POST request body"})
+        return res.status(404).send({"message" : "Wrong format for POST request body"})
     }
 
     Question.findOne()

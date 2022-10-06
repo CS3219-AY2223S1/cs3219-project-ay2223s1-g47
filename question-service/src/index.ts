@@ -4,6 +4,8 @@ import { createServer } from "http";
 import questionRoutes from "./routes/question-routes.js"
 import 'dotenv/config'
 
+require("./db/db");
+
 const app = express();
 app.use(cors());
 app.use(express.json());

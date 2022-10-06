@@ -4,8 +4,8 @@ const request = require('supertest')
 const difficulty = 'Medium'
 const postBody = {
     "questionIds": [
-        "631816d4ae0c4d90a4909a6e",
-        "631dd4d610ff4f3b04e5ac3e"
+        "633dbfde101bea946c7a30ef",
+        "633dbfde101bea946c7a30f2"
     ]
 }
 
