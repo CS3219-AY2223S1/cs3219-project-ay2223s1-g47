@@ -45,17 +45,21 @@ function LoginPage() {
     }
 
     // try to login in the backend
-    await login(username, password).then((response) => {
-      if (response.status === 200) {
-        navigate("/");
-      } else {
-        const errorMessage: string =
-          response.data.message ??
-          "Something went wrong! Please try again later.";
-        setErrorSnackbarContent(errorMessage);
-      }
-      setIsErrorSnackbarOpen(true);
-    });
+    await login(username, password)
+      .then((response) => {
+        if (response.status === 200) {
+          navigate("/");
+        } else {
+          const errorMessage: string =
+            response.data.message ??
+            "Something went wrong! Please try again later.";
+          setErrorSnackbarContent(errorMessage);
+        }
+        setIsErrorSnackbarOpen(true);
+      })
+      .catch((error) => {
+        console.error(error);
+      });
   };
 
   /**

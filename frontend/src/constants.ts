@@ -20,7 +20,7 @@ export const STATUS_CODE_CONFLICT = 409;
 // user service
 const USER_SERVICE_DOMAIN =
   process.env.URI_USER_SERVICE || "http://localhost:8000";
-export const USER_SERVICE_SIGNUP_URL = USER_SERVICE_DOMAIN + "/user/signup";
-export const USER_SERVICE_LOGIN_URL = USER_SERVICE_DOMAIN + "/user/login";
-export const USER_SERVICE_LOGOUT_URL = USER_SERVICE_DOMAIN + "/user/logout";
-export const USER_SERVICE_AUTHENTICATE_URL = USER_SERVICE_DOMAIN + "/user/auth";
+export const USER_SERVICE_SIGNUP_URL = USER_SERVICE_DOMAIN + "/signup";
+export const USER_SERVICE_LOGIN_URL = USER_SERVICE_DOMAIN + "/login";
+export const USER_SERVICE_LOGOUT_URL = USER_SERVICE_DOMAIN + "/logout";
+export const USER_SERVICE_AUTHENTICATE_URL = USER_SERVICE_DOMAIN + "/auth";

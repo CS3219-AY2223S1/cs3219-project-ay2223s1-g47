@@ -1,0 +1,35 @@
+version: '3.9'
+
+services:
+  
+  user-service:
+    container_name: "user-service"
+    build: 
+      context: ./user-service
+    ports:
+      - "8000:8000"
+    depends_on:
+      - mongodb
+    environment:
+      - ENV=DEV
+      - DB_LOCAL_URI=mongodb://mongodb:27017/user-service
+      - DB_CLOUD_URI=mongodb+srv:// {rest-of-cloud-URL}
+      - PW_SALT=$$2b$$10$$zzlQzTUZKmvPuIejOTr0Ke
+      - JWT_SECRET_KEY=Swe4g7c?UBm5Nrd96vhsVDtkyJFbqKMTm!TMw5BDRLtaCFAXNvbq?s4rGKQSZnUP 
+      - DB_LOCAL_JSON_PATH=/usr/user-service/src/dev-data.json
+
+  frontend:
+    container_name: "frontend"
+    build: 
+      context: ./frontend
+    ports:
+      - "3000:3000"
+    environment:
+      - PORT=3000
+    
+  
+  mongodb:
+    container_name: "mongodb"
+    image: mongo
+    ports:
+      - "27017:27017"
