@@ -11,6 +11,8 @@ import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
 
+import useCodeMirrorEditor from "../../hooks/useCodeMirrorEditor";
+
 function CollaborationPage() {
   // =========== query params ==================
   const [searchParams, setSearchParams] = useSearchParams();
@@ -84,7 +86,14 @@ function CollaborationPage() {
           console.log("set room");
         }
       }}
-      highlight={(code) => highlight(code, languages.js, "js")}
+      highlight={(code) =>
+        highlight(code, languages.js, "js")
+          .split("\n")
+          .map(
+            (line, i) => `<span class='editorLineNumber'>${i + 1}</span>${line}`
+          )
+          .join("\n")
+      }
       padding={10}
       style={{
         fontFamily: '"Fira code", "Fira Mono", monospace',
@@ -98,7 +107,9 @@ function CollaborationPage() {
   console.log(room);
   console.log(roomId);
 
-  return <div>{codeEditorComponent}</div>;
+  const coder = useCodeMirrorEditor([]);
+
+  return codeEditorComponent;
 }
 
 export default CollaborationPage;
