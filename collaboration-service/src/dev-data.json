@@ -35,6 +35,9 @@
             "question": {
                 "question_id": "1",
                 "question": "What is the meaning of life?",
+                "question_resource_uris": [
+                    "https://en.wikipedia.org/wiki/42_(number)"
+                ],
                 "answer": "42",
                 "answer_resource_uris": [
                     "https://en.wikipedia.org/wiki/42_(number)"
@@ -42,7 +45,6 @@
                 "created_at": "2018-01-01T00:00:00Z",
                 "difficulty": 1
             }
-        },
-        {}
+        }
     ]
 }

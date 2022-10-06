@@ -24,3 +24,9 @@ export const USER_SERVICE_SIGNUP_URL = USER_SERVICE_DOMAIN + "/signup";
 export const USER_SERVICE_LOGIN_URL = USER_SERVICE_DOMAIN + "/login";
 export const USER_SERVICE_LOGOUT_URL = USER_SERVICE_DOMAIN + "/logout";
 export const USER_SERVICE_AUTHENTICATE_URL = USER_SERVICE_DOMAIN + "/auth";
+
+// collaboration service
+const COLLABORATION_SERVICE_DOMAIN =
+  process.env.URI_COLLABORATION_SERVICE || "http://localhost:8003";
+export const COLLABORATION_SERVICE_GET_ROOM_URL =
+  COLLABORATION_SERVICE_DOMAIN + "/crud/get_room";

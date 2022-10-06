@@ -43,7 +43,7 @@ function App() {
               }
             />
             <Route
-              path="/match"
+              path="/room"
               element={
                 <ProtectedRoute
                   redirectPath={"/"}

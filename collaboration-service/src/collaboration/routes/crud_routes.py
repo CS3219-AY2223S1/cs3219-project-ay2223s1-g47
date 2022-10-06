@@ -6,12 +6,13 @@ from src.collaboration.services.room_crud_services import RoomCrudService
 from src.api.question_service_api import QuestionServiceApiHandler
 from src.db.db import db
 from src.collaboration.interfaces.room import RoomInResponse
-from fastapi import APIRouter
+from fastapi import APIRouter, Body
 from src.collaboration.crud_manager import CrudManager
+import logging
 
 router = APIRouter()
 
-router.post("/create", dependencies=[]) # TODO: add auth in dependencies
+@router.post("/create", dependencies=[]) # TODO: add auth in dependencies
 def create_room(user1_id: str, user2_id: str, difficulty: int) -> RoomInResponse:
     # 1. create manager and ask it to create room
     manager = CrudManager(RoomCrudService(db), QuestionServiceApiHandler(api_base_url=QUESTION_SERVICE_HOST))
@@ -21,7 +22,7 @@ def create_room(user1_id: str, user2_id: str, difficulty: int) -> RoomInResponse
     return RoomInResponse.from_room(room)
 
 
-router.get("/get_room_history", dependencies=[]) # TODO: add auth in dependencies
+@router.get("/get_room_history", dependencies=[]) # TODO: add auth in dependencies
 def get_room_history(user_id: str) -> List[RoomInResponse]:
     # 1. create manager and ask it to get room history
     manager = CrudManager()
@@ -31,11 +32,12 @@ def get_room_history(user_id: str) -> List[RoomInResponse]:
     return [RoomInResponse.from_room(room) for room in room_history]
 
 
-router.get("/room", dependencies=[]) # TODO: add auth in dependencies  
+@router.get("/get_room/{room_id}", dependencies=[]) # TODO: add auth in dependencies  
 def get_room(room_id: str) -> RoomInResponse:
     # 1. create manager and ask it to get room
-    manager = CrudManager()
+    print(room_id)
+    manager = CrudManager(RoomCrudService(db), QuestionServiceApiHandler())
     room = manager.get_room(room_id)
-
+    
     # 2. convert to exposable interface
     return RoomInResponse.from_room(room)

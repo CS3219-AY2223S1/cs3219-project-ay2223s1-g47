@@ -13,6 +13,8 @@ router = APIRouter()
 
 router.websocket("/room/")
 async def room_socket(websocket: WebSocket, room_id: str = Query(default=""), user = Depends(jwt_auth)):
+    # NOTE: if jwt auth doesn't work out, we can just pass user id
+    # then directly ping user service for user object. may be less secure, though
     
     # jwt auth is async. need to yield
     # see https://fastapi.tiangolo.com/tutorial/dependencies/dependencies-with-yield/

@@ -1,12 +1,12 @@
 from src.api.api_handler import ApiHandler
-from src.constants import QUESTION_SERVICE_GET_QUESTION_ENDPOINT
+from src.constants import QUESTION_SERVICE_HOST, QUESTION_SERVICE_GET_QUESTION_ENDPOINT
 from src.collaboration.interfaces.question import Question
 from tests.object_factories import create_question
 
 class QuestionServiceApiHandler:
 
-    def __init__(self, _api_handler: ApiHandler):
-        self.handler = _api_handler or ApiHandler(QUESTION_SERVICE_BASE_URL)
+    def __init__(self, _api_handler: ApiHandler = None):
+        self.handler = _api_handler or ApiHandler(QUESTION_SERVICE_HOST)
 
 
     async def get_question(self, difficulty: int) -> Question:

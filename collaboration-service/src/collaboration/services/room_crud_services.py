@@ -1,6 +1,6 @@
 from typing import List
 
-from src.collaboration.exceptions import CrudException
+from src.collaboration.exceptions import CrudException, CrudItemNotFoundException
 
 from src.collaboration.interfaces.question import Question
 from src.collaboration.interfaces.room import Room
@@ -105,9 +105,9 @@ class RoomCrudService:
         # 1. query db, using room_id as index
         rooms = [r for r in self.db.get_items(self.table, dict(room_id=room_id))]
         if len(rooms) == 0:
-            raise CrudException("Room not found in db.")
+            raise CrudItemNotFoundException("Room not found!")
         elif len(rooms) > 1:
-            raise CrudException("Multiple rooms found in db.")
+            raise CrudException("Multiple rooms found! This should not happen for a specific id.")
         room = rooms[0] # we have exactly one room (as expected)
         room = Room(**room)
         return room

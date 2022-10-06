@@ -4,7 +4,7 @@ import {
   apiCallUserLogin,
   apiCallUserLogout,
   UserInfoApiResponseData,
-} from "../api/userServiceApi";
+} from "../api/UserServiceApi";
 import { User } from "../interfaces/users/User";
 
 /**
@@ -38,7 +38,7 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
   const defaultUser: User = {
     username: "",
     userId: "",
-    loggedIn: false,
+    loggedIn: true,
   };
   const [user, setUser] = useState<User>(defaultUser);
 

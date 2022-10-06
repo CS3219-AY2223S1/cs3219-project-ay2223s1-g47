@@ -1,7 +1,7 @@
 import { User } from "../../interfaces/users/User";
 import { useEffect, useState } from "react";
 import { Room } from "../../interfaces/collaboration/Room";
-import { apiGetRoom } from "../../api/collaborationServiceApi";
+import { apiGetRoom } from "../../api/CollaborationServiceApi";
 import useIsMobile from "../../hooks/useIsMobile";
 import { useSearchParams } from "react-router-dom";
 
@@ -52,9 +52,10 @@ function CollaborationPage() {
         setRoom(roomFromResponse);
       } else {
         const errorMessage =
-          response.data.message ??
+          response.detail.message ??
           "Something went wrong! Please try again later.";
         setErrorSnackbarContent(errorMessage);
+        console.log(errorMessage);
         setIsErrorSnackbarOpen(true);
       }
     });
@@ -64,8 +65,10 @@ function CollaborationPage() {
   const codeEditorComponent = <div></div>;
   const chatComponent = <div></div>;
   const questionComponent = <div></div>;
+  console.log(room);
+  console.log(roomId);
 
-  return <div></div>;
+  return <div>Hello</div>;
 }
 
 export default CollaborationPage;

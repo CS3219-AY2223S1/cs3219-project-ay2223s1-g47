@@ -9,6 +9,8 @@ assert os.environ.get("MONGODB_CLOUD_URI") or os.environ.get("MONGODB_LOCAL_URI"
 assert os.environ.get("PORT") is not None
 assert os.environ.get("HOST") is not None
 assert os.environ.get("QUESTION_SERVICE_HOST") is not None
+assert os.environ.get("USER_SERVICE_HOST") is not None
+
 
 # enviroment
 ENV_IS_PROD = os.environ.get("ENV") == 'PROD'
@@ -37,3 +39,7 @@ CLEANUP_TIMEOUT_IN_SECONDS = 300 # 5 minutes
 # question service
 QUESTION_SERVICE_HOST = os.environ.get("QUESTION_SERVICE_HOST")
 QUESTION_SERVICE_GET_QUESTION_ENDPOINT = "/question"
+
+# ======================== user service ========================
+USER_SERVICE_HOST = os.environ.get("USER_SERVICE_HOST")
+USER_SERVICE_JWT_AUTH_ENDPOINT = "/auth/jwt"

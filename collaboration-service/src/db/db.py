@@ -2,7 +2,7 @@ from src.collaboration.exceptions import DatabaseException, DatabaseItemNotFound
 from src.db.interfaces import DatabaseIndexWrapper
 from pymongo import MongoClient
 from src.constants import ENV_IS_DEV, MONGODB_COLLABORATION_DATABASE_NAME, MONGODB_JSON_PATH, MONGODB_TABLES, MONGODB_URI
-from typing import Any, Dict, List, Mapping
+from typing import Any, Dict, List
 import logging
 
 
@@ -54,7 +54,11 @@ class DatabaseWrapper:
         """
         Gets an item from a table.
         """
-        return self.db[table].find(index_keys)
+        try:
+            results = [r for r in self.db[table].find(index_keys)]
+            return results
+        except: 
+            raise DatabaseException("Error getting items from db.")
 
     def update_item(self, table: str, index_keys: Dict[str, Any], data: Dict[str, Any]):
         """
