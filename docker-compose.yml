@@ -9,10 +9,10 @@ services:
     ports:
       - "8001:8001"
     depends_on:
-      - mongodb
+      - rabbitmq
     environment:
       - MODE=DEV
-      - FRONTEND_URI=http://localhost:3000
+      - FRONTEND_URI=frontend:3000
       - PORT=8001
 
   user-service:
@@ -46,3 +46,9 @@ services:
     image: mongo
     ports:
       - "27017:27017"
+  
+  rabbitmq:
+    container_name: "rabbitmq"
+    image: rabbitmq
+    ports:
+      - "5672:5672"
