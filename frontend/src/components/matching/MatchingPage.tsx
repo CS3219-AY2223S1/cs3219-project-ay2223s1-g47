@@ -6,8 +6,10 @@ import {
   Typography,
 } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
+import { toast } from "react-toastify";
 import { UserContext, UserContextType } from "../../contexts/UserContext";
 import useIsMobile from "../../hooks/useIsMobile";
+import { MatchLoadingComponent } from "./MatchLoadingComponent";
 
 const serverUri = process.env.MATCHING_SERVICE_URI || "http://localhost:8001";
 
@@ -18,6 +20,7 @@ function MatchingPage() {
   const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] =
     useState<Boolean>(false);
   const [errorSnackBarContent, setErrorSnackbarContent] = useState<String>("");
+  const [isMatching, setIsMatching] = useState<Boolean>(false);
 
   // contexts
   const { user, socket, createSocket } = useContext(UserContext) as UserContextType;
@@ -32,6 +35,11 @@ function MatchingPage() {
 
   // ====== Event handlers ======
 
+    const onMatchingTimeout = () => {
+        setIsMatching(false);
+        toast("Matching timeout! Please make another match.");
+    }
+
     const createPendingMatch = (difficulty: number) => {
         if (!socket || !socket.connected) {
             createSocket(serverUri);
@@ -42,6 +50,8 @@ function MatchingPage() {
                 difficulty,
             });
         }
+        setIsMatching(true);
+        setTimeout(onMatchingTimeout, 60 * 1000);
     }
 
   // ====== UI components ======
@@ -100,6 +110,8 @@ function MatchingPage() {
   );
 
   // ====== Render ======
+  if (isMatching) return <MatchLoadingComponent/>
+
   return (
     <div
       className="MatchingPage"

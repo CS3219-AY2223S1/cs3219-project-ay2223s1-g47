@@ -7,6 +7,9 @@ import Home from "./components/Home";
 import { useContext } from "react";
 import { UserContext, UserContextType } from "./contexts/UserContext";
 import MatchingPage from "./components/matching/MatchingPage";
+import { ToastContainer } from "react-toastify";
+
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   // =============== State management ===============
@@ -18,6 +21,7 @@ function App() {
 
   return (
     <div className="App">
+      <ToastContainer />
       <Box display={"flex"} flexDirection={"column"} padding={"1rem"}>
         <Router>
           <Routes>
