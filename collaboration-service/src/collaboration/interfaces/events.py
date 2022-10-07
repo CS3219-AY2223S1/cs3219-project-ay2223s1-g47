@@ -1,10 +1,10 @@
 from typing import List
 from pydantic import BaseModel
-from enum import Enum
+from enum import IntEnum
 
-class ChatRoomEventType(Enum):
-    USER_JOIN = "USER_JOIN"
-    USER_LEFT = "USER_LEFT"
+class ChatRoomEventType(IntEnum):
+    USER_JOIN = 0
+    USER_LEFT = 1
 
 class ChatRoomEvent(BaseModel):
     """

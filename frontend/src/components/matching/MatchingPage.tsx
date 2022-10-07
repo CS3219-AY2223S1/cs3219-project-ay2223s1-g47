@@ -26,12 +26,12 @@ function MatchingPage() {
 
   // ====== Event handlers ======
 
-    const createPendingMatch = (difficulty: number) => {
-        socket.emit("match", {
-            userId: user.userId,
-            difficulty,
-        })
-    }
+  const createPendingMatch = (difficulty: number) => {
+    socket.emit("match", {
+      userId: user.userId,
+      difficulty,
+    });
+  };
 
   // ====== UI components ======
   const matchOptionCard = (
@@ -68,21 +68,17 @@ function MatchingPage() {
         {matchOptionCard(
           "Easy",
           "Choose this if you're new to programming",
-          () => createPendingMatch(0),
+          () => createPendingMatch(0)
         )}
       </Grid>
       <Grid item xs={12} md={4}>
-        {matchOptionCard(
-            "Medium",
-            "For most people.",
-            () => createPendingMatch(1),
+        {matchOptionCard("Medium", "For most people.", () =>
+          createPendingMatch(1)
         )}
       </Grid>
       <Grid item xs={12} md={4}>
-        {matchOptionCard(
-            "Hard",
-            "Dark Souls, but for programmers",
-            () => createPendingMatch(2)
+        {matchOptionCard("Hard", "Dark Souls, but for programmers", () =>
+          createPendingMatch(2)
         )}
       </Grid>
     </Grid>

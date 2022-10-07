@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Room } from "../../interfaces/collaboration/Room";
 import { apiGetRoom } from "../../api/CollaborationServiceApi";
 import useIsMobile from "../../hooks/useIsMobile";
@@ -12,6 +12,8 @@ import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
 
 import useCodeMirrorEditor from "../../hooks/useCodeMirrorEditor";
+import { UserContext, UserContextType } from "../../contexts/UserContext";
+import { apiGetNewJwt } from "../../api/UserServiceApi";
 
 function CollaborationPage() {
   // =========== query params ==================
@@ -20,8 +22,16 @@ function CollaborationPage() {
 
   // =========== state management ==============
 
+  // context
+  const { webSocket, createWebSocket, clearWebSocket } = useContext(
+    UserContext
+  ) as UserContextType;
+
   // room data
   const [room, setRoom] = useState<Room | undefined>(undefined);
+
+  // auth state
+  const [socketJwt, setSocketJwt] = useState<string>("");
 
   // UI states
   const isMobile = useIsMobile();
@@ -74,6 +84,43 @@ function CollaborationPage() {
     });
   }, [roomId]);
 
+  useEffect(() => {
+    if (room) {
+      webSocket?.send(JSON.stringify(room.state));
+    }
+  }, [code]);
+
+  useEffect(() => {
+    console.log("get new jwt");
+    apiGetNewJwt().then((response) => {
+      if (response.status === 200) {
+        setSocketJwt(response.data.jwt);
+      } else {
+        setErrorSnackbarContent(
+          "Something went wrong! Please try again later."
+        );
+        console.log(response);
+        setIsErrorSnackbarOpen(true);
+      }
+    });
+  }, []);
+
+  /**
+   * Hook that initializes the socket.
+   */
+  useEffect(() => {
+    console.log("initializing socket");
+    createWebSocket("ws://localhost:8003/room?room_id=1&jwt=" + socketJwt);
+  }, [socketJwt]);
+
+  useEffect(() => {
+    if (webSocket) {
+      webSocket.onmessage = (event) => {
+        console.log(event.data);
+      };
+    }
+  }, [webSocket]);
+
   // =========== components ====================
   const codeEditorComponent = (
     <Editor
@@ -104,8 +151,6 @@ function CollaborationPage() {
   );
   const chatComponent = <div></div>;
   const questionComponent = <div></div>;
-  console.log(room);
-  console.log(roomId);
 
   const coder = useCodeMirrorEditor([]);
 

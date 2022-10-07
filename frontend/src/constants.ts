@@ -24,6 +24,7 @@ export const USER_SERVICE_SIGNUP_URL = USER_SERVICE_DOMAIN + "/signup";
 export const USER_SERVICE_LOGIN_URL = USER_SERVICE_DOMAIN + "/login";
 export const USER_SERVICE_LOGOUT_URL = USER_SERVICE_DOMAIN + "/logout";
 export const USER_SERVICE_AUTHENTICATE_URL = USER_SERVICE_DOMAIN + "/auth";
+export const USER_SERVICE_NEW_JWT_URL = USER_SERVICE_DOMAIN + "/get_jwt";
 
 // collaboration service
 const COLLABORATION_SERVICE_DOMAIN =

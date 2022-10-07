@@ -7,6 +7,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from src.collaboration.routes.crud_routes import router as crud_router
 from src.collaboration.routes.collaboration_routes import router as collaboration_router
 from src.constants import HOST, PORT
+from fastapi_socketio import SocketManager
 
 import uvicorn
 
@@ -34,6 +35,9 @@ app.include_router(
     collaboration_router,
 )
 
+# add support for socketio
+socket_manager = SocketManager(app) # , cors_allowed_origins="*", cors_credentials=True)
+
 # sanity
 @app.get("/")
 def root():
@@ -42,7 +46,7 @@ def root():
 if __name__ == "__main__":
 
     # start app
-    uvicorn.run(app, host=HOST, port=PORT)
+    uvicorn.run("src.main:app", host=HOST, port=PORT, reload=True)
     logging.info("Collaboration service started.")
 
     # update db

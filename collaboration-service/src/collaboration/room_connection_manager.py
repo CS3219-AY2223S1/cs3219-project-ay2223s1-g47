@@ -1,3 +1,4 @@
+import asyncio
 import logging
 from typing import Dict, List
 
@@ -32,7 +33,7 @@ class RoomConnectionManager:
         """
         # get room from db if needed
         if self.room is None:
-            self.room = await self.crud_service.get_room_by_id(self.room_id)
+            self.room = self.crud_service.get_room_by_id(self.room_id)
             if self.room is None:
                 raise RoomNotFoundException("Room does not exist")
 
@@ -54,8 +55,10 @@ class RoomConnectionManager:
             message = f"{user.username} has joined the room.",
             event_type = ChatRoomEventType.USER_JOIN
         )
+        tasks = []
         for connection in self.active_connections:
-            connection.send_json(connected_event.dict())
+            tasks.append(connection.send_json(self.room.dict()))
+        await asyncio.gather(*tasks)
 
     async def add_socket_to_room(self, websocket: WebSocket):
         """
@@ -71,12 +74,12 @@ class RoomConnectionManager:
         # save to db
         self.crud_service.update_room(self.room)
 
-    def disconnect_user(self, user: User, websocket: WebSocket):
+    async def disconnect_user(self, user: User, websocket: WebSocket):
         """
         Disconnects a user from the room.
         """
         # remove socket from room
-        self.remove_socket_from_room(websocket)
+        await self.remove_socket_from_room(websocket)
 
         # send message 
         disconnected_event = ChatRoomEvent(
@@ -84,15 +87,20 @@ class RoomConnectionManager:
             message = f"{user.username} has left the room.",
             event_type = ChatRoomEventType.USER_LEFT
         )
+        tasks = []
         for connection in self.active_connections:
-            connection.send_json(disconnected_event.dict()) 
+            tasks.append(connection.send_json(self.room.dict()))
+        await asyncio.gather(*tasks)
+        
 
-    def remove_socket_from_room(self, websocket: WebSocket):
+    async def remove_socket_from_room(self, websocket: WebSocket):
         """
         Removes a websocket object from the list of active connections.
         """
         # 1. remove
+        print(self.active_connections)
         self.active_connections.remove(websocket)
+        print(self.active_connections)
 
         # 2. update state
         self.room.num_in_room -= 1
@@ -103,19 +111,24 @@ class RoomConnectionManager:
         # 3. push to db
         self.crud_service.update_room(self.room)
 
-    def update_room_state(self, room_state: RoomState):
+        # 4. close the conection
+        await websocket.close()
+
+    async def update_room_state(self, room_state: RoomState):
         """
         Updates the room state in the database.
         """
         # update tracked state
-        self.room.room_state = room_state
+        self.room.state = room_state
 
         # update db
         self.crud_service.update_room(self.room)
 
         # publish to all sockets
+        tasks = []
         for connection in self.active_connections:
-            connection.send_json(self.room.dict())    
+            tasks.append(connection.send_json(self.room.dict()))
+        await asyncio.gather(*tasks) 
     
     async def handle_cleanup(self, timeout_in_seconds: int):
         """
