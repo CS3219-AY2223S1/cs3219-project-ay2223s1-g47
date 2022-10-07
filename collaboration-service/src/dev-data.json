@@ -29,7 +29,7 @@
                 "code": "print('Hello World');\n"
             },
             "num_in_room": 0,
-            "user1_id": "1",
+            "user1_id": "3",
             "user2_id": "2",
             "question_id": "1",
             "question": {

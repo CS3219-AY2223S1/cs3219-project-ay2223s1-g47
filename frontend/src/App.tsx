@@ -57,7 +57,7 @@ function App() {
               element={
                 <ProtectedRoute
                   redirectPath={"/"}
-                  isAllowed={!loggedIn} // if logged in, redirect to home
+                  isAllowed={true} // if logged in, redirect to home
                   children={<SignupPage />}
                 />
               }

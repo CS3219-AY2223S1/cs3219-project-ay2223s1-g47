@@ -27,11 +27,14 @@ async def room_socket(websocket: WebSocket, room_id: str = Query(default=""), us
     # 1. create connection manager
     room_manager = global_room_connection_store.get(room_id)
     if room_manager is None:
+        print("no manager, creating new one")
         room_manager = RoomConnectionManager(room_id, RoomCrudService(db))
         global_room_connection_store[room_id] = room_manager
+    
 
     # iinitialize 
     await room_manager.initialize(user, websocket)
+    print("sockets in room: ", room_manager.active_connections)
 
     # 2. loop
     while True:
@@ -39,7 +42,7 @@ async def room_socket(websocket: WebSocket, room_id: str = Query(default=""), us
         
             # receieve frontend state as json
             frontend_state = await websocket.receive_json()
-            logging.debug(f"Recieving message from user {user.id} in room {room_id}, message: {frontend_state}")
+            print(f"Recieving message from user {user.id} in room {room_id}, message: {frontend_state}")
             activity_state = RoomState.from_frontend_state(frontend_state)
 
             # pass to connection manager to handle
@@ -47,10 +50,11 @@ async def room_socket(websocket: WebSocket, room_id: str = Query(default=""), us
 
             
         except WebSocketDisconnect:
-            logging.debug(f"User {user.id} disconnected from room {room_id}")
+            print(f"User {user.id} disconnected from room {room_id}")
             # disconnect user from room
-            await room_manager.disconnect_user(user, websocket)
-            logging.debug("Closing websocket.")
+            await room_manager.disconnect_user(user)
+            print("Closing websocket.")
+            break
     
             
                          

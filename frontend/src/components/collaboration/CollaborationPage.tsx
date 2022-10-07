@@ -11,9 +11,12 @@ import "prismjs/components/prism-clike";
 import "prismjs/components/prism-javascript";
 import "prismjs/themes/prism.css";
 
-import useCodeMirrorEditor from "../../hooks/useCodeMirrorEditor";
 import { UserContext, UserContextType } from "../../contexts/UserContext";
 import { apiGetNewJwt } from "../../api/UserServiceApi";
+import { COLLABORATION_SERVICE_COLLABRATION_ROOM_URL } from "../../constants";
+import { Grid } from "@mui/material";
+import { Box } from "@mui/system";
+import { useNavigate } from "react-router-dom";
 
 function CollaborationPage() {
   // =========== query params ==================
@@ -21,6 +24,9 @@ function CollaborationPage() {
   const roomId = searchParams.get("roomId") as string;
 
   // =========== state management ==============
+
+  // history
+  const navigate = useNavigate();
 
   // context
   const { webSocket, createWebSocket, clearWebSocket } = useContext(
@@ -34,20 +40,29 @@ function CollaborationPage() {
   const [socketJwt, setSocketJwt] = useState<string>("");
 
   // UI states
+  // mobile
   const isMobile = useIsMobile();
+
+  // errors
   const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState(false);
   const [errorSnackBarContent, setErrorSnackbarContent] = useState("");
+
+  // code editor language and code
   const [codeLanguage, setCodeLanguage] = useState<{
     languageGrammer: Grammar;
     language: string;
-  }>({ languageGrammer: languages.python, language: "py" });
+  }>({ languageGrammer: languages.js, language: "js" });
   const [code, setCode] = useState("");
+
+  // chat
+  const [chat, setChat] = useState("");
 
   // =========== hooks =========================
   /**
    * Hook that initializes the room state.
    */
   useEffect(() => {
+    // get and set room by api call
     apiGetRoom(roomId).then((response) => {
       if (response.status === 200) {
         const roomFromResponse: Room = {
@@ -73,7 +88,10 @@ function CollaborationPage() {
           },
         };
         setRoom(roomFromResponse);
+        setCode(roomFromResponse.state.code);
       } else {
+        console.log(response);
+        navigate("/match");
         const errorMessage =
           response.detail.message ??
           "Something went wrong! Please try again later.";
@@ -84,14 +102,20 @@ function CollaborationPage() {
     });
   }, [roomId]);
 
+  /**
+   * Hook that updates the room state via the websocket connection.
+   */
   useEffect(() => {
-    if (room) {
-      webSocket?.send(JSON.stringify(room.state));
+    if (!!room && !!webSocket && webSocket.readyState === 1) {
+      webSocket.send(JSON.stringify(room.state));
     }
-  }, [code]);
+  }, [room?.state, code, webSocket, socketJwt]);
 
+  /**
+   * Hook that initializes authentication in preparation for the websocket connection.
+   * Specifically, it gets a new JWT for the websocket connection.
+   */
   useEffect(() => {
-    console.log("get new jwt");
     apiGetNewJwt().then((response) => {
       if (response.status === 200) {
         setSocketJwt(response.data.jwt);
@@ -99,62 +123,133 @@ function CollaborationPage() {
         setErrorSnackbarContent(
           "Something went wrong! Please try again later."
         );
-        console.log(response);
         setIsErrorSnackbarOpen(true);
       }
     });
   }, []);
 
   /**
-   * Hook that initializes the socket.
+   * Hook that initializes the socket with the collaboration service.
    */
   useEffect(() => {
     console.log("initializing socket");
-    createWebSocket("ws://localhost:8003/room?room_id=1&jwt=" + socketJwt);
-  }, [socketJwt]);
+    clearWebSocket();
+    if (room && socketJwt) {
+      createWebSocket(
+        "ws://" +
+          COLLABORATION_SERVICE_COLLABRATION_ROOM_URL +
+          "?room_id=" +
+          room?.roomId +
+          "&jwt=" +
+          socketJwt
+      );
+    }
+  }, [socketJwt, room?.roomId, socketJwt]);
 
+  /**
+   * Hook that listens for updates to the room state from the socket.
+   */
   useEffect(() => {
     if (webSocket) {
       webSocket.onmessage = (event) => {
-        console.log(event.data);
+        // 1. set room state
+        const updatedRoom = JSON.parse(event.data);
+        const roomFromResponse: Room = {
+          roomId: updatedRoom.room_id ?? "",
+          createdAt: updatedRoom.created_at ?? "",
+          closedAt: updatedRoom.closed_at ?? room?.closedAt,
+          isClosed: updatedRoom.is_closed ?? room?.isClosed,
+          state: {
+            chatHistory:
+              updatedRoom.state?.chat_history ?? room?.state.chatHistory,
+            code: updatedRoom.state?.code ?? room?.state.code,
+          },
+          numInRoom: updatedRoom.num_in_room ?? 1,
+          question: {
+            questionId:
+              updatedRoom.question?.question_id ?? room?.question.questionId,
+            question: updatedRoom.question?.question ?? room?.question.question,
+            answer: updatedRoom.question?.answer ?? room?.question.answer,
+            difficulty:
+              updatedRoom.question?.difficulty ?? room?.question.difficulty,
+            questionResourceUris:
+              updatedRoom.question?.question_resource_uris ??
+              room?.question.questionResourceUris,
+            answerResourceUris:
+              updatedRoom.question?.answer_resource_uris ??
+              room?.question.answerResourceUris,
+            createdAt:
+              updatedRoom.question?.created_at ?? room?.question.createdAt,
+          },
+        };
+
+        // 2. if not the same, then update
+        if (updatedRoom !== room) {
+          console.log("updating");
+          setRoom(roomFromResponse);
+          setCode(roomFromResponse.state.code);
+        }
       };
     }
   }, [webSocket]);
 
   // =========== components ====================
+
+  /**
+   * Code editor
+   */
   const codeEditorComponent = (
-    <Editor
-      value={code}
-      onValueChange={(code: string) => {
-        setCode(code);
-        if (room) {
-          room.state.code = code;
-          setRoom(room);
-          console.log("set room");
-        }
-      }}
-      highlight={(code) =>
-        highlight(code, languages.js, "js")
-          .split("\n")
-          .map(
-            (line, i) => `<span class='editorLineNumber'>${i + 1}</span>${line}`
-          )
-          .join("\n")
-      }
-      padding={10}
+    <Box
       style={{
-        fontFamily: '"Fira code", "Fira Mono", monospace',
-        fontSize: 12,
+        height: "100%",
+        width: "100%",
       }}
-      tabSize={4}
-    />
+    >
+      <Editor
+        value={code}
+        onValueChange={(code: string) => {
+          setCode(code);
+          if (room) {
+            room.state.code = code;
+            setRoom(room);
+          }
+        }}
+        highlight={(code) =>
+          highlight(code, codeLanguage.languageGrammer, codeLanguage.language)
+        }
+        padding={10}
+        style={{
+          fontFamily: '"Fira code", "Fira Mono", monospace',
+          fontSize: 12,
+          outline: 0,
+          boxShadow: "none",
+          minHeight: "100%",
+        }}
+        tabSize={4}
+      />
+    </Box>
   );
+
+  /**
+   * Chat component
+   */
   const chatComponent = <div></div>;
-  const questionComponent = <div></div>;
 
-  const coder = useCodeMirrorEditor([]);
+  /**
+   * Question component
+   */
+  const questionComponent = <div>Question</div>;
 
-  return codeEditorComponent;
+  return (
+    <Grid container minHeight={"100vh"}>
+      <Grid item xs={4}>
+        {questionComponent}
+      </Grid>
+      <Grid item xs={8}>
+        {codeEditorComponent}
+      </Grid>
+    </Grid>
+  );
 }
 
 export default CollaborationPage;
