@@ -53,24 +53,28 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
    * Note the empty dependency array, which means this function will only be called
    * once.
    */
-  useEffect(() => {
-    apiCallUserAuthentication().then((response) => {
-      // if ok, set the user state
-      if (response.status >= 200 && response.status < 300) {
-        console.log(response);
-        if (response.data.username && response.data.id) {
-          const user: User = {
-            username: response.data.username,
-            userId: response.data.id,
-            loggedIn: true,
-          };
-          setUser(user);
-        }
-      }
 
-      // else, do nothing
-    });
-  }, []);
+  // Fires off too often, causing logged out create account to redirect to logged in home
+
+  // useEffect(() => {
+  //   console.log("effect used : auth")
+  //   apiCallUserAuthentication().then((response) => {
+  //     // if ok, set the user state
+  //     if (response.status >= 200 && response.status < 300) {
+  //       console.log(response);
+  //       if (response.data.username && response.data.id) {
+  //         const user: User = {
+  //           username: response.data.username,
+  //           userId: response.data.id,
+  //           loggedIn: true,
+  //         };
+  //         setUser(user);
+  //       }
+  //     }
+
+  //     // else, do nothing
+  //   });
+  // }, []);
 
   /**
    * Handles logging in and setting the global user state.
