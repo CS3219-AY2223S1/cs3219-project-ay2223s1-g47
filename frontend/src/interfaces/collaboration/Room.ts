@@ -27,6 +27,7 @@ export interface Question {
 
 export interface ChatMessage {
   message: string;
-  user: User;
+  id: string; // user id
+  username: string;
   timestamp: string;
 }

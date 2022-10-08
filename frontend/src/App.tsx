@@ -18,63 +18,61 @@ function App() {
   console.log("App.tsx: loggedIn = " + loggedIn);
 
   return (
-    <div className="App">
-      <Box display={"flex"} flexDirection={"column"} padding={"1rem"}>
-        <Router>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute
-                  redirectPath={"/login"}
-                  isAllowed={loggedIn}
-                  children={<Home />}
-                />
-              }
-            />
-            <Route
-              path="/match"
-              element={
-                <ProtectedRoute
-                  redirectPath={"/"}
-                  isAllowed={loggedIn}
-                  children={<MatchingPage />}
-                />
-              }
-            />
-            <Route
-              path="/room"
-              element={
-                <ProtectedRoute
-                  redirectPath={"/"}
-                  isAllowed={loggedIn}
-                  children={<CollaborationPage />}
-                />
-              }
-            />
-            <Route
-              path="/signup"
-              element={
-                <ProtectedRoute
-                  redirectPath={"/"}
-                  isAllowed={true} // if logged in, redirect to home
-                  children={<SignupPage />}
-                />
-              }
-            />
-            <Route
-              path="/login"
-              element={
-                <ProtectedRoute
-                  redirectPath={"/"}
-                  isAllowed={!loggedIn} // if logged in, redirect to home
-                  children={<LoginPage />}
-                />
-              }
-            />
-          </Routes>
-        </Router>
-      </Box>
+    <div className="App" style={{ minHeight: "100vh" }}>
+      <Router>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <ProtectedRoute
+                redirectPath={"/login"}
+                isAllowed={loggedIn}
+                children={<Home />}
+              />
+            }
+          />
+          <Route
+            path="/match"
+            element={
+              <ProtectedRoute
+                redirectPath={"/"}
+                isAllowed={loggedIn}
+                children={<MatchingPage />}
+              />
+            }
+          />
+          <Route
+            path="/room"
+            element={
+              <ProtectedRoute
+                redirectPath={"/"}
+                isAllowed={loggedIn}
+                children={<CollaborationPage />}
+              />
+            }
+          />
+          <Route
+            path="/signup"
+            element={
+              <ProtectedRoute
+                redirectPath={"/"}
+                isAllowed={true} // if logged in, redirect to home
+                children={<SignupPage />}
+              />
+            }
+          />
+          <Route
+            path="/login"
+            element={
+              <ProtectedRoute
+                redirectPath={"/"}
+                isAllowed={!loggedIn} // if logged in, redirect to home
+                children={<LoginPage />}
+              />
+            }
+          />
+        </Routes>
+      </Router>
     </div>
   );
 }

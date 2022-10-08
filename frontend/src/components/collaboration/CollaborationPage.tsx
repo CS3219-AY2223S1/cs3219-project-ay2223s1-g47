@@ -1,9 +1,9 @@
 import { useContext, useEffect, useState } from "react";
-import { Room } from "../../interfaces/collaboration/Room";
+import { ChatMessage, Room } from "../../interfaces/collaboration/Room";
 import { apiGetRoom } from "../../api/CollaborationServiceApi";
 import useIsMobile from "../../hooks/useIsMobile";
 import { useSearchParams } from "react-router-dom";
-
+import CloseIcon from "@mui/icons-material/Close";
 import Editor from "react-simple-code-editor";
 
 import { highlight, Grammar, languages } from "prismjs";
@@ -14,9 +14,26 @@ import "prismjs/themes/prism.css";
 import { UserContext, UserContextType } from "../../contexts/UserContext";
 import { apiGetNewJwt } from "../../api/UserServiceApi";
 import { COLLABORATION_SERVICE_COLLABRATION_ROOM_URL } from "../../constants";
-import { Grid } from "@mui/material";
+import {
+  Avatar,
+  Button,
+  Card,
+  CardActions,
+  Divider,
+  FormControl,
+  Grid,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemText,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import { Box } from "@mui/system";
 import { useNavigate } from "react-router-dom";
+import { useDebounce } from "../../hooks/useDebounce";
+import userEvent from "@testing-library/user-event";
 
 function CollaborationPage() {
   // =========== query params ==================
@@ -29,7 +46,7 @@ function CollaborationPage() {
   const navigate = useNavigate();
 
   // context
-  const { webSocket, createWebSocket, clearWebSocket } = useContext(
+  const { user, webSocket, createWebSocket, clearWebSocket } = useContext(
     UserContext
   ) as UserContextType;
 
@@ -53,9 +70,30 @@ function CollaborationPage() {
     language: string;
   }>({ languageGrammer: languages.js, language: "js" });
   const [code, setCode] = useState("");
+  const debouncedCode = useDebounce(code, 500); // debounce code for half second
 
   // chat
-  const [chat, setChat] = useState("");
+  const [chatText, setChatText] = useState("");
+  const chatMessageList = room?.state.chatHistory || [];
+
+  // =============== functions =================
+  const handleChatSendMessage: (text: string) => void = (text: string) => {
+    console.log("called");
+    // update room state for chat history via appending
+    // hook will handle update
+    room?.state.chatHistory.push({
+      message: chatText,
+      username: user.username,
+      id: user.userId,
+      timestamp: new Date().toISOString(),
+    });
+
+    if (!!room && !!webSocket && webSocket.readyState === 1) {
+      webSocket.send(JSON.stringify(room.state));
+      // clear chat message
+      setChatText("");
+    }
+  };
 
   // =========== hooks =========================
   /**
@@ -90,7 +128,7 @@ function CollaborationPage() {
         setRoom(roomFromResponse);
         setCode(roomFromResponse.state.code);
       } else {
-        console.log(response);
+        console.error(response);
         navigate("/match");
         const errorMessage =
           response.detail.message ??
@@ -109,7 +147,7 @@ function CollaborationPage() {
     if (!!room && !!webSocket && webSocket.readyState === 1) {
       webSocket.send(JSON.stringify(room.state));
     }
-  }, [room?.state, code, webSocket, socketJwt]);
+  }, [room, debouncedCode, room?.state.chatHistory, webSocket, socketJwt]);
 
   /**
    * Hook that initializes authentication in preparation for the websocket connection.
@@ -220,7 +258,7 @@ function CollaborationPage() {
         padding={10}
         style={{
           fontFamily: '"Fira code", "Fira Mono", monospace',
-          fontSize: 12,
+          fontSize: 14,
           outline: 0,
           boxShadow: "none",
           minHeight: "100%",
@@ -230,26 +268,119 @@ function CollaborationPage() {
     </Box>
   );
 
+  const chatMessageListComponent = chatMessageList.map(
+    (chatMessage: ChatMessage, index: number) => {
+      return (
+        <ListItem key={index}>
+          <ListItemAvatar>
+            <Avatar
+              alt={chatMessage.username}
+              src={
+                "https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"
+              }
+            />
+          </ListItemAvatar>
+          <ListItemText
+            primary={
+              chatMessage.id === user.userId ? "You" : chatMessage.username
+            }
+            secondary={chatMessage.message}
+          />
+        </ListItem>
+      );
+    }
+  );
+
   /**
    * Chat component
    */
-  const chatComponent = <div></div>;
+  const chatWindowComponent = (
+    <Grid container spacing={4} component={Paper}>
+      <Grid item xs={12}>
+        <List style={{ maxHeight: "50vh", overflow: "auto" }}>
+          {chatMessageListComponent}
+        </List>
+      </Grid>
+      <Grid item xs={12}>
+        <FormControl fullWidth>
+          <TextField
+            onChange={(event) => setChatText(event.target.value)}
+            onKeyDown={(event) => {
+              const ENTER_KEY_CODE = 13;
+              if (event.keyCode === ENTER_KEY_CODE) {
+                handleChatSendMessage(chatText);
+              }
+            }}
+            value={chatText}
+            label="Type your message..."
+            variant="outlined"
+          />
+        </FormControl>
+      </Grid>
+    </Grid>
+  );
 
   /**
    * Question component
    */
-  const questionComponent = <div>Question</div>;
+  const questionComponent = (
+    <Grid container component={Paper}>
+      <Grid item xs={12} padding={"12px"}>
+        <Typography variant="h4">{room?.question.question}</Typography>
+      </Grid>
+      <Grid item xs={12}></Grid>
+    </Grid>
+  );
 
-  return (
-    <Grid container minHeight={"100vh"}>
+  /**
+   * Room is closed component
+   */
+  const roomIsClosedComponent = (
+    <Box
+      style={{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <Card elevation={24} style={{ padding: "24px", borderRadius: "12px" }}>
+        <Typography variant="h2">Room is closed</Typography>
+        <CardActions>
+          <Button onClick={() => navigate("/match")}>
+            <Typography>Return to matching page</Typography>
+          </Button>
+        </CardActions>
+      </Card>
+    </Box>
+  );
+
+  const roomIsOpenComponent = (
+    <Grid container direction="row" justifyContent="space-evenly">
       <Grid item xs={4}>
-        {questionComponent}
+        <Grid
+          container
+          direction="column"
+          justifyContent="space-evenly"
+          spacing={12}
+        >
+          <Grid item xs={12}>
+            {questionComponent}
+          </Grid>
+          <Divider />
+          <Grid item xs={12}>
+            {chatWindowComponent}
+          </Grid>
+        </Grid>
       </Grid>
       <Grid item xs={8}>
         {codeEditorComponent}
       </Grid>
     </Grid>
   );
+
+  const toShow = room?.isClosed ? roomIsClosedComponent : roomIsOpenComponent;
+
+  return toShow;
 }
 
 export default CollaborationPage;

@@ -65,10 +65,9 @@ class RoomConnectionManager:
         """
         
         # close existing connection if exists
-        exist: WebSocket = self.active_connections.get(id)
-        if exist:
-            await exist.close()
-            self.active_connections.pop(id)
+        if id in self.active_connections:
+            await self.active_connections.pop(id).close()
+            
 
         # add connection
         self.active_connections[id] = websocket
@@ -103,7 +102,8 @@ class RoomConnectionManager:
         """
         # 1. remove
         print(self.active_connections)
-        websocket = self.active_connections.pop(id)
+        if id in self.active_connections:
+            websocket = self.active_connections.pop(id)
         print(self.active_connections)
 
         # 2. update state
