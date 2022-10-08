@@ -1,4 +1,5 @@
 import React, { useState, createContext, useEffect } from "react";
+import { io, Socket } from "socket.io-client";
 import {
   apiCallUserAuthentication,
   apiCallUserLogin,
@@ -12,12 +13,15 @@ import { User } from "../interfaces/users/User";
  * It contains the user data and the functions to update the user data.
  */
 export interface UserContextType {
+    socket: Socket | null;
   user: User;
   login: (
     username: string,
     password: string
   ) => Promise<{ status: number; data: UserInfoApiResponseData }>;
   logout: () => Promise<{ status: number; data: {} }>;
+  createSocket: (url: string) => Promise<Socket>;
+  clearSocket: () => Promise<void>;
 }
 
 /**
@@ -41,6 +45,7 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
     loggedIn: false,
   };
   const [user, setUser] = useState<User>(defaultUser);
+  const [socket, setSocket] = useState<Socket | null>(null);
 
   // ================ Functions =================
   /**
@@ -98,8 +103,26 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
     return response; // in either case, return data to caller
   };
 
+  const createSocket = async (url: string) => {
+    const socket: Socket = io(url, { query: {
+        userId: user.userId,
+    }});
+    setSocket(socket);
+    return socket;
+  }
+
+  const clearSocket = async () => {
+    setSocket(null);
+ }
   return (
-    <UserContext.Provider value={{ user, login, logout }}>
+    <UserContext.Provider value={{
+        user,
+        login,
+        logout,
+        socket,
+        createSocket,
+        clearSocket
+    }}>
       {props.children}
     </UserContext.Provider>
   );

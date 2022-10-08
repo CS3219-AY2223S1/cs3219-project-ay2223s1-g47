@@ -5,13 +5,11 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { UserContext, UserContextType } from "../../contexts/UserContext";
 import useIsMobile from "../../hooks/useIsMobile";
-import { io } from "socket.io-client";
 
 const serverUri = process.env.MATCHING_SERVICE_URI || "http://localhost:8001";
-const socket = io(serverUri, {});
 
 function MatchingPage() {
   // ====== State management ======
@@ -22,15 +20,28 @@ function MatchingPage() {
   const [errorSnackBarContent, setErrorSnackbarContent] = useState<String>("");
 
   // contexts
-  const { user } = useContext(UserContext) as UserContextType;
+  const { user, socket, createSocket } = useContext(UserContext) as UserContextType;
+
+  socket?.on("matchSuccess", (room: any) => {
+    console.log("room: ", room);
+  })
+
+  useEffect(() => {
+    createSocket(serverUri);
+  }, []);
 
   // ====== Event handlers ======
 
     const createPendingMatch = (difficulty: number) => {
-        socket.emit("match", {
-            userId: user.userId,
-            difficulty,
-        })
+        if (!socket || !socket.connected) {
+            createSocket(serverUri);
+        }
+        if (socket) {
+            socket.emit("match", {
+                userId: user.userId,
+                difficulty,
+            });
+        }
     }
 
   // ====== UI components ======
