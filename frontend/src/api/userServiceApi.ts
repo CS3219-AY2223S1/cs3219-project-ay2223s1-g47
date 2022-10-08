@@ -4,6 +4,8 @@ import {
   USER_SERVICE_LOGIN_URL,
   USER_SERVICE_AUTHENTICATE_URL,
   USER_SERVICE_LOGOUT_URL,
+  USER_SERVICE_CHANGEUSERNAME_URL,
+  USER_SERVICE_CHANGEPW_URL,
 } from "../constants";
 
 export interface UserInfoApiResponseData {
@@ -79,16 +81,6 @@ export const apiCallUserLogin: (
     }) as Promise<{ status: number; data: UserInfoApiResponseData }>;
 
   return response;
-  // // dummy success response
-  // return {
-  //   status: 200,
-  //   data: { username: "test", id: "test" },
-  // };
-  // // dummy error response
-  // return {
-  //   status: 500,
-  //   data: { username: "test", userId: "test", message: "Error!" },
-  // }; // dummy data for now
 };
 
 /**
@@ -98,21 +90,17 @@ export const apiCallUserLogout: () => Promise<{
   status: number;
   data: {};
 }> = async () => {
-  //   const respose = await axios
-  //     .get(USER_SERVICe_AUTHENTICATE_URL, {})
-  //     .catch((error: Error | AxiosError) => {
-  //       if (axios.isAxiosError(error)) {
-  //         return error.response?.data; // return response data from backend
-  //       } else {
-  //         console.error(error);
-  //         return error; // propagate up the call stack
-  //       }
-  //     });
-  // dummy success response
-  return {
-    status: 200,
-    data: {},
-  };
+    const response = await axios
+      .post(USER_SERVICE_LOGOUT_URL,{ withCredentials: true } )
+      .catch((error: Error | AxiosError) => {
+        if (axios.isAxiosError(error)) {
+          return error.response?.data; // return response data from backend
+        } else {
+          console.error(error);
+          return error; // propagate up the call stack
+        }
+      }) as Promise<{ status: number; data: UserInfoApiResponseData }>;
+      return response;
 };
 
 /**
@@ -144,14 +132,62 @@ export const apiCallUserAuthentication: () => Promise<{
     }) as Promise<{ status: number; data: UserInfoApiResponseData }>;
 
   return response;
-  // // dummy success response
-  // return {
-  //   status: 200,
-  //   data: { username: "test", userId: "test" },
-  // };
-  // // dummy error response
-  // return {
-  //   status: 401,
-  //   data: { username: "test", id: "test", message: "Not logged in!" },
-  // }; // dummy data for now
+};
+
+
+// put user change
+export const apiCallUserChangeUsername: (
+  username: string,
+  password: string
+) => Promise<{ status: number; data: UserInfoApiResponseData }> = async (
+  username: string,
+  password: string
+) => {
+  const response = axios.put(
+      USER_SERVICE_CHANGEUSERNAME_URL,
+      {
+        username,
+        password,
+      },
+      { withCredentials: true }
+    )
+    .catch((error: Error | AxiosError) => {
+      if (axios.isAxiosError(error)) {
+        return error.response?.data; // return response data from backend
+      } else {
+        console.error(error);
+        return error; // propagate up the call stack
+      }
+    }) as Promise<{ status: number; data: UserInfoApiResponseData }>;
+
+  return response;
+};
+
+
+// put password change
+export const apiCallUserChangePassword: (
+  username: string,
+  password: string
+) => Promise<{ status: number; data: UserInfoApiResponseData }> = async (
+  username: string,
+  password: string
+) => {
+  const response = axios.put(
+      USER_SERVICE_CHANGEPW_URL,
+      {
+        username,
+        password,
+      },
+      { withCredentials: true }
+    )
+    .catch((error: Error | AxiosError) => {
+      if (axios.isAxiosError(error)) {
+        return error.response?.data; // return response data from backend
+      } else {
+        console.error(error);
+        return error; // propagate up the call stack
+      }
+    }) as Promise<{ status: number; data: UserInfoApiResponseData }>;
+
+  return response;
 };
