@@ -4,6 +4,7 @@ import SignupPage from "./components/user/SignupPage";
 import { Box } from "@mui/material";
 import LoginPage from "./components/user/LoginPage";
 import Home from "./components/Home";
+import AccountPage from "./components/AccountPage";
 import { useContext } from "react";
 import { UserContext, UserContextType } from "./contexts/UserContext";
 import MatchingPage from "./components/matching/MatchingPage";
@@ -61,6 +62,19 @@ function App() {
                 />
               }
             />
+
+            <Route
+              path="/account"
+              element={
+                <ProtectedRoute
+                  redirectPath={"/"}
+                  isAllowed={loggedIn} // if logged in, redirect to home
+                  children={<AccountPage />}
+                />
+              }
+            />
+
+
           </Routes>
         </Router>
       </Box>
