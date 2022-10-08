@@ -20,11 +20,13 @@ function MatchingPage() {
   const [errorSnackBarContent, setErrorSnackbarContent] = useState<String>("");
 
   // contexts
-  const { user, socket, createSocket } = useContext(UserContext) as UserContextType;
+  const { user, socket, createSocket } = useContext(
+    UserContext
+  ) as UserContextType;
 
   socket?.on("matchSuccess", (room: any) => {
     console.log("room: ", room);
-  })
+  });
 
   useEffect(() => {
     createSocket(serverUri);
@@ -32,26 +34,17 @@ function MatchingPage() {
 
   // ====== Event handlers ======
 
-<<<<<<< HEAD
   const createPendingMatch = (difficulty: number) => {
-    socket.emit("match", {
-      userId: user.userId,
-      difficulty,
-    });
-  };
-=======
-    const createPendingMatch = (difficulty: number) => {
-        if (!socket || !socket.connected) {
-            createSocket(serverUri);
-        }
-        if (socket) {
-            socket.emit("match", {
-                userId: user.userId,
-                difficulty,
-            });
-        }
+    if (!socket || !socket.connected) {
+      createSocket(serverUri);
     }
->>>>>>> main
+    if (socket) {
+      socket.emit("match", {
+        userId: user.userId,
+        difficulty,
+      });
+    }
+  };
 
   // ====== UI components ======
   const matchOptionCard = (
