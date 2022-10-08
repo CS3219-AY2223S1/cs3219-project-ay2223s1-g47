@@ -1,7 +1,6 @@
 from src.api.api_handler import ApiHandler
 from src.constants import QUESTION_SERVICE_HOST, QUESTION_SERVICE_GET_QUESTION_ENDPOINT
 from src.collaboration.interfaces.question import Question
-from tests.object_factories import create_question
 
 class QuestionServiceApiHandler:
 
@@ -15,7 +14,15 @@ class QuestionServiceApiHandler:
         """
         # TODO: unmock this when question service is implemented
         # response = await self._get(endpoint=QUESTION_SERVICE_GET_QUESTION_ROUTE, params={"difficulty": difficulty})
-        response = create_question().dict()
+        response = {
+            "question_id": "1", # question id
+            "question": "some question", # question
+            "question_resource_uris": [],  # question resource uri e.g. image
+            "answer": "some answer", # answer
+            "answer_resource_uris": [], # answer resource uri e.g. image
+            "created_at": "2021-01-01T00:00:00.000Z",
+            "difficulty": 1
+        }
         return Question(**response)
     
 
