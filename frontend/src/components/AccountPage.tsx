@@ -1,16 +1,10 @@
 import {
-  Card,
-  CardActionArea,
-  CardContent,
-  Grid,
-  Paper,
-  Typography,
   Button,
   TextField
 } from "@mui/material";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiCallUserChangeUsername } from "../api/userServiceApi";
+import { apiCallUserChangeUsername,apiCallUserChangePassword } from "../api/userServiceApi";
 import { UserContext, UserContextType } from "../contexts/UserContext";
 import useIsMobile from "../hooks/useIsMobile";
 
@@ -22,6 +16,7 @@ function AccountPage() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [isUsernameError, setIsUsernameError] = useState(false);
+  const [isPasswordError, setIsPasswordError] = useState(false);
 
   // TODO: add user context
   // ================ State management ================
@@ -55,6 +50,23 @@ function AccountPage() {
     });
   }
 
+  const handleChangePassword = async () => {
+    await apiCallUserChangePassword("", password)
+    .then((response) => {
+      if (response.status === 200) {
+        navigate("/");
+      } else {
+        const errorMessage: string =
+          "Something went wrong! Please try again later.";
+        setErrorSnackbarContent(errorMessage);
+      }
+      setIsErrorSnackbarOpen(true);
+    })
+    .catch((error) => {
+      console.error(error);
+    });
+  }
+
   // ================ UI rendering ===================
   const changeUser_TextField = 
     <TextField
@@ -69,7 +81,6 @@ function AccountPage() {
           isUsernameError &&
           "3-20 characters, only letters, numbers, and underscores"
         }
-        autoFocus
       />
   const changeUser_button = 
   <Button
@@ -77,6 +88,26 @@ function AccountPage() {
         variant="contained"
         onClick={handleChangeUsername}
       >confirm new username</Button>
+
+      const changePassword_TextField = 
+      <TextField
+        label="Password"
+        variant="outlined"
+        type="password"
+        value={password}
+        error={isPasswordError}
+        helperText={isPasswordError && "Password cannot be empty!"}
+        onChange={(e) => setPassword(e.target.value)}
+        sx={{ marginBottom: "2rem" }}
+      />
+    const changePassword_button = 
+    <Button
+          style={{ width: "100%", textTransform: "none" }}
+          variant="contained"
+          onClick={handleChangePassword}
+        >confirm new password</Button>
+
+
 
 
   // ====== Render ======
@@ -91,6 +122,9 @@ function AccountPage() {
     >
       {changeUser_TextField}
       {changeUser_button}
+      <br></br>
+      {changePassword_TextField}
+      {changePassword_button}
     </div>
   );
 }
