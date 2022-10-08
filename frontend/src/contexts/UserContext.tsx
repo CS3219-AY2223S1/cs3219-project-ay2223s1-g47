@@ -13,18 +13,18 @@ import { User } from "../interfaces/users/User";
  * It contains the user data and the functions to update the user data.
  */
 export interface UserContextType {
-  socketIo: Socket | null;
+  socket: Socket | null;
   user: User;
   login: (
     username: string,
     password: string
   ) => Promise<{ status: number; data: UserInfoApiResponseData }>;
   logout: () => Promise<{ status: number; data: {} }>;
-  createSocketIo: (url: string, query: any) => Promise<Socket>;
-  clearSocketIo: () => Promise<void>;
   webSocket: WebSocket | null;
   createWebSocket: (url: string) => Promise<WebSocket>;
   clearWebSocket: () => Promise<void>;
+  createSocket: (url: string) => Promise<Socket>;
+  clearSocket: () => Promise<void>;
 }
 
 /**
@@ -119,9 +119,11 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
   /**
    * Creates a socket io connection.
    */
-  const createSocketIo = async (url: string, query: any) => {
+  const createSocket = async (url: string) => {
     const socket: Socket = io(url, {
-      query: query, // should be {... : ...}, but we put "any" type to stop ts from complaining
+      query: {
+        userId: user.userId,
+      }, // should be {... : ...}, but we put "any" type to stop ts from complaining
     });
     setSocket(socket);
     return socket;
@@ -130,7 +132,7 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
   /**
    * Clears the socket io connection.
    */
-  const clearSocketIo = async () => {
+  const clearSocket = async () => {
     setSocket(null);
   };
 
@@ -156,9 +158,9 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
         user,
         login,
         logout,
-        socketIo: socket,
-        createSocketIo: createSocketIo,
-        clearSocketIo: clearSocketIo,
+        socket: socket,
+        createSocket: createSocket,
+        clearSocket: clearSocket,
         webSocket: webSocket,
         createWebSocket: createWebSocket,
         clearWebSocket: clearWebSocket,

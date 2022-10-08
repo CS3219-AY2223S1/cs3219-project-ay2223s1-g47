@@ -84,7 +84,6 @@ export async function login(request: Request, response: Response) {
     console.debug("Cookie set: " + jwt);
 
     response = createOkResponse(response, user);
-    console.debug(response);
     return response;
   } catch (error) {
     console.error(error);
