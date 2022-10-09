@@ -38,7 +38,7 @@ CLEANUP_TIMEOUT_IN_SECONDS = 300 # 5 minutes
 
 # question service
 QUESTION_SERVICE_HOST = os.environ.get("QUESTION_SERVICE_HOST")
-QUESTION_SERVICE_GET_QUESTION_ENDPOINT = "/question"
+QUESTION_SERVICE_GET_QUESTION_ENDPOINT = "/difficulty"
 
 # ======================== user service ========================
 USER_SERVICE_HOST = os.environ.get("USER_SERVICE_HOST")

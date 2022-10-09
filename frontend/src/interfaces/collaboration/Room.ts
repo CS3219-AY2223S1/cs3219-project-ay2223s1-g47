@@ -1,5 +1,3 @@
-import { User } from "../users/User";
-
 export interface Room {
   roomId: string;
   createdAt: string;
@@ -16,13 +14,21 @@ export interface RoomState {
 }
 
 export interface Question {
-  questionId: string;
-  question: string;
-  answer: string;
-  questionResourceUris: Array<string>;
-  answerResourceUris: Array<string>;
-  createdAt: string;
-  difficulty: number;
+  qid: string;
+  title: string; // question title in markdown
+  description: string; // description of the question in markdown.
+  difficulty: QuestionDifficulty;
+  topic: QuestionTopic;
+}
+
+export enum QuestionDifficulty {
+  EASY = 0,
+  MEDIUM = 1,
+  HARD = 2,
+}
+
+export enum QuestionTopic {
+  ARRAYS_AND_HASHING = 0,
 }
 
 export interface ChatMessage {

@@ -35,12 +35,10 @@ interface RoomApiResponseData {
 }
 
 export interface QuestionInResponse {
-  question_id?: string;
-  question?: string;
-  answer?: string;
-  question_resource_uris?: Array<string>;
-  answer_resource_uris?: Array<string>;
-  created_at?: string;
+  qid?: string;
+  title?: string;
+  description?: string;
+  topic?: number;
   difficulty?: number;
 }
 

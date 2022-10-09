@@ -1,12 +1,21 @@
 from typing import List
 from pydantic import BaseModel
+from enum import IntEnum
+
+class QuestionTopic(IntEnum):
+    ARRAYS_AND_HASHING = 0
+
+class QuestionDifficulty(IntEnum):
+    EASY = 0
+    MEDIUM = 1
+    HARD = 2
 
 class Question(BaseModel):
 
-    question_id: str # question id
-    question: str # question
-    question_resource_uris: List[str]  # question resource uri e.g. image
-    answer: str # answer
-    answer_resource_uris: List[str] # answer resource uri e.g. image
-    created_at: str
-    difficulty: int
+    qid: str
+    title: str # question
+    description: str
+    difficulty: QuestionDifficulty
+    topic: QuestionTopic
+
+

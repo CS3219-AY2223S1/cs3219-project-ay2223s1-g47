@@ -114,15 +114,11 @@ function CollaborationPage() {
           },
           numInRoom: response.data.num_in_room ?? 1,
           question: {
-            questionId: response.data.question?.question_id ?? "",
-            question: response.data.question?.question ?? "",
-            answer: response.data.question?.answer ?? "",
+            qid: response.data.question?.qid ?? "",
+            title: response.data.question?.title ?? "",
+            description: response.data.question?.description ?? "",
             difficulty: response.data.question?.difficulty ?? 0,
-            questionResourceUris:
-              response.data.question?.question_resource_uris ?? [],
-            answerResourceUris:
-              response.data.question?.answer_resource_uris ?? [],
-            createdAt: response.data.question?.created_at ?? "",
+            topic: response.data.question?.topic ?? 0,
           },
         };
         setRoom(roomFromResponse);
@@ -204,20 +200,13 @@ function CollaborationPage() {
           },
           numInRoom: updatedRoom.num_in_room ?? 1,
           question: {
-            questionId:
-              updatedRoom.question?.question_id ?? room?.question.questionId,
-            question: updatedRoom.question?.question ?? room?.question.question,
-            answer: updatedRoom.question?.answer ?? room?.question.answer,
+            qid: updatedRoom.question?.qid ?? room?.question.qid,
+            title: updatedRoom.question?.title ?? room?.question.title,
+            description:
+              updatedRoom.question?.description ?? room?.question.description,
             difficulty:
               updatedRoom.question?.difficulty ?? room?.question.difficulty,
-            questionResourceUris:
-              updatedRoom.question?.question_resource_uris ??
-              room?.question.questionResourceUris,
-            answerResourceUris:
-              updatedRoom.question?.answer_resource_uris ??
-              room?.question.answerResourceUris,
-            createdAt:
-              updatedRoom.question?.created_at ?? room?.question.createdAt,
+            topic: updatedRoom.question?.topic ?? room?.question.topic,
           },
         };
 
@@ -272,19 +261,23 @@ function CollaborationPage() {
     (chatMessage: ChatMessage, index: number) => {
       return (
         <ListItem key={index}>
-          <ListItemAvatar>
-            <Avatar
-              alt={chatMessage.username}
-              src={
-                "https://t3.ftcdn.net/jpg/03/46/83/96/360_F_346839683_6nAPzbhpSkIpb8pmAwufkC7c5eD7wYws.jpg"
-              }
-            />
-          </ListItemAvatar>
           <ListItemText
             primary={
               chatMessage.id === user.userId ? "You" : chatMessage.username
             }
-            secondary={chatMessage.message}
+            secondary={
+              <>
+                <Typography
+                  sx={{ display: "inline" }}
+                  component="span"
+                  variant="body2"
+                  color="text.primary"
+                >
+                  {chatMessage.timestamp}
+                </Typography>
+                <Typography>{chatMessage.message}</Typography>
+              </>
+            }
           />
         </ListItem>
       );
@@ -326,7 +319,7 @@ function CollaborationPage() {
   const questionComponent = (
     <Grid container component={Paper}>
       <Grid item xs={12} padding={"12px"}>
-        <Typography variant="h4">{room?.question.question}</Typography>
+        <Typography variant="h4">{room?.question.title}</Typography>
       </Grid>
       <Grid item xs={12}></Grid>
     </Grid>
