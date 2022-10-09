@@ -14,8 +14,7 @@ const get_random_question_by_difficulty = async (
   response: Response
 ) => {
   // 1. read params
-  const difficulty: number = request.query.difficulty as unknown as number;
-  console.log(difficulty);
+  const difficulty: number = request.body.difficulty as unknown as number;
 
   // 2. query db
   const question = await questionServices.get_question_by_difficulty(

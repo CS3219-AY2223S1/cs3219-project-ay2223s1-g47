@@ -112,7 +112,8 @@ export async function logout(request: Request, response: Response) {
 export async function auth(request: Request, response: Response) {
   console.debug("Called auth");
   // 1. check jwt
-  const jwtPayload = (await checkJWT(request)) as unknown as User;
+  const jwtCookie = request.cookies.JWT;
+  const jwtPayload = (await checkJWT(jwtCookie)) as unknown as User;
   if (!jwtPayload) {
     return createUnauthorizedResponse(response, "Invalid JWT");
   }
@@ -126,4 +127,51 @@ export async function auth(request: Request, response: Response) {
 
   // 3. return user
   return createOkResponse(response, jwtPayload);
+}
+
+/**
+ * Handles a POST request to see if the jwt's match.
+ */
+export async function auth_server(request: Request, response: Response) {
+  console.debug("Called auth server");
+  // 1. check jwt
+  const jwtCookie = request.body.jwt; // we expect a jwt in the body
+  const jwtPayload = (await checkJWT(jwtCookie)) as unknown as User;
+  if (!jwtPayload) {
+    return createUnauthorizedResponse(response, "Invalid JWT");
+  }
+
+  // 2. check user exists
+  const id = jwtPayload.id ?? "";
+  const exists = await userWithIdExists(id);
+  if (!exists) {
+    return createUnauthorizedResponse(response, "Invalid JWT");
+  }
+
+  // 3. return user
+  return createOkResponse(response, jwtPayload);
+}
+
+/**
+ * Handles a get request to get a new jwt.
+ */
+export async function get_jwt(request: Request, response: Response) {
+  console.debug("Called get jwt");
+  // 1. check jwt
+  const jwtCookie = request.cookies.JWT;
+  const user = (await checkJWT(jwtCookie)) as unknown as User;
+  if (!user) {
+    return createUnauthorizedResponse(response, "Invalid JWT");
+  }
+
+  // 2. check user exists
+  const id = user.id ?? "";
+  const exists = await userWithIdExists(id);
+  if (!exists) {
+    return createUnauthorizedResponse(response, "Invalid JWT");
+  }
+
+  // 3. return user
+  const jwt = await signJWT(user);
+  return createOkResponse(response, { jwt: jwt });
 }

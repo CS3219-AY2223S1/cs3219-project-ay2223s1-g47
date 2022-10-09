@@ -45,3 +45,20 @@ services:
     image: mongo
     ports:
       - "27017:27017"
+
+  collaboration-service:
+    container_name:  "collaboration-service"
+    build: 
+      context: ./collaboration-service
+    ports:
+      - "8003:8003"
+    depends_on:
+      - mongodb
+    environment:
+      - ENV=DEV
+      - HOST=0.0.0.0
+      - PORT=8003
+      - MONGODB_CLOUD_URI=
+      - MONGODB_LOCAL_URI=mongodb://mongodb:27017/
+      - QUESTION_SERVICE_HOST=http://question-service:8002
+      - USER_SERVICE_HOST=http://user-service:8000
