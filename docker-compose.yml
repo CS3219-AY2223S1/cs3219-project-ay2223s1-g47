@@ -26,8 +26,20 @@ services:
       - "3000:3000"
     environment:
       - PORT=3000
-    
-  
+
+  question-service:
+    container_name: question-service
+    build: 
+      context: ./question-service
+    ports:
+      - '8002:8002'
+    depends_on:
+      - mongodb
+    environment:
+      - ENV=DEV
+      - DB_LOCAL_URI=mongodb://mongodb:27017/question-service
+      - PORT=8002
+
   mongodb:
     container_name: "mongodb"
     image: mongo
