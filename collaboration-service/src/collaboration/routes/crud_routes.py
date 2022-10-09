@@ -24,8 +24,8 @@ def create_room(user1_id: str, user2_id: str, difficulty: int) -> RoomInResponse
     manager = CrudManager(RoomCrudService(db), QuestionServiceApiHandler(api_base_url=QUESTION_SERVICE_HOST))
     room = manager.create_room(user1_id, user2_id, difficulty)
 
-    # 2. convert to exposable interface
-    return RoomInResponse.from_room(room)
+    # 2. just return id for now
+    return room.room_id
 
 
 @router.get("/get_room_history", dependencies=[]) # TODO: add auth in dependencies

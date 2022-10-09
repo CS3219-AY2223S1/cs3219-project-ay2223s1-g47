@@ -66,5 +66,6 @@ app.post("/auth/jwt", auth_server);
  * services that require explicit jwt's, like socket connections.
  */
 app.get("/get_jwt", get_jwt);
+
 // listen
 app.listen(PORT, () => console.log("user-service listening on port " + PORT));
