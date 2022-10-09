@@ -1,25 +1,25 @@
 import express from "express";
 import cors from "cors";
-import { createServer } from "http";
-import questionRoutes from "./routes/question-routes.js"
-import 'dotenv/config'
+import questionRoutes from "./routes/question-routes";
+import "dotenv/config";
+import { CORS_OPTIONS, DEFAULT_PORT } from "./constants";
 
+// ============= require db set up =============
 require("./db/db");
 
+// ============= initialize app =================
 const app = express();
-app.use(cors());
-app.use(express.json());
-app.options("*", cors());
+// see https://stackoverflow.com/questions/23259168/what-are-express-json-and-express-urlencoded
+// and https://masteringjs.io/tutorials/express/express-json for more details
+app.use(express.urlencoded({ extended: true }));
+app.use(express.json()); // parses incoming json and puts parsed data in req.body. See
+app.use(cors(CORS_OPTIONS)); // use and set cors config
 
-app.use((req, res, next) => {
-    res.setHeader('content-type', 'application/json')
-    res.setHeader('Access-Control-Allow-Origin', '*')
-    next()
-})
+// ============== routing =======================
+app.use(questionRoutes);
 
-app.use(questionRoutes)
+// ============= start server ===================
+const PORT = process.env.PORT || DEFAULT_PORT;
+app.listen(PORT, () => console.log("user-service listening on port " + PORT));
 
-const httpServer = createServer(app);
-httpServer.listen(process.env.PORT || 8002, () => console.log('question-service listening on port 8002'));
-
-module.exports = app
+module.exports = app;

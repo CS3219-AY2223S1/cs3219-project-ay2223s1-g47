@@ -1,15 +1,5 @@
 FROM node:16
-
 WORKDIR /app
-
-COPY package*.json ./
-
+COPY . /app
 RUN npm install
-
-COPY . .
-
-ENV PORT=8002
-
-EXPOSE 8002
-
 CMD [ "npm", "start" ]

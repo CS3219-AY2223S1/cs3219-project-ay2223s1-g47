@@ -1,31 +1,52 @@
-import Question from "../Question.js";
-import 'dotenv/config'
+import { Request, Response } from "express";
+import questionServices from "./services/question-services";
+import {
+  createNoContentResponse,
+  createNotFoundResponse,
+  createOkResponse,
+} from "./services/response-services";
 
-// Get one question by difficulty, and not in the question history 
-const get_one_by_difficulty = (req: any, res: any) => {
-    const difficulty : string = req.params.difficulty;
-    const past_qns : string[] = req.body.questionIds;
+/**
+ * Get one question by difficulty randomly.
+ */
+const get_random_question_by_difficulty = async (
+  request: Request,
+  response: Response
+) => {
+  // 1. read params
+  const difficulty: number = request.query.difficulty as unknown as number;
+  console.log(difficulty);
 
-    if (past_qns == null) {
-        return res.status(404).send({"message" : "Wrong format for POST request body"})
-    }
+  // 2. query db
+  const question = await questionServices.get_question_by_difficulty(
+    difficulty
+  );
 
-    Question.findOne()
-        .where("difficulty")
-        .equals(difficulty)
-        .where("_id")
-        .nin(past_qns)
-        .then((question) => {
-            if (question == null) {
-                return res.status(404).send({"message" : "No questions found"})
-            }
-            return res.send(question);
-        })
-        .catch((err) => {
-            console.log(err);
-        });
+  // 3. return response
+  if (!!question) {
+    return createOkResponse(response, question);
+  }
+  return createNoContentResponse(response);
+};
+
+/**
+ * Gets question by id.
+ */
+const get_question_by_qid = async (request: Request, response: Response) => {
+  // read params
+  const qid: string = request.query.qid as unknown as string;
+
+  // query db
+  const question = await questionServices.get_question_by_qid(qid);
+
+  // return response
+  if (!!question) {
+    return createOkResponse(response, question);
+  }
+  return createNotFoundResponse(response);
 };
 
 export default {
-    get_one_by_difficulty,
+  get_random_question_by_difficulty: get_random_question_by_difficulty,
+  get_question_by_qid: get_question_by_qid,
 };
