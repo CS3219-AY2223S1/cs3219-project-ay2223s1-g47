@@ -15,12 +15,12 @@ class CrudManager:
         self.crud_service = crud_service
         self.question_service = question_service
 
-    def create_room(self, user1_id: str, user2_id: str, difficulty: int) -> Room:
+    async def create_room(self, user1_id: str, user2_id: str, difficulty: int) -> Room:
         """
         Creates a new room in db and sets a worker to close the room after some predefined time.
         """
         # 1. asynchronously ask for a question for question service
-        question = self.question_service.get_question(difficulty)
+        question = await self.question_service.get_question(difficulty)
 
         # 2. create object
         room = self.crud_service.create_room(user1_id, user2_id, question)
