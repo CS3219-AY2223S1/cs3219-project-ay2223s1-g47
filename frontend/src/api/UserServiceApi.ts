@@ -4,6 +4,7 @@ import {
   USER_SERVICE_LOGIN_URL,
   USER_SERVICE_AUTHENTICATE_URL,
   USER_SERVICE_LOGOUT_URL,
+  USER_SERVICE_NEW_JWT_URL,
 } from "../constants";
 
 export interface UserInfoApiResponseData {
@@ -154,4 +155,31 @@ export const apiCallUserAuthentication: () => Promise<{
   //   status: 401,
   //   data: { username: "test", id: "test", message: "Not logged in!" },
   // }; // dummy data for now
+};
+
+/**
+ * Handles API call to get a new temporary jwt token. Useful for things like socket connections.
+ */
+export const apiGetNewJwt: () => Promise<{
+  status: number;
+  data: { jwt: string };
+}> = async () => {
+  const response = axios
+    .get(USER_SERVICE_NEW_JWT_URL, {
+      withCredentials: true,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+      },
+    })
+    .catch((error: Error | AxiosError) => {
+      if (axios.isAxiosError(error)) {
+        return error.response?.data; // return response data from backend
+      } else {
+        console.error(error);
+        return error; // propagate up the call stack
+      }
+    }) as Promise<{ status: number; data: { jwt: string } }>;
+
+  return response;
 };

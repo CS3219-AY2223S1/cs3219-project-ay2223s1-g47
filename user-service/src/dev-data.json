@@ -9,6 +9,11 @@
             "id": "2",
             "username": "admin",
             "password": "$2b$10$zzlQzTUZKmvPuIejOTr0KeXW6U1VYp4fUSlEr9XJB35rIAT5LShNK"
+        },
+        {
+            "id": "3",
+            "username": "another",
+            "password": "$2b$10$zzlQzTUZKmvPuIejOTr0Ke1Jmvh6PMMkVblncuyNehJ5PUMn8pzOG"
         }
     ]
 }

@@ -6,12 +6,11 @@ import { JWT_SECRET_KEY, JWT_EXPIRES_IN, JWT_ISSUER } from "../../constants";
 /**
  * Decodes a JWT and returns the payload.
  */
-export const checkJWT = async (request: Request) => {
+export const checkJWT = async (jwtCookie: string) => {
   console.debug("Called checkJWT");
-  // 1. check that the request has a JWT
-  const jwtCookie = request.cookies.JWT;
   if (!jwtCookie) {
-    return false; // missing cookie
+    // if undefined/falsey
+    return false;
   }
 
   // 2. check that the JWT is valid

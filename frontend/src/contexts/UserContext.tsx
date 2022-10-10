@@ -5,7 +5,7 @@ import {
   apiCallUserLogin,
   apiCallUserLogout,
   UserInfoApiResponseData,
-} from "../api/userServiceApi";
+} from "../api/UserServiceApi";
 import { User } from "../interfaces/users/User";
 
 /**
@@ -13,13 +13,16 @@ import { User } from "../interfaces/users/User";
  * It contains the user data and the functions to update the user data.
  */
 export interface UserContextType {
-    socket: Socket | null;
+  socket: Socket | null;
   user: User;
   login: (
     username: string,
     password: string
   ) => Promise<{ status: number; data: UserInfoApiResponseData }>;
   logout: () => Promise<{ status: number; data: {} }>;
+  webSocket: WebSocket | null;
+  createWebSocket: (url: string) => Promise<WebSocket>;
+  clearWebSocket: () => Promise<void>;
   createSocket: (url: string) => Promise<Socket>;
   clearSocket: () => Promise<void>;
 }
@@ -33,19 +36,21 @@ export const UserContext = createContext<UserContextType | undefined>(
   undefined
 );
 
-/**
- * This explicitly defines
- */
 const UserContextProvider = (props: { children: JSX.Element }) => {
   // ================ States =================
   // default user state
   const defaultUser: User = {
     username: "",
     userId: "",
-    loggedIn: false,
+    loggedIn: true,
   };
   const [user, setUser] = useState<User>(defaultUser);
+
+  // socket.io state
   const [socket, setSocket] = useState<Socket | null>(null);
+
+  // websocket state
+  const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
 
   // ================ Functions =================
   /**
@@ -54,22 +59,30 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
    * once.
    */
   useEffect(() => {
-    apiCallUserAuthentication().then((response) => {
-      // if ok, set the user state
-      if (response.status >= 200 && response.status < 300) {
+    console.log("here");
+    apiCallUserAuthentication()
+      .then((response) => {
         console.log(response);
-        if (response.data.username && response.data.id) {
-          const user: User = {
-            username: response.data.username,
-            userId: response.data.id,
-            loggedIn: true,
-          };
-          setUser(user);
+        // if ok, set the user state
+        if (response.status >= 200 && response.status < 300) {
+          console.log(response);
+          if (response.data.username && response.data.id) {
+            const user: User = {
+              username: response.data.username,
+              userId: response.data.id,
+              loggedIn: true,
+            };
+            setUser(user);
+          }
+        } else {
+          setUser({ ...defaultUser, loggedIn: false });
         }
-      }
 
-      // else, do nothing
-    });
+        // else, do nothing
+      })
+      .catch((error) => {
+        console.log(error);
+      });
   }, []);
 
   /**
@@ -103,26 +116,56 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
     return response; // in either case, return data to caller
   };
 
+  /**
+   * Creates a socket io connection.
+   */
   const createSocket = async (url: string) => {
-    const socket: Socket = io(url, { query: {
+    const socket: Socket = io(url, {
+      query: {
         userId: user.userId,
-    }});
+      }, // should be {... : ...}, but we put "any" type to stop ts from complaining
+    });
     setSocket(socket);
     return socket;
-  }
+  };
 
+  /**
+   * Clears the socket io connection.
+   */
   const clearSocket = async () => {
     setSocket(null);
- }
+  };
+
+  /**
+   * Creates a websocket connection.
+   */
+  const createWebSocket = async (url: string) => {
+    const ws = new WebSocket(url);
+    setWebSocket(ws);
+    return ws;
+  };
+
+  /**
+   * Clears the websocket connection.
+   */
+  const clearWebSocket = async () => {
+    setWebSocket(null);
+  };
+
   return (
-    <UserContext.Provider value={{
+    <UserContext.Provider
+      value={{
         user,
         login,
         logout,
-        socket,
-        createSocket,
-        clearSocket
-    }}>
+        socket: socket,
+        createSocket: createSocket,
+        clearSocket: clearSocket,
+        webSocket: webSocket,
+        createWebSocket: createWebSocket,
+        clearWebSocket: clearWebSocket,
+      }}
+    >
       {props.children}
     </UserContext.Provider>
   );
