@@ -47,7 +47,7 @@ class RoomCrudService:
             user1_id = user1_id,
             user2_id = user2_id,
             question = question,
-            question_id=question.question_id
+            question_id=question.qid
         )
 
         # 2. check that object isn't inside

@@ -12,17 +12,17 @@ from src.collaboration.services.room_crud_services import RoomCrudService
 from src.api.question_service_api import QuestionServiceApiHandler
 from src.db.db import db
 from src.collaboration.interfaces.room import RoomInResponse
-from fastapi import APIRouter, Depends
+from fastapi import APIRouter, Depends, Body
 from src.collaboration.crud_manager import CrudManager
 import logging
 
 router = APIRouter()
 
 @router.post("/create", dependencies=[]) # TODO: add auth in dependencies
-def create_room(user1_id: str, user2_id: str, difficulty: int) -> RoomInResponse:
+async def create_room(user1_id: str = Body(), user2_id: str= Body(), difficulty: int= Body()) -> RoomInResponse:
     # 1. create manager and ask it to create room
-    manager = CrudManager(RoomCrudService(db), QuestionServiceApiHandler(api_base_url=QUESTION_SERVICE_HOST))
-    room = manager.create_room(user1_id, user2_id, difficulty)
+    manager = CrudManager(RoomCrudService(db), QuestionServiceApiHandler())
+    room = await manager.create_room(user1_id, user2_id, difficulty)
 
     # 2. just return id for now
     return room.room_id
