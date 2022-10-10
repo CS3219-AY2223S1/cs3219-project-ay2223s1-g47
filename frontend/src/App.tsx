@@ -7,7 +7,10 @@ import Home from "./components/Home";
 import { useContext } from "react";
 import { UserContext, UserContextType } from "./contexts/UserContext";
 import MatchingPage from "./components/matching/MatchingPage";
+import { ToastContainer } from "react-toastify";
 import CollaborationPage from "./components/collaboration/CollaborationPage";
+
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   // =============== State management ===============
