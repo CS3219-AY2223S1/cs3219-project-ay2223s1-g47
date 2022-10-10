@@ -23,11 +23,13 @@ function MatchingPage() {
   const [isMatching, setIsMatching] = useState<Boolean>(false);
 
   // contexts
-  const { user, socket, createSocket } = useContext(UserContext) as UserContextType;
+  const { user, socket, createSocket } = useContext(
+    UserContext
+  ) as UserContextType;
 
   socket?.on("matchSuccess", (room: any) => {
     console.log("room: ", room);
-  })
+  });
 
   useEffect(() => {
     createSocket(serverUri);
@@ -89,21 +91,17 @@ function MatchingPage() {
         {matchOptionCard(
           "Easy",
           "Choose this if you're new to programming",
-          () => createPendingMatch(0),
+          () => createPendingMatch(0)
         )}
       </Grid>
       <Grid item xs={12} md={4}>
-        {matchOptionCard(
-            "Medium",
-            "For most people.",
-            () => createPendingMatch(1),
+        {matchOptionCard("Medium", "For most people.", () =>
+          createPendingMatch(1)
         )}
       </Grid>
       <Grid item xs={12} md={4}>
-        {matchOptionCard(
-            "Hard",
-            "Dark Souls, but for programmers",
-            () => createPendingMatch(2)
+        {matchOptionCard("Hard", "Dark Souls, but for programmers", () =>
+          createPendingMatch(2)
         )}
       </Grid>
     </Grid>

@@ -1,7 +1,20 @@
 version: '3.9'
 
 services:
-  
+
+  matching-service:
+    container_name: "matching-service"
+    build: 
+      context: ./matching-service
+    ports:
+      - "8001:8001"
+    depends_on:
+      - rabbitmq
+    environment:
+      - MODE=DEV
+      - FRONTEND_URI=frontend:3000
+      - PORT=8001
+
   user-service:
     container_name: "user-service"
     build: 
@@ -26,10 +39,45 @@ services:
       - "3000:3000"
     environment:
       - PORT=3000
-    
-  
+
+  question-service:
+    container_name: question-service
+    build: 
+      context: ./question-service
+    ports:
+      - '8002:8002'
+    depends_on:
+      - mongodb
+    environment:
+      - ENV=DEV
+      - DB_LOCAL_URI=mongodb://mongodb:27017/question-service
+      - PORT=8002
+
   mongodb:
     container_name: "mongodb"
     image: mongo
     ports:
       - "27017:27017"
+  
+  rabbitmq:
+    container_name: "rabbitmq"
+    image: rabbitmq
+    ports:
+      - "5672:5672"
+      
+  collaboration-service:
+    container_name:  "collaboration-service"
+    build: 
+      context: ./collaboration-service
+    ports:
+      - "8003:8003"
+    depends_on:
+      - mongodb
+    environment:
+      - ENV=DEV
+      - HOST=0.0.0.0
+      - PORT=8003
+      - MONGODB_CLOUD_URI=
+      - MONGODB_LOCAL_URI=mongodb://mongodb:27017/
+      - QUESTION_SERVICE_HOST=http://question-service:8002
+      - USER_SERVICE_HOST=http://user-service:8000
