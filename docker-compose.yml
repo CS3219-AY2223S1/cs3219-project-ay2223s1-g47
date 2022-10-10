@@ -1,7 +1,20 @@
 version: '3.9'
 
 services:
-  
+
+  matching-service:
+    container_name: "matching-service"
+    build: 
+      context: ./matching-service
+    ports:
+      - "8001:8001"
+    depends_on:
+      - rabbitmq
+    environment:
+      - MODE=DEV
+      - FRONTEND_URI=frontend:3000
+      - PORT=8001
+
   user-service:
     container_name: "user-service"
     build: 
@@ -45,7 +58,13 @@ services:
     image: mongo
     ports:
       - "27017:27017"
-
+  
+  rabbitmq:
+    container_name: "rabbitmq"
+    image: rabbitmq
+    ports:
+      - "5672:5672"
+      
   collaboration-service:
     container_name:  "collaboration-service"
     build: 
