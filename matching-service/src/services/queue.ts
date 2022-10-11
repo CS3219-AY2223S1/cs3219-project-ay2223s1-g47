@@ -1,14 +1,15 @@
 import amqp, { ConsumeMessage } from "amqplib";
 import axios from "axios";
-import { Types } from "mongoose";
+import { onMatchSuccess } from "..";
 import { TPendingMatch } from "../types/TPendingMatch";
-import { getSocket, onMatchSuccess } from "./socket";
+import { getSocket } from "./socket";
 
 export const QUEUES = ["easy", "medium", "hard"];
 export const WAITERS: (TPendingMatch | null)[] = QUEUES.map((queue) => null);
 
 export const initQueues = async () => {
-    const connection = await amqp.connect("amqp://rabbitmq:5672");
+    // const connection = await amqp.connect("amqp://rabbitmq:5672");
+    const connection = await amqp.connect("amqp://localhost:5672");
     const consumerChannel = await connection.createChannel();
     const producerChannel = await connection.createChannel();
 
@@ -25,7 +26,7 @@ export const initQueues = async () => {
     return producerChannel;
 }
 
-const handleMessage = (msg: ConsumeMessage | null) => {
+const handleMessage = async (msg: ConsumeMessage | null) => {
     if (!msg) return;
     const pendingMatch: TPendingMatch = JSON.parse(msg.content.toString());
     const { difficulty, userId, socketId } = pendingMatch;
@@ -42,18 +43,19 @@ const handleMessage = (msg: ConsumeMessage | null) => {
         WAITERS[difficulty] = pendingMatch;
     }
     else {
-        // const room = createRoom(userId, waiting.userId);
-        const room = { roomId: "roomId" };
-        onMatchSuccess(pendingSocket, waitingSocket, room);
+        const roomId = await createRoom(userId, waiting.userId, difficulty);
+        onMatchSuccess(pendingSocket, waitingSocket, roomId);
         WAITERS[difficulty] = null;
     }
 }
 
 // Send data to collab service
-const createRoom = async (userId1: Types.ObjectId, userId2: Types.ObjectId) => {
-    const collabUri = "localhost:3000";
+const createRoom = async (userId1: string, userId2: string, difficulty: number) => {
+    const collabUri = "http://localhost:8003/crud/create";
     const res = await axios.post(collabUri, {
-        userIds: [userId1, userId2],
+        user1_id: userId1,
+        user2_id: userId2,
+        difficulty,
     });
     if (res.status == 200) {
         return res.data;

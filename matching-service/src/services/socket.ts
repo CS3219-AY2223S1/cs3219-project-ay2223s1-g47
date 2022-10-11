@@ -23,9 +23,9 @@ const cullDuplicateConnection = async ({ socket }: { socket: Socket }) => {
 }
 
 const validateUser = async ({ socket }: { socket: Socket }) => {
-    const userServiceUri = "localhost:5000";
+    const userServiceUri = "http://localhost:5000";
     const headers = socket.handshake.headers;
-    const res = await axios.post(userServiceUri, headers);
+    const res = await axios.post(userServiceUri, {}, { headers });
     if (res.status == 200 && res.data) {
         const currentUserId = res.data;
         if (currentUserId != socket.handshake.query.userId) {
@@ -45,12 +45,12 @@ const connectionValidators = [
 export const listenForMatches = async () => {
     const channel = await initQueues();
 
-    io.on("connection", (socket: Socket) => {
-        checkValidators({ socket }, connectionValidators);
+    io.on("connection", async (socket: Socket) => {
+        await checkValidators({ socket }, connectionValidators);
         console.log("a user connected: ");
 
         socket.on("match", async (
-            args: { difficulty: number, userId: Types.ObjectId }
+            args: { difficulty: number, userId: string }
         ) => {
             const { difficulty } = args;
             try {
@@ -68,7 +68,7 @@ export const listenForMatches = async () => {
             }
         });
     
-        socket.on("matchSuccess", async (room) => {
+        socket.on("matchSuccess", (room) => {
             console.log("room created: ", room);
         });
     
@@ -91,8 +91,8 @@ export const getSocket = (socketId: SocketId) => {
 
 export const onMatchSuccess = (socket1: Socket, socket2: Socket, room: any) => {
     if (socket1 && socket2) {
-        socket1.to(socket1.id).emit("matchSuccess", room);
-        socket2.to(socket2.id).emit("matchSuccess", room);
+        socket1.emit("matchSuccess", room);
+        socket2.emit("matchSuccess", room);
     }
     console.log("matchSuccess");
 }

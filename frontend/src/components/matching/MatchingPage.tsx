@@ -6,9 +6,9 @@ import {
   Typography,
 } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { UserContext, UserContextType } from "../../contexts/UserContext";
-import useIsMobile from "../../hooks/useIsMobile";
 import { MatchLoadingComponent } from "./MatchLoadingComponent";
 
 const serverUri = process.env.MATCHING_SERVICE_URI || "http://localhost:8001";
@@ -16,19 +16,18 @@ const serverUri = process.env.MATCHING_SERVICE_URI || "http://localhost:8001";
 function MatchingPage() {
   // ====== State management ======
   // UI states
-  const isMobile = useIsMobile();
-  const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] =
     useState<Boolean>(false);
-  const [errorSnackBarContent, setErrorSnackbarContent] = useState<String>("");
   const [isMatching, setIsMatching] = useState<Boolean>(false);
+
+  const navigate = useNavigate();
 
   // contexts
   const { user, socket, createSocket } = useContext(
     UserContext
   ) as UserContextType;
 
-  socket?.on("matchSuccess", (room: any) => {
-    console.log("room: ", room);
+  socket?.on("matchSuccess", (room: string) => {
+    navigate(`/room?roomId=${room}`);
   });
 
   useEffect(() => {
