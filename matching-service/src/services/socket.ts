@@ -1,5 +1,4 @@
 import axios from "axios";
-import { Types } from "mongoose";
 import { Socket } from "socket.io";
 import { SocketId } from "socket.io-adapter";
 import { io } from "..";
@@ -83,4 +82,12 @@ export const listenForMatches = async () => {
 
 export const getSocket = (socketId: SocketId) => {
     return io.sockets.sockets.get(socketId);
+}
+
+export const onMatchSuccess = (socket1: Socket, socket2: Socket, room: any) => {
+    if (socket1 && socket2) {
+        socket1.emit("matchSuccess", room);
+        socket2.emit("matchSuccess", room);
+    }
+    console.log("matchSuccess");
 }

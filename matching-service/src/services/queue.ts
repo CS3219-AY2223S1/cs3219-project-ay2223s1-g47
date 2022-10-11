@@ -1,8 +1,7 @@
 import amqp, { ConsumeMessage } from "amqplib";
 import axios from "axios";
-import { onMatchSuccess } from "..";
 import { TPendingMatch } from "../types/TPendingMatch";
-import { getSocket } from "./socket";
+import { getSocket, onMatchSuccess } from "./socket";
 
 export const QUEUES = ["easy", "medium", "hard"];
 export const WAITERS: (TPendingMatch | null)[] = QUEUES.map((queue) => null);

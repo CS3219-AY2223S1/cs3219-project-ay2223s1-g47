@@ -22,14 +22,6 @@ app.get('/', (req, res) => {
     res.send('Hello World from matching-service');
 });
 
-export const onMatchSuccess = (socket1: Socket, socket2: Socket, room: any) => {
-    if (socket1 && socket2) {
-        socket1.emit("matchSuccess", room);
-        socket2.emit("matchSuccess", room);
-    }
-    console.log("matchSuccess");
-}
-
 listenForMatches();
 
 httpServer.listen(process.env.PORT || FALLBACK_PORT);
