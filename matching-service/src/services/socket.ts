@@ -13,12 +13,12 @@ const cullDuplicateConnection = async ({ socket }: { socket: Socket }) => {
     const sockets: Socket[] = Array.from(io.sockets.sockets.values());
     const existing = sockets.find((s: Socket) => {
         return s.handshake.query.userId
-                && s.handshake.query.userId !== socket.handshake.query.userId
+                && s.handshake.query.userId == socket.handshake.query.userId
                 && s.connected;
     });
     if (existing) {
         console.log("existing socket: ", existing.id);
-        socket.disconnect();
+        existing.disconnect();
     }
 }
 
@@ -68,10 +68,6 @@ export const listenForMatches = async () => {
             }
         });
     
-        socket.on("matchSuccess", (room) => {
-            console.log("room created: ", room);
-        });
-    
         socket.on("disconnect", async () => {
             console.log("user disconnected");
         });
@@ -87,12 +83,4 @@ export const listenForMatches = async () => {
 
 export const getSocket = (socketId: SocketId) => {
     return io.sockets.sockets.get(socketId);
-}
-
-export const onMatchSuccess = (socket1: Socket, socket2: Socket, room: any) => {
-    if (socket1 && socket2) {
-        socket1.emit("matchSuccess", room);
-        socket2.emit("matchSuccess", room);
-    }
-    console.log("matchSuccess");
 }
