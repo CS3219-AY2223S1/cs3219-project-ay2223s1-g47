@@ -40,20 +40,13 @@ function MatchingPage() {
     }
 
     const createPendingMatch = async (difficulty: number) => {
-        if (!socket || !socket.connected) {
-            const newSocket = io(serverUri, {
-                query: {
-                  userId: user.userId,
-                }, // should be {... : ...}, but we put "any" type to stop ts from complaining
-              });
-            setSocket(newSocket);
-            newSocket.emit("match", {
+        const newSocket = io(serverUri, {
+            query: {
                 userId: user.userId,
-                difficulty,
+            },
             });
-            console.log("create new socket")
-        }
-        socket?.emit("match", {
+        setSocket(newSocket);
+        newSocket.emit("match", {
             userId: user.userId,
             difficulty,
         });
