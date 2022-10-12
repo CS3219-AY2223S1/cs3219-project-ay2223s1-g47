@@ -1,0 +1,18 @@
+{
+  "questions": [
+    {
+      "qid": "1",
+      "title": "Contains Duplicate",
+      "description": "Given an integer array `nums`, return `true` if any value appears at least twice in the array, and return `false` if every element is distinct.",
+      "difficulty": 0,
+      "topic": 0
+    },
+    {
+      "qid": "2",
+      "title": "Valid Anagram",
+      "description": "Given two strings `s` and `t`, return `true` if `t` is an anagram of `s`, and `false` otherwise.\nAn Anagram is a word or phrase formed by rearranging the letters of a different word or phrase, typically using all the original letters exactly once.",
+      "difficulty": 0,
+      "topic": 0
+    }
+  ]
+}

@@ -11,7 +11,7 @@ import {
 import MuiAlert from "@mui/material/Alert";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
-import { apiCallUserSignup } from "../../api/userServiceApi";
+import { apiCallUserSignup } from "../../api/UserServiceApi";
 import useIsMobile from "../../hooks/useIsMobile";
 import { validatePassword, validateUsername } from "./utils";
 

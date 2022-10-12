@@ -5,11 +5,13 @@ import {
   handleCreateUser,
   login,
   auth,
+  auth_server,
   logout,
   changeUsername,
-  changePassword
-} from './controller/user-controller'
-const CookieParser = require('cookie-parser')
+  changePassword,
+  get_jwt,
+} from "./controller/user-controller";
+const CookieParser = require("cookie-parser");
 
 // ======= initialize stuff with require ========
 require('./db/db')
@@ -65,6 +67,19 @@ app.post('/logout', logout)
  * to use for authentication.
  */
 app.get('/auth', auth)
+
+
+/**
+ * Endpoint to ping to verify a jwt is valid. Intended to be used by other services.
+ */
+app.post("/auth/jwt", auth_server);
+
+/**
+ * Endpoint to ping to get a new jwt. Expected to already have a httponly jwt. This is intended for
+ * services that require explicit jwt's, like socket connections.
+ */
+app.get("/get_jwt", get_jwt);
+
 
 // listen only if launched directly
 if (require.main === module) {
