@@ -1,5 +1,5 @@
 ---
-    name: Node.js CI
+    name: Node.js CI subfolder
     
     on:
       push
@@ -21,8 +21,10 @@
             with:
               node-version: ${{ matrix.node-version }}
               cache: 'npm'
-              working-directory: ./user-service
           - run: npm ci
+            working-directory: ./user-service
           - run: npm run build --if-present
+            working-directory: ./user-service
           - run: npm run test-ci
+            working-directory: ./user-service
     
