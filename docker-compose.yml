@@ -12,6 +12,7 @@ services:
       - rabbitmq
       - user-service
       - collaboration-service
+    restart: on-failure
     environment:
       - MODE=DEV
       - FRONTEND_URI=http://localhost:3000
@@ -68,6 +69,11 @@ services:
     image: rabbitmq
     ports:
       - "5672:5672"
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "5672" ]
+      interval: 5s
+      timeout: 15s
+      retries: 1
       
   collaboration-service:
     container_name:  "collaboration-service"
