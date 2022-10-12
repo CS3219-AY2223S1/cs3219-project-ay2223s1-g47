@@ -6,7 +6,8 @@
   "scripts": {
     "start": "tsc && node ./dist/index.js",
     "dev": "tsc-watch --onSuccess 'nodemon ./dist/index.js'",
-    "test": "tsc && jest --detectOpenHandles --coverage"
+    "test": "tsc && jest --detectOpenHandles --coverage",
+    "test-ci": "tsc && jest --detectOpenHandles --coverage --forceExit"
   },
   "keywords": [],
   "author": "",

@@ -5,7 +5,9 @@
   "main": "./dist/index",
   "scripts": {
     "dev": "tsc-watch --onSuccess 'nodemon ./dist/index.js'",
-    "test": "jest"
+    "test": "jest",
+    "test-ci": "tsc && jest --detectOpenHandles --coverage --forceExit"
+
   },
   "keywords": [],
   "author": "",
