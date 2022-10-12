@@ -3,9 +3,11 @@
     
     on:
       push
-    
+    # on:
+    #   pull_request:
+    #     branches: [master, main]
     jobs:
-      build:
+      test-user-service:
         env:
           # same contents as .env.sample
           ENV: DEV
