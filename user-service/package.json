@@ -5,9 +5,9 @@
   "main": "./dist/index",
   "scripts": {
     "dev": "tsc-watch --onSuccess 'nodemon ./dist/index.js'",
-    "test": "jest --detectOpenHandles --silent",
-    "test-ci": "jest --silent --forceExit",
-    "test-verbose": "jest --detectOpenHandles",
+    "test": "tsc && jest --detectOpenHandles --coverage --silent",
+    "test-ci": "tsc && jest --detectOpenHandles --coverage --silent --forceExit",
+    "test-verbose": "tsc && jest --detectOpenHandles",
     "lint": "eslint .",
     "autolint": "eslint . --fix"
   },
