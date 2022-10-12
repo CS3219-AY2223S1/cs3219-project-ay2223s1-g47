@@ -2,7 +2,6 @@ import express from 'express';
 import cors from 'cors';
 import { createServer } from 'http';
 import { listenForMatches } from './services/socket';
-import { Socket } from 'socket.io';
 
 const frontendUri = process.env.FRONTEND_URI || "http://localhost:3000";
 const app = express();

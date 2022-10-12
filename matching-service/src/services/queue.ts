@@ -7,8 +7,8 @@ export const QUEUES = ["easy", "medium", "hard"];
 export const WAITERS: (TPendingMatch | null)[] = QUEUES.map((queue) => null);
 
 export const initQueues = async () => {
-    // const connection = await amqp.connect("amqp://rabbitmq:5672");
-    const connection = await amqp.connect("amqp://localhost:5672");
+    const rabbitMqUri = process.env.RABBITMQ_URI || "amqp://localhost:5672";
+    const connection = await amqp.connect(rabbitMqUri);
     const consumerChannel = await connection.createChannel();
     const producerChannel = await connection.createChannel();
 
@@ -50,8 +50,9 @@ const handleMessage = async (msg: ConsumeMessage | null) => {
 
 // Send data to collab service
 const createRoom = async (userId1: string, userId2: string, difficulty: number) => {
-    const collabUri = "http://localhost:8003/crud/create";
-    const res = await axios.post(collabUri, {
+    const collabUri = process.env.COLLABORATION_SERVICE_URI
+            || "http://localhost:8003";
+    const res = await axios.post(collabUri + "/crud/create", {
         user1_id: userId1,
         user2_id: userId2,
         difficulty,

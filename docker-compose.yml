@@ -10,9 +10,13 @@ services:
       - "8001:8001"
     depends_on:
       - rabbitmq
+      - user-service
+      - collaboration-service
     environment:
       - MODE=DEV
-      - FRONTEND_URI=frontend:3000
+      - FRONTEND_URI=http://localhost:3000
+      - COLLABORATION_SERVICE_URI=http://collaboration-service:8003
+      - RABBITMQ_URI=amqp://rabbitmq:5672
       - PORT=8001
 
   user-service:
