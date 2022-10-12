@@ -5,10 +5,11 @@ import {
   Grid,
   Typography,
 } from "@mui/material";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
 import { io, Socket } from "socket.io-client";
+import { apiGetNewJwt } from "../../api/UserServiceApi";
 import { UserContext, UserContextType } from "../../contexts/UserContext";
 import { MatchLoadingComponent } from "./MatchLoadingComponent";
 
@@ -20,6 +21,7 @@ function MatchingPage() {
     useState<Boolean>(false);
   const [isMatching, setIsMatching] = useState<Boolean>(false);
   const [socket, setSocket] = useState<Socket>();
+  const [socketJwt, setSocketJwt] = useState<string>("");
 
   const navigate = useNavigate();
 
@@ -32,6 +34,20 @@ function MatchingPage() {
     navigate(`/room?roomId=${room}`);
   });
 
+  /**
+   * Hook that initializes authentication in preparation for the websocket connection.
+   * Specifically, it gets a new JWT for the websocket connection.
+   */
+   useEffect(() => {
+    apiGetNewJwt().then((response) => {
+      if (response.status === 200) {
+        setSocketJwt(response.data.jwt);
+      } else {
+        toast("Something went wrong.");
+      }
+    });
+  }, []);
+
   // ====== Event handlers ======
 
     const onMatchingTimeout = () => {
@@ -39,17 +55,19 @@ function MatchingPage() {
         toast("Matching timeout! Please make another match.");
     }
 
-    const createPendingMatch = async (difficulty: number) => {
+    const createPendingMatch = (difficulty: number) => {
         const newSocket = io(serverUri, {
             query: {
                 userId: user.userId,
+                socketJwt,
             },
-            });
+        });
         setSocket(newSocket);
         newSocket.emit("match", {
             userId: user.userId,
             difficulty,
         });
+        console.log("in createPendingMatch: ", newSocket);
         setIsMatching(true);
         setTimeout(onMatchingTimeout, 60 * 1000);
     }

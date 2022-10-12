@@ -23,17 +23,18 @@ const cullDuplicateConnection = async ({ socket }: { socket: Socket }) => {
 }
 
 const validateUser = async ({ socket }: { socket: Socket }) => {
-    const userServiceUri = "http://localhost:5000";
-    const headers = socket.handshake.headers;
-    const res = await axios.post(userServiceUri, {}, { headers });
+    const userServiceUri = "http://localhost:8000/auth/jwt";
+    const socketJwt = socket.handshake.query.socketJwt;
+    const res = await axios.post(userServiceUri, { jwt: socketJwt });
     if (res.status == 200 && res.data) {
-        const currentUserId = res.data;
-        if (currentUserId != socket.handshake.query.userId) {
+        const user = res.data;
+        if (user.id != socket.handshake.query.userId) {
             throw new Error("wrong user!");
         }
+        console.log("user: ", user);
     }
     else {
-        // throw new Error("user does not exist");
+        throw new Error("user does not exist");
     }
 }
 
@@ -47,7 +48,7 @@ export const listenForMatches = async () => {
 
     io.on("connection", async (socket: Socket) => {
         await checkValidators({ socket }, connectionValidators);
-        console.log("a user connected: ");
+        console.log("a user connected, socketid: ", socket.id);
 
         socket.on("match", async (
             args: { difficulty: number, userId: string }
