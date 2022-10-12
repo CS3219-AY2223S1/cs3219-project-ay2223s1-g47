@@ -15,11 +15,8 @@ import { apiCallUserLogout } from "../api/userServiceApi";
 
 
 
-function Home() {
 
-  const { logout } = useContext(UserContext) as UserContextType;
-
-
+function AccountPage() {
   // TODO: add user context
   // ================ State management ================
   // UI states
@@ -35,29 +32,9 @@ function Home() {
   const navigate = useNavigate();
 
   // ================ Event handlers ==================
-  const goToMatchingPage: () => void = () => {
-    navigate("/match");
-  };
-  const goToAccountPage: () => void = () => {
-    navigate("/account");
-  };
-
-  const handleLogout = async () => {
-    await logout().then((response) => {
-      if (response.status === 201) {
-        navigate("/login");
-      } else {
-        const errorMessage: string =
-          "Something went wrong! Please try again later.";
-        setErrorSnackbarContent(errorMessage);
-      }
-      setIsErrorSnackbarOpen(true);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
-  }
-
+  // const goToMatchingPage: () => void = () => {
+  //   navigate("/match");
+  // };
 
   // ================ UI rendering ===================
   const quickRedirectCard = (
@@ -84,27 +61,20 @@ function Home() {
 
   const quickActionsPanel = (
     <Grid container direction="row" alignItems="center" justifyContent="center">
-      <Grid item xs={12} md={4}>
-        {quickRedirectCard(
-          "Find a match",
-          "Join a paired-programming session with a similarlly skilled programmer",
-          goToMatchingPage
-        )}
-      </Grid>
 
       <Grid item xs={12} md={4}>
         {quickRedirectCard(
-          "Account Settings",
+          "ChangeUserName",
           "change account info",
-          goToAccountPage
-        )}
+          ()=>{}
+)}
       </Grid>
-
+      
       <Grid item xs={12} md={4}>
         {quickRedirectCard(
+          "ChangePassword",
           "Logout",
-          "Logout",
-          handleLogout
+          ()=>{}
         )}
       </Grid>
       
@@ -125,4 +95,4 @@ function Home() {
     </div>
   );
 }
-export default Home;
+export default AccountPage;
