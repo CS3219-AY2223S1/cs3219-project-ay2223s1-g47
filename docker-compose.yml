@@ -10,9 +10,14 @@ services:
       - "8001:8001"
     depends_on:
       - rabbitmq
+      - user-service
+      - collaboration-service
+    restart: on-failure
     environment:
       - MODE=DEV
-      - FRONTEND_URI=frontend:3000
+      - FRONTEND_URI=http://localhost:3000
+      - COLLABORATION_SERVICE_URI=http://collaboration-service:8003
+      - RABBITMQ_URI=amqp://rabbitmq:5672
       - PORT=8001
 
   user-service:
@@ -64,6 +69,11 @@ services:
     image: rabbitmq
     ports:
       - "5672:5672"
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "5672" ]
+      interval: 5s
+      timeout: 15s
+      retries: 1
       
   collaboration-service:
     container_name:  "collaboration-service"

@@ -1,17 +1,29 @@
-import amqp, { ConsumeMessage } from "amqplib";
-import axios from "axios";
-import { Types } from "mongoose";
+import amqp, { Channel, ConsumeMessage } from "amqplib";
 import { TPendingMatch } from "../types/TPendingMatch";
+import { createRoom } from "./room";
 import { getSocket, onMatchSuccess } from "./socket";
 
-export const QUEUES = ["easy", "medium", "hard"];
-export const WAITERS: (TPendingMatch | null)[] = QUEUES.map((queue) => null);
+/**
+ * Specify 1 queue for each difficulty level.
+*/
+const QUEUES = ["easy", "medium", "hard"];
+/**
+ * For each queue, at most 1 match will be pending at a time (waiter).
+ * Initialize all waiters to null.
+*/
+const WAITERS: (TPendingMatch | null)[] = QUEUES.map(() => null);
 
+/**
+ * Connect to rabbitMq. Initialize channels and queues.
+ * @returns producerChannel: Channel
+ */
 export const initQueues = async () => {
-    const connection = await amqp.connect("amqp://rabbitmq:5672");
+    const rabbitMqUri = process.env.RABBITMQ_URI || "amqp://localhost:5672";
+    const connection = await amqp.connect(rabbitMqUri);
     const consumerChannel = await connection.createChannel();
     const producerChannel = await connection.createChannel();
 
+    // Create queue for each difficulty level.
     for (const queue of QUEUES) {
         consumerChannel.assertQueue(queue, {
             durable: false
@@ -25,7 +37,27 @@ export const initQueues = async () => {
     return producerChannel;
 }
 
-const handleMessage = (msg: ConsumeMessage | null) => {
+/**
+ * Enqueue message (pending match) to queue with corresponding difficulty.
+ */
+export const sendMessage = (
+    channel: Channel,
+    pendingMatch: TPendingMatch
+) => {
+    channel.sendToQueue(
+        QUEUES[pendingMatch.difficulty],
+        Buffer.from(JSON.stringify(pendingMatch))
+    );
+}
+
+/**
+ * Dequeue/consume message.
+ * Check if there is waiting pending match.
+ * If no waiting match, current match waits for next match.
+ * Otherwise, create room with waiting match and current match. Send room id to client.
+ * @param msg
+ */
+const handleMessage = async (msg: ConsumeMessage | null) => {
     if (!msg) return;
     const pendingMatch: TPendingMatch = JSON.parse(msg.content.toString());
     const { difficulty, userId, socketId } = pendingMatch;
@@ -37,26 +69,16 @@ const handleMessage = (msg: ConsumeMessage | null) => {
     console.log("Waiting socket", waiting?.socketId);
     console.log(" [x] Received %s", pendingMatch.toString());
 
-    if (!waiting || !waitingSocket || !waitingSocket.connected
-            || waiting.userId == pendingMatch.userId) {
+    if (!waiting
+            || !waitingSocket
+            || !waitingSocket.connected
+            || waiting.userId == pendingMatch.userId
+    ) {
         WAITERS[difficulty] = pendingMatch;
-    }
-    else {
-        // const room = createRoom(userId, waiting.userId);
-        const room = { roomId: "roomId" };
-        onMatchSuccess(pendingSocket, waitingSocket, room);
+    } else {
         WAITERS[difficulty] = null;
+        const roomId = await createRoom(userId, waiting.userId, difficulty);
+        // Sends room id to frontend.
+        onMatchSuccess(pendingSocket, waitingSocket, roomId);
     }
-}
-
-// Send data to collab service
-const createRoom = async (userId1: Types.ObjectId, userId2: Types.ObjectId) => {
-    const collabUri = "localhost:3000";
-    const res = await axios.post(collabUri, {
-        userIds: [userId1, userId2],
-    });
-    if (res.status == 200) {
-        return res.data;
-    }
-    return;
 }
