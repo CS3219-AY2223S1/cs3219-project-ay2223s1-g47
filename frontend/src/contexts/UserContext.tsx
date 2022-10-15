@@ -13,7 +13,7 @@ import { User } from "../interfaces/users/User";
  * It contains the user data and the functions to update the user data.
  */
 export interface UserContextType {
-    socket: Socket | null;
+  socket: Socket | null;
   user: User;
   login: (
     username: string,
@@ -42,7 +42,7 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
   const defaultUser: User = {
     username: "",
     userId: "",
-    loggedIn: false,
+    loggedIn: true,
   };
   const [user, setUser] = useState<User>(defaultUser);
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -53,28 +53,26 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
    * Note the empty dependency array, which means this function will only be called
    * once.
    */
+  useEffect(() => {
+    apiCallUserAuthentication().then((response) => {
+      // if ok, set the user state
+      if (response.status >= 200 && response.status < 300) {
+        console.log(response);
+        if (response.data.username && response.data.id) {
+          const user: User = {
+            username: response.data.username,
+            userId: response.data.id,
+            loggedIn: true,
+          };
+          setUser(user);
+        } else {
+          setUser({ ...defaultUser, loggedIn: false });
+        }
+      }
 
-  // Fires off too often, causing logged out create account to redirect to logged in home
-
-  // useEffect(() => {
-  //   console.log("effect used : auth")
-  //   apiCallUserAuthentication().then((response) => {
-  //     // if ok, set the user state
-  //     if (response.status >= 200 && response.status < 300) {
-  //       console.log(response);
-  //       if (response.data.username && response.data.id) {
-  //         const user: User = {
-  //           username: response.data.username,
-  //           userId: response.data.id,
-  //           loggedIn: true,
-  //         };
-  //         setUser(user);
-  //       }
-  //     }
-
-  //     // else, do nothing
-  //   });
-  // }, []);
+      // else, do nothing
+    });
+  }, [defaultUser]);
 
   /**
    * Handles logging in and setting the global user state.
@@ -108,25 +106,29 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
   };
 
   const createSocket = async (url: string) => {
-    const socket: Socket = io(url, { query: {
+    const socket: Socket = io(url, {
+      query: {
         userId: user.userId,
-    }});
+      },
+    });
     setSocket(socket);
     return socket;
-  }
+  };
 
   const clearSocket = async () => {
     setSocket(null);
- }
+  };
   return (
-    <UserContext.Provider value={{
+    <UserContext.Provider
+      value={{
         user,
         login,
         logout,
         socket,
         createSocket,
-        clearSocket
-    }}>
+        clearSocket,
+      }}
+    >
       {props.children}
     </UserContext.Provider>
   );
