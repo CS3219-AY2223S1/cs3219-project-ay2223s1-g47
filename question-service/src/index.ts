@@ -5,7 +5,9 @@ import "dotenv/config";
 import { CORS_OPTIONS, DEFAULT_PORT } from "./constants";
 
 // ============= require db set up =============
-require("./db/db");
+// require("./db/db");
+import db from "./db/db";
+
 
 // ============= initialize app =================
 const app = express();
@@ -20,6 +22,15 @@ app.use(questionRoutes);
 
 // ============= start server ===================
 const PORT = process.env.PORT || DEFAULT_PORT;
-app.listen(PORT, () => console.log("user-service listening on port " + PORT));
 
-module.exports = app;
+
+// listen only if launched directly
+if (require.main === module) {
+    app.listen(PORT, async () => {
+      await db.connectDb(false);
+    app.listen(PORT, () => console.log("user-service listening on port " + PORT));
+    });
+  }
+  
+  export default app;
+  
