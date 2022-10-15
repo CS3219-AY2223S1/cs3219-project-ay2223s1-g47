@@ -2,6 +2,7 @@ import { ENV_IS_PROD, PW_SALT } from "../constants";
 import { LoginDetails, SignUpDetails } from "../interfaces/login-details";
 import {
   createUser,
+  modifyUser,
   loginUser,
   userWithIdExists,
 } from "./services/user-services";
@@ -34,9 +35,12 @@ export async function handleCreateUser(request: Request, response: Response) {
 
     // 3. create user
     console.debug("Creating user: " + username + " , " + saltedPassword);
-    const user = await createUser({ username, password: saltedPassword });
+    const user = await createUser({
+      username: username,
+      password: saltedPassword,
+    });
 
-    response.json(user);
+    return createOkResponse(response, user);
   } catch (error) {
     console.error(error);
     const message =
@@ -65,11 +69,11 @@ export async function login(request: Request, response: Response) {
     // 3. call service to handle login
     console.debug("Logging in user: " + username + " , " + saltedPassword);
     const user = await loginUser({
-      username: username,
+      username,
       password: saltedPassword,
     });
 
-    if (!user) {
+    if (user == null) {
       console.debug("Tried to log in, but incorrect username/password!");
       return createUnauthorizedResponse(
         response,
@@ -96,7 +100,7 @@ export async function login(request: Request, response: Response) {
 }
 
 /**
- * Hanldes a POST request to logout a user.
+ * Handles a POST request to logout a user.
  */
 export async function logout(request: Request, response: Response) {
   // 1. clear cookie
@@ -107,13 +111,88 @@ export async function logout(request: Request, response: Response) {
 }
 
 /**
+ * Handles a PUT request to change an account's username
+ */
+export async function changeUsername(request: Request, response: Response) {
+  try {
+    // 1. check jwt
+    const jwtPayload = (await checkJWT(request)) as unknown as User;
+    if (!jwtPayload) {
+      return createUnauthorizedResponse(response, "Invalid JWT");
+    }
+
+    // 2. check user exists
+    const id = jwtPayload.id ?? "";
+    const exists = await userWithIdExists(id);
+    if (!exists) {
+      return createUnauthorizedResponse(response, "Invalid JWT");
+    }
+
+    // 2. get new details from request body
+    const loginDetails: LoginDetails = request.body as unknown as LoginDetails;
+    const username = loginDetails.username;
+
+    // 3. modify user
+    const user = await modifyUser(id, { username, password: "" });
+    response.json(user);
+  } catch (error) {
+    console.error(error);
+    const message =
+      error instanceof UserServiceException ? error.message : undefined;
+    const statusCode =
+      error instanceof UserServiceException ? error.statusCode : undefined;
+    return createInternalServerErrorResponse(response, statusCode, message);
+  }
+}
+
+/**
+ * Handles a PUT request to change an account's password
+ */
+export async function changePassword(request: Request, response: Response) {
+  try {
+    // 1. check jwt
+    const jwtPayload = (await checkJWT(request)) as unknown as User;
+    if (!jwtPayload) {
+      return createUnauthorizedResponse(response, "Invalid JWT");
+    }
+
+    // 2. check user exists
+    const id = jwtPayload.id ?? "";
+    const exists = await userWithIdExists(id);
+    if (!exists) {
+      return createUnauthorizedResponse(response, "Invalid JWT");
+    }
+
+    // 2. get new details from request body
+    const loginDetails: LoginDetails = request.body as unknown as LoginDetails;
+    const password = loginDetails.password;
+
+    // 3. hash new password
+    const saltedPassword = bcrypt.hashSync(password, PW_SALT);
+
+    // 3. modify user
+    const user = await modifyUser(id, {
+      username: jwtPayload.username,
+      password: saltedPassword,
+    });
+    response.json(user);
+  } catch (error) {
+    console.error(error);
+    const message =
+      error instanceof UserServiceException ? error.message : undefined;
+    const statusCode =
+      error instanceof UserServiceException ? error.statusCode : undefined;
+    return createInternalServerErrorResponse(response, statusCode, message);
+  }
+}
+
+/**
  * Handles a GET request to see if the jwt's match.
  */
 export async function auth(request: Request, response: Response) {
   console.debug("Called auth");
   // 1. check jwt
-  const jwtCookie = request.cookies.JWT;
-  const jwtPayload = (await checkJWT(jwtCookie)) as unknown as User;
+  const jwtPayload = (await checkJWT(request)) as unknown as User;
   if (!jwtPayload) {
     return createUnauthorizedResponse(response, "Invalid JWT");
   }

@@ -6,9 +6,11 @@ import {
   Typography,
 } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { io, Socket } from "socket.io-client";
+import { apiGetNewJwt } from "../../api/UserServiceApi";
 import { UserContext, UserContextType } from "../../contexts/UserContext";
-import useIsMobile from "../../hooks/useIsMobile";
 import { MatchLoadingComponent } from "./MatchLoadingComponent";
 
 const serverUri = process.env.MATCHING_SERVICE_URI || "http://localhost:8001";
@@ -16,23 +18,34 @@ const serverUri = process.env.MATCHING_SERVICE_URI || "http://localhost:8001";
 function MatchingPage() {
   // ====== State management ======
   // UI states
-  const isMobile = useIsMobile();
-  const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] =
     useState<Boolean>(false);
-  const [errorSnackBarContent, setErrorSnackbarContent] = useState<String>("");
   const [isMatching, setIsMatching] = useState<Boolean>(false);
+  const [socket, setSocket] = useState<Socket>();
+  const [socketJwt, setSocketJwt] = useState<string>("");
+
+  const navigate = useNavigate();
 
   // contexts
-  const { user, socket, createSocket } = useContext(
+  const { user } = useContext(
     UserContext
   ) as UserContextType;
 
-  socket?.on("matchSuccess", (room: any) => {
-    console.log("room: ", room);
+  socket?.on("matchSuccess", (room: string) => {
+    navigate(`/room?roomId=${room}`);
   });
 
-  useEffect(() => {
-    createSocket(serverUri);
+  /**
+   * Hook that initializes authentication in preparation for the websocket connection.
+   * Specifically, it gets a new JWT for the websocket connection.
+   */
+   useEffect(() => {
+    apiGetNewJwt().then((response) => {
+      if (response.status === 200) {
+        setSocketJwt(response.data.jwt);
+      } else {
+        toast("Something went wrong.");
+      }
+    });
   }, []);
 
   // ====== Event handlers ======
@@ -43,15 +56,18 @@ function MatchingPage() {
     }
 
     const createPendingMatch = (difficulty: number) => {
-        if (!socket || !socket.connected) {
-            createSocket(serverUri);
-        }
-        if (socket) {
-            socket.emit("match", {
+        const newSocket = io(serverUri, {
+            query: {
                 userId: user.userId,
-                difficulty,
-            });
-        }
+                socketJwt,
+            },
+        });
+        setSocket(newSocket);
+        newSocket.emit("match", {
+            userId: user.userId,
+            difficulty,
+        });
+        console.log("in createPendingMatch: ", newSocket);
         setIsMatching(true);
         setTimeout(onMatchingTimeout, 60 * 1000);
     }

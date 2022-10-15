@@ -7,12 +7,13 @@ import {
   auth,
   auth_server,
   logout,
+  changeUsername,
+  changePassword,
   get_jwt,
 } from "./controller/user-controller";
-const CookieParser = require("cookie-parser");
+import db from "./db/db";
 
-// ======= initialize stuff with require ========
-require("./db/db");
+const CookieParser = require("cookie-parser");
 
 // ============== start the app =================
 const app: Express = express();
@@ -25,6 +26,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.json()); // parses incoming json and puts parsed data in req.body. See
 app.use(cors(CORS_OPTIONS)); // use and set cors config
 app.use(CookieParser()); // for parsing cookies
+
+// ================== db ========================
 
 // =================== routing ==================
 
@@ -44,6 +47,16 @@ app.post("/signup", handleCreateUser);
  * Endpoint to login.
  */
 app.post("/login", login);
+
+/**
+ * Endpoint to login.
+ */
+app.put("/changePassword", changePassword);
+
+/**
+ * Endpoint to login.
+ */
+app.put("/changeUsername", changeUsername);
 
 /**
  * Endpoint to logout.
@@ -67,5 +80,12 @@ app.post("/auth/jwt", auth_server);
  */
 app.get("/get_jwt", get_jwt);
 
-// listen
-app.listen(PORT, () => console.log("user-service listening on port " + PORT));
+// listen only if launched directly
+if (require.main === module) {
+  app.listen(PORT, async () => {
+    await db.connectDb(false);
+    console.log("user-service listening on port " + PORT);
+  });
+}
+
+export default app;

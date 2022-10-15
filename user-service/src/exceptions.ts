@@ -13,6 +13,13 @@ export class UserServiceException extends Error {
   }
 }
 
+export class UserDetailValidationException extends UserServiceException {
+  constructor(message: string) {
+    super(message, 400);
+    Object.setPrototypeOf(this, UserDetailValidationException.prototype);
+  }
+}
+
 /**
  * Exception thrown when there is an error writing to the database.
  */

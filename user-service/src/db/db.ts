@@ -1,4 +1,5 @@
 import mongoose, { CallbackError, ConnectOptions } from "mongoose";
+import { MongoMemoryServer } from "mongodb-memory-server";
 import {
   DB_URI,
   ENV_IS_DEV,
@@ -6,9 +7,13 @@ import {
   DB_TABLES,
 } from "../constants";
 // =================== database ==================
+// global mock db variable we use for tests
+let mock_db: MongoMemoryServer | null = null;
 
-// initialization CRUD handler
-const initDb = () => {
+/**
+ * This function is called to populate the dev db with data from the local json file.
+ */
+const populateDevDb = () => {
   const db = mongoose.connection;
 
   // 1. if dev, populate
@@ -54,18 +59,42 @@ const initDb = () => {
   // 2. if prod, do nothing
 };
 
-// connect to db
-console.log("\nOpening DB connection: " + DB_URI);
-mongoose
-  .connect(DB_URI, {
+/**
+ * Sets up the database connection. If test is true, it will connect to the test database, intended for use
+ * for local testing.
+ */
+const connectDb = async (test: boolean) => {
+  // 1. connection
+  let dbURI_candidate = DB_URI;
+  if (test) {
+    mock_db = await MongoMemoryServer.create();
+    dbURI_candidate = mock_db.getUri();
+  }
+  const dbURI = dbURI_candidate;
+  console.log("\nOpening DB connection: " + dbURI);
+  const connection = await mongoose.connect(dbURI, {
     useNewUrlParser: true,
     useUnifiedTopology: true,
-  } as ConnectOptions)
-  .then(() => {
-    console.log("Connected to DB");
-    initDb();
-    console.log("DB initialization complete");
-  })
-  .catch((error: CallbackError) => {
-    console.error("MongoDB initialization error!", error);
-  });
+  } as ConnectOptions);
+
+  // 2. initialization
+  if (!test) {
+    populateDevDb();
+  }
+
+  // 3. log
+  console.log("DB connection complete!");
+};
+
+/**
+ * Closes the database connection.
+ */
+const closeDb = async () => {
+  console.log("Closing DB connection");
+  await mongoose.connection.close();
+  if (mock_db) {
+    await mock_db.stop();
+  }
+};
+
+export default { connectDb, closeDb };

@@ -1,7 +1,8 @@
 module.exports = {
   preset: "ts-jest",
   testEnvironment: "node",
-  testMatch: ["**/tests/**/*.+(ts|tsx|js)", "**/tests/*.+(ts|tsx|js)"],
+  testMatch: ["**/tests/**/*.+(ts|tsx)", "**/tests/*.+(ts|tsx)"],
+  testPathIgnorePatterns: ["node_modules/", "/dist/"],
   transform: {
     "^.+\\.(ts|tsx)$": "ts-jest",
   },
