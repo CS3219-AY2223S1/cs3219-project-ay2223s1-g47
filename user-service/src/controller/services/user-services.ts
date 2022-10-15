@@ -205,7 +205,6 @@ export function validateSignupDetails(details: SignUpDetails) {
     username.trim().length >= 1 &&
     username.trim().length <= 20;
   if (!isValid) {
-    console.log("throwing");
     throw new UserDetailValidationException(
       "Invalid username! Needs to be alphanumeric, no special characters, and between 1 and 20 characters."
     );

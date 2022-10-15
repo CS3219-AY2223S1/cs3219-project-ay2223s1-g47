@@ -172,7 +172,7 @@ export async function changePassword(request: Request, response: Response) {
 
     // 3. modify user
     const user = await modifyUser(id, {
-      username: "",
+      username: jwtPayload.username,
       password: saltedPassword,
     });
     response.json(user);
