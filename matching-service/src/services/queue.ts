@@ -8,7 +8,7 @@ export const QUEUES = ["easy", "medium", "hard"];
 export const WAITERS: (TPendingMatch | null)[] = QUEUES.map((queue) => null);
 
 export const initQueues = async () => {
-    const connection = await amqp.connect("amqp://localhost");
+    const connection = await amqp.connect("amqp://rabbitmq:5672");
     const consumerChannel = await connection.createChannel();
     const producerChannel = await connection.createChannel();
 

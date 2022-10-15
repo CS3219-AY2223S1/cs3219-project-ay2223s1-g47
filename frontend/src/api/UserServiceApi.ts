@@ -6,6 +6,7 @@ import {
   USER_SERVICE_LOGOUT_URL,
   USER_SERVICE_CHANGEUSERNAME_URL,
   USER_SERVICE_CHANGEPW_URL,
+  USER_SERVICE_NEW_JWT_URL,
 } from "../constants";
 
 export interface UserInfoApiResponseData {
@@ -90,17 +91,17 @@ export const apiCallUserLogout: () => Promise<{
   status: number;
   data: {};
 }> = async () => {
-    const response = await axios
-      .post(USER_SERVICE_LOGOUT_URL,{ withCredentials: true } )
-      .catch((error: Error | AxiosError) => {
-        if (axios.isAxiosError(error)) {
-          return error.response?.data; // return response data from backend
-        } else {
-          console.error(error);
-          return error; // propagate up the call stack
-        }
-      }) as Promise<{ status: number; data: UserInfoApiResponseData }>;
-      return response;
+  const response = (await axios
+    .post(USER_SERVICE_LOGOUT_URL, { withCredentials: true })
+    .catch((error: Error | AxiosError) => {
+      if (axios.isAxiosError(error)) {
+        return error.response?.data; // return response data from backend
+      } else {
+        console.error(error);
+        return error; // propagate up the call stack
+      }
+    })) as Promise<{ status: number; data: UserInfoApiResponseData }>;
+  return response;
 };
 
 /**
@@ -134,7 +135,6 @@ export const apiCallUserAuthentication: () => Promise<{
   return response;
 };
 
-
 // put user change
 export const apiCallUserChangeUsername: (
   username: string,
@@ -143,7 +143,8 @@ export const apiCallUserChangeUsername: (
   username: string,
   password: string
 ) => {
-  const response = axios.put(
+  const response = axios
+    .put(
       USER_SERVICE_CHANGEUSERNAME_URL,
       {
         username,
@@ -163,7 +164,6 @@ export const apiCallUserChangeUsername: (
   return response;
 };
 
-
 // put password change
 export const apiCallUserChangePassword: (
   username: string,
@@ -172,7 +172,8 @@ export const apiCallUserChangePassword: (
   username: string,
   password: string
 ) => {
-  const response = axios.put(
+  const response = axios
+    .put(
       USER_SERVICE_CHANGEPW_URL,
       {
         username,
@@ -188,6 +189,33 @@ export const apiCallUserChangePassword: (
         return error; // propagate up the call stack
       }
     }) as Promise<{ status: number; data: UserInfoApiResponseData }>;
+
+  return response;
+};
+
+/**
+ * Handles API call to get a new temporary jwt token. Useful for things like socket connections.
+ */
+export const apiGetNewJwt: () => Promise<{
+  status: number;
+  data: { jwt: string };
+}> = async () => {
+  const response = axios
+    .get(USER_SERVICE_NEW_JWT_URL, {
+      withCredentials: true,
+      headers: {
+        "Access-Control-Allow-Origin": "*",
+        "Content-Type": "application/json",
+      },
+    })
+    .catch((error: Error | AxiosError) => {
+      if (axios.isAxiosError(error)) {
+        return error.response?.data; // return response data from backend
+      } else {
+        console.error(error);
+        return error; // propagate up the call stack
+      }
+    }) as Promise<{ status: number; data: { jwt: string } }>;
 
   return response;
 };

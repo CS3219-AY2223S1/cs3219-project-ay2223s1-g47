@@ -3,7 +3,7 @@ import cors from 'cors'
 import { createSecretKey } from 'crypto'
 import * as dotenv from 'dotenv'
 dotenv.config()
-const { subtle } = require('crypto').webcrypto
+// const { subtle } = require('crypto').webcrypto
 
 // ======= assertions to check .env ========
 assert(process.env.PW_SALT, 'PW_SALT not set in .env')
