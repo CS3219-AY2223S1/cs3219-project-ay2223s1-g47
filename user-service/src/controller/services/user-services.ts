@@ -37,6 +37,7 @@ export async function createUser(signupDetails: SignUpDetails) {
     };
     return user;
   } catch (error) {
+    console.error(error);
     throw new DbWriteException("Error creating user!");
   }
 }

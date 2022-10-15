@@ -5,8 +5,8 @@
   "main": "./dist/index",
   "scripts": {
     "dev": "tsc-watch --onSuccess 'nodemon ./dist/index.js'",
-    "test": "jest --detectOpenHandles --silent",
-    "test-verbose": "jest --detectOpenHandles"
+    "test": "jest --detectOpenHandles --silent --watchAll",
+    "test-verbose": "tsc && jest --detectOpenHandles --watchAll"
   },
   "keywords": [],
   "author": "",

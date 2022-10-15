@@ -40,7 +40,7 @@ export async function handleCreateUser(request: Request, response: Response) {
       password: saltedPassword,
     });
 
-    response.json(user);
+    return createOkResponse(response, user);
   } catch (error) {
     console.error(error);
     const message =

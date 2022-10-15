@@ -68,7 +68,7 @@ const connectDb = async (test: boolean) => {
   let dbURI_candidate = DB_URI;
   if (test) {
     mock_db = await MongoMemoryServer.create();
-    const dbURI_candidate = mock_db.getUri();
+    dbURI_candidate = mock_db.getUri();
   }
   const dbURI = dbURI_candidate;
   console.log("\nOpening DB connection: " + dbURI);
