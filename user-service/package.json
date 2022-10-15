@@ -7,9 +7,7 @@
     "dev": "tsc-watch --onSuccess 'nodemon ./dist/index.js'",
     "test": "tsc && jest --detectOpenHandles --coverage --silent",
     "test-ci": "tsc && jest --detectOpenHandles --coverage --silent --forceExit",
-    "test-verbose": "tsc && jest --detectOpenHandles",
-    "lint": "eslint .",
-    "autolint": "eslint . --fix"
+    "test-verbose": "tsc && jest --detectOpenHandles"
   },
   "keywords": [],
   "author": "",
