@@ -4,13 +4,13 @@ import {
   CardContent,
   Grid,
   Paper,
+  Button,
   Typography,
 } from "@mui/material";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 import { UserContext, UserContextType } from "../contexts/UserContext";
 import useIsMobile from "../hooks/useIsMobile";
-import { apiCallUserLogout } from "../api/userServiceApi";
 
 
 
@@ -99,15 +99,6 @@ function Home() {
           goToAccountPage
         )}
       </Grid>
-
-      <Grid item xs={12} md={4}>
-        {quickRedirectCard(
-          "Logout",
-          "Logout",
-          handleLogout
-        )}
-      </Grid>
-      
     </Grid>
   );
 
@@ -122,6 +113,12 @@ function Home() {
       }}
     >
       {quickActionsPanel}
+      <br/>
+      <Button
+        style={{ width: "100%", textTransform: "none" }}
+        variant="contained"
+        onClick={handleLogout}
+      >logout</Button>
     </div>
   );
 }

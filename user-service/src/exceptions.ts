@@ -2,14 +2,21 @@
  * Generic exception class used within the user service.
  */
 export class UserServiceException extends Error {
-  statusCode: number
+  statusCode: number;
 
-  constructor (message: string, statusCode?: number) {
-    super(message)
-    this.statusCode = statusCode ?? 500 // default as internal server error
+  constructor(message: string, statusCode?: number) {
+    super(message);
+    this.statusCode = statusCode ?? 500; // default as internal server error
 
     // Set the prototype explicitly.
-    Object.setPrototypeOf(this, UserServiceException.prototype)
+    Object.setPrototypeOf(this, UserServiceException.prototype);
+  }
+}
+
+export class UserDetailValidationException extends UserServiceException {
+  constructor(message: string) {
+    super(message, 400);
+    Object.setPrototypeOf(this, UserDetailValidationException.prototype);
   }
 }
 
@@ -17,11 +24,11 @@ export class UserServiceException extends Error {
  * Exception thrown when there is an error writing to the database.
  */
 export class DbWriteException extends UserServiceException {
-  constructor (message: string) {
-    super(message)
+  constructor(message: string) {
+    super(message);
 
     // Set the prototype explicitly.
-    Object.setPrototypeOf(this, DbWriteException.prototype)
+    Object.setPrototypeOf(this, DbWriteException.prototype);
   }
 }
 
@@ -29,11 +36,11 @@ export class DbWriteException extends UserServiceException {
  * Exception thrown when there is an error reading from the database.
  */
 export class DbReadException extends UserServiceException {
-  constructor (message: string) {
-    super(message)
+  constructor(message: string) {
+    super(message);
 
     // Set the prototype explicitly.
-    Object.setPrototypeOf(this, DbReadException.prototype)
+    Object.setPrototypeOf(this, DbReadException.prototype);
   }
 }
 
@@ -42,10 +49,10 @@ export class DbReadException extends UserServiceException {
  * delete another user's account)
  */
 export class DbPermissionDeniedException extends UserServiceException {
-  constructor (message: string) {
-    super(message)
+  constructor(message: string) {
+    super(message);
 
     // Set the prototype explicitly.
-    Object.setPrototypeOf(this, DbPermissionDeniedException.prototype)
+    Object.setPrototypeOf(this, DbPermissionDeniedException.prototype);
   }
 }

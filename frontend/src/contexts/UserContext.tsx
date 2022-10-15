@@ -75,15 +75,14 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
             setUser(user);
           }
         } else {
+          // else, log the user out
           setUser({ ...defaultUser, loggedIn: false });
         }
-
-        // else, do nothing
       })
       .catch((error) => {
         console.log(error);
       });
-  }, []);
+  }, [defaultUser]);
 
   /**
    * Handles logging in and setting the global user state.
