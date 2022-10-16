@@ -10,8 +10,16 @@ import { UserContext, UserContextType } from "./contexts/UserContext";
 import MatchingPage from "./components/matching/MatchingPage";
 import { ToastContainer } from "react-toastify";
 import CollaborationPage from "./components/collaboration/CollaborationPage";
+import styled from "styled-components";
 
 import 'react-toastify/dist/ReactToastify.css';
+
+const AppComponent = styled.div`
+  background: #444;
+  color: #fff;
+  font-family: sans-serif;
+  min-height: 100vh;
+`;
 
 function App() {
   // =============== State management ===============
@@ -22,7 +30,7 @@ function App() {
   console.log("App.tsx: loggedIn = " + loggedIn);
 
   return (
-    <div className="App" style={{ minHeight: "100vh" }}>
+    <AppComponent>
       <Router>
         <Routes>
           <Route
@@ -77,7 +85,7 @@ function App() {
           />
         </Routes>
       </Router>
-    </div>
+    </AppComponent>
   );
 }
 

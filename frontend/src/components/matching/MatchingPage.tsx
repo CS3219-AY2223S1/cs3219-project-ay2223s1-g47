@@ -1,10 +1,3 @@
-import {
-  Card,
-  CardActionArea,
-  CardContent,
-  Grid,
-  Typography,
-} from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
@@ -12,8 +5,46 @@ import { io, Socket } from "socket.io-client";
 import { apiGetNewJwt } from "../../api/UserServiceApi";
 import { UserContext, UserContextType } from "../../contexts/UserContext";
 import { MatchLoadingComponent } from "./MatchLoadingComponent";
+import styled from "styled-components";
 
 const serverUri = process.env.MATCHING_SERVICE_URI || "http://localhost:8001";
+
+const Grid = styled.div`
+  display: grid;
+  grid-column-gap: 2rem;
+  grid-template-columns: 1fr 1fr 1fr;
+`;
+
+const Card = styled.div`
+  border-radius: 20px;
+  box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, .5),
+      -5px -5px 15px 5px rgba(255, 255, 255, .2);
+  padding: 2em 1em;
+  text-align: center;
+
+  h2 {
+    color: rgb(255, 210, 150);
+    text-shadow: 5px 2px 20px rgba(255, 90, 8, .8);
+  }
+`;
+
+const Button = styled.button`
+  background: rgb(46, 137, 255);
+  border: none;
+  border-radius: 2rem;
+  box-shadow: 5px 5px 15px 5px rgba(34, 0, 224, .5);
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: bold;
+  padding: .8em 1.6em;
+
+  &:hover {
+    background: rgb(64, 159, 255);
+    box-shadow: 5px 5px 15px 5px rgba(43, 54, 255, .5);
+    cursor: pointer;
+  }
+`;
 
 function MatchingPage() {
   // ====== State management ======
@@ -79,64 +110,37 @@ function MatchingPage() {
     onClick: () => void
   ) => {
     return (
-      <Card elevation={24}>
-        <CardActionArea onClick={onClick}>
-          {/*some image*/}
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
-              {title}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {description}
-            </Typography>
-          </CardContent>
-        </CardActionArea>
+      <Card>
+        <h2>{ title }</h2>
+        <p>{ description }</p>
+        <Button onClick={ onClick }>Select</Button>
       </Card>
     );
   };
 
   const matchingSelection = (
-    <Grid
-      container
-      direction="row"
-      alignItems="center"
-      justifyContent="center"
-      spacing={4}
-    >
-      <Grid item xs={12} md={4}>
-        {matchOptionCard(
-          "Easy",
-          "Choose this if you're new to programming",
-          () => createPendingMatch(0)
-        )}
-      </Grid>
-      <Grid item xs={12} md={4}>
-        {matchOptionCard("Medium", "For most people.", () =>
-          createPendingMatch(1)
-        )}
-      </Grid>
-      <Grid item xs={12} md={4}>
-        {matchOptionCard("Hard", "Dark Souls, but for programmers", () =>
-          createPendingMatch(2)
-        )}
-      </Grid>
-    </Grid>
+    <>
+      {matchOptionCard(
+        "Easy",
+        "Choose this if you're new to programming",
+        () => createPendingMatch(0)
+      )}
+      {matchOptionCard("Medium", "For most people.", () =>
+        createPendingMatch(1)
+      )}
+      {matchOptionCard("Hard", "Dark Souls, but for programmers", () =>
+        createPendingMatch(2)
+      )}
+    </>
   );
 
   // ====== Render ======
   if (isMatching) return <MatchLoadingComponent/>
 
   return (
-    <div
-      className="MatchingPage"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
+    <Grid>
       {matchingSelection}
-    </div>
+    </Grid>
   );
 }
 

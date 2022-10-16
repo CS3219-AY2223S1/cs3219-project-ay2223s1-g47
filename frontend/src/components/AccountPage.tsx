@@ -4,7 +4,7 @@ import {
 } from "@mui/material";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiCallUserChangeUsername,apiCallUserChangePassword } from "../api/userServiceApi";
+import { apiCallUserChangeUsername,apiCallUserChangePassword } from "../api/UserServiceApi";
 import { UserContext, UserContextType } from "../contexts/UserContext";
 import useIsMobile from "../hooks/useIsMobile";
 
