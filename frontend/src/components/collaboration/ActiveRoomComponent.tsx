@@ -48,10 +48,12 @@ const DestructiveButton = styled.button`
   }
 `;
 
-export function ActiveRoomComponent() {
+export function ActiveRoomComponent(props: { onJoin: () => void, onDisconnect: () => void }) {
+    const { onJoin, onDisconnect } = props;
+
     return <RoomCard>
       <p>You have an active session</p>
-      <Button>Join</Button>
-      <DestructiveButton>Disconnect</DestructiveButton>
+      <Button onClick={onJoin}>Join</Button>
+      <DestructiveButton onClick={onDisconnect}>Disconnect</DestructiveButton>
     </RoomCard>
 }

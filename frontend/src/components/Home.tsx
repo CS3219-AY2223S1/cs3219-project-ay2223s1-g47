@@ -1,17 +1,6 @@
-import {
-  Card,
-  CardActionArea,
-  CardContent,
-  Grid,
-  Paper,
-  Button,
-  Typography,
-} from "@mui/material";
-import { editableInputTypes } from "@testing-library/user-event/dist/utils";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
-import { UserContext, UserContextType } from "../contexts/UserContext";
 import useIsMobile from "../hooks/useIsMobile";
 import { ActiveRoomComponent } from "./collaboration/ActiveRoomComponent";
 import MatchingPage from "./matching/MatchingPage";
@@ -38,48 +27,43 @@ const MatchingSection = styled.div`
 `;
 
 function Home() {
-
-
   // TODO: add user context
   // ================ State management ================
+  const [activeRoom, setActiveRoom] = useState<any>();
   // UI states
   const isMobile = useIsMobile();
   const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] =
     useState<Boolean>(false);
   const [errorSnackBarContent, setErrorSnackbarContent] = useState<String>("");
 
-  // contexts
-
-  // history
   const navigate = useNavigate();
 
-  // ================ UI rendering ===================
-  const quickRedirectCard = (
-    title: string,
-    description: string,
-    onClick?: () => void
-  ) => {
-    return (
-      <Card elevation={24}>
-        <CardActionArea onClick={onClick ?? undefined}>
-          {/*some image*/}
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
-              {title}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {description}
-            </Typography>
-          </CardContent>
-        </CardActionArea>
-      </Card>
-    );
-  };
+  const handleCheckMostRecentRoom = () => {
+    const room = {};
+    setActiveRoom(room);
+  }
+
+  const handleJoinRoom = () => {
+    navigate(`/room?roomId=${activeRoom.room_id}`);
+  }
+
+  const handleDisconnectRoom = () => {
+
+  }
+
+  useEffect(() => {
+    handleCheckMostRecentRoom();
+  }, []);
 
   // ====== Render ======
   return (
     <HomeComponent>
-      <ActiveRoomComponent/>
+      {activeRoom &&
+        <ActiveRoomComponent
+          onJoin={handleJoinRoom}
+          onDisconnect={handleDisconnectRoom}
+        />
+      }
       <MatchingSection>
         <h1>Find a Match</h1>
         <p>
