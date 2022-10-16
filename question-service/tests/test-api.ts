@@ -46,6 +46,14 @@ describe("post return q by difficulty", () => {
       expect(res.body.difficulty === 0)
     });
 
+    test("successful", async () => {
+      const res = await agent.post("/difficulty/").send({"difficulty":1});
+      expect(res.statusCode).toEqual(200);
+      expect(res.body.difficulty === 1)
+    });
+
+
+
     test("invalid difficulty", async () => {
       const res = await agent.post("/difficulty/").send({"difficulty":99});
       expect(res.statusCode).toEqual(204);
