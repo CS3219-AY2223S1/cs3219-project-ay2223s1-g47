@@ -2,10 +2,10 @@
   "name": "question-service",
   "version": "1.0.0",
   "description": "",
-  "main": "./dist/index",
+  "main": "./dist/src/index",
   "scripts": {
-    "start": "tsc && node ./dist/index.js",
-    "dev": "tsc-watch --onSuccess 'nodemon ./dist/index.js'",
+    "start": "tsc && node ./dist/src/index.js",
+    "dev": "tsc-watch --onSuccess 'nodemon ./dist/src/index.js'",
     "test": "tsc && jest --detectOpenHandles --coverage",
     "test-ci": "tsc && jest --detectOpenHandles --coverage --forceExit"
   },
