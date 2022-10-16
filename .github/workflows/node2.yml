@@ -1,0 +1,68 @@
+---
+name: Node.js CI subfolder
+
+# on:
+#   push
+on:
+  pull_request:
+    branches: [master, main]
+jobs:
+  test-user-service:
+    env:
+      # same contents as .env.sample
+      ENV: DEV
+      DB_CLOUD_URI: mongodb+srv:// {rest-of-cloud-URL}
+      DB_LOCAL_URI: mongodb://localhost:27017/user-service
+      PW_SALT: $2b$10$zzlQzTUZKmvPuIejOTr0Ke
+      JWT_SECRET_KEY: Swe4g7c?UBm5Nrd96vhsVDtkyJFbqKMTm!TMw5BDRLtaCFAXNvbq?s4rGKQSZnUP
+
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: user-service
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: 'user-service/package-lock.json'
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: npm run test-ci
+
+
+  test-question-service:
+    env:
+      # same contents as .env.sample
+      ENV: DEV
+      DB_LOCAL_URI: mongodb://localhost:27017/question-service
+      DB_DOCKER_URI: mongodb://mongodb:27017/question-service
+      PORT: 8002
+
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: question-service
+    strategy:
+      matrix:
+        node-version: [16.x]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+          cache-dependency-path: 'question-service/package-lock.json'
+      - run: npm ci
+      - run: npm run build --if-present
+      - run: npm run test-ci
