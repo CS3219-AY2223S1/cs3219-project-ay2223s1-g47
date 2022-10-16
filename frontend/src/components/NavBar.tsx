@@ -5,8 +5,8 @@ import styled from "styled-components";
 import { UserContext, UserContextType } from "../contexts/UserContext";
 
 const NavBarWrapper = styled.div`
-    background: rgba(0, 0, 0, .2);
-    color: #aaa;
+    // background: rgba(0, 0, 0, .2);
+    color: #bbb;
 
     ul {
         align-items: center;

@@ -1,16 +1,53 @@
-import {
-  Button,
-  TextField
-} from "@mui/material";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 import { apiCallUserChangeUsername,apiCallUserChangePassword } from "../api/UserServiceApi";
 import { UserContext, UserContextType } from "../contexts/UserContext";
 import useIsMobile from "../hooks/useIsMobile";
+import { TextField } from "./TextField";
 
+const SettingsForm = styled.form`
+  border-radius: 20px;
+  box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, .4),
+      -5px -5px 15px 5px rgba(255, 255, 255, .1);
+  display: grid;
+  grid-column-gap: 1rem;
+  grid-row-gap: 3rem;
+  grid-template-columns: 1fr auto;
+  grid-template-areas: 'heading heading'
+                       'field1 field1'
+                       'field2 field2';
+  margin: 0 auto;
+  max-width: 600px;
+  padding: 4rem 2rem;
 
+  > h1 {
+    color: rgb(255, 210, 150);
+    grid-area: heading;
+    margin: 0 auto 2rem auto;
+    text-align: center;
+    text-shadow: 5px 2px 20px rgba(255, 90, 8, .8);
+  }
+`;
 
+const Button = styled.button`
+  background: rgb(46, 137, 255);
+  border: none;
+  border-radius: 2rem;
+  box-shadow: 5px 5px 15px 5px rgba(34, 0, 224, .5);
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: bold;
+  min-width: 0;
+  padding: .8em 1.6em;
 
+  &:hover {
+    background: rgb(64, 159, 255);
+    box-shadow: 5px 5px 15px 5px rgba(43, 54, 255, .5);
+    cursor: pointer;
+  }
+`;
 
 function AccountPage() {
   const [username, setUsername] = useState("");
@@ -71,61 +108,46 @@ function AccountPage() {
   const changeUser_TextField = 
     <TextField
         label="Username"
-        variant="outlined"
         type="username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
-        sx={{ marginBottom: "1rem" }}
-        error={isUsernameError}
+        hasError={isUsernameError}
         helperText={
-          isUsernameError &&
-          "3-20 characters, only letters, numbers, and underscores"
+          isUsernameError ?
+          "3-20 characters, only letters, numbers, and underscores" : null
         }
       />
   const changeUser_button = 
-  <Button
-        style={{ width: "100%", textTransform: "none" }}
-        variant="contained"
-        onClick={handleChangeUsername}
-      >confirm new username</Button>
+  <Button onClick={handleChangeUsername}>
+    Confirm New Username
+  </Button>
 
       const changePassword_TextField = 
       <TextField
         label="Password"
-        variant="outlined"
         type="password"
         value={password}
-        error={isPasswordError}
-        helperText={isPasswordError && "Password cannot be empty!"}
+        hasError={isPasswordError}
+        helperText={isPasswordError ? "Password cannot be empty" : null}
         onChange={(e) => setPassword(e.target.value)}
-        sx={{ marginBottom: "2rem" }}
       />
     const changePassword_button = 
-    <Button
-          style={{ width: "100%", textTransform: "none" }}
-          variant="contained"
-          onClick={handleChangePassword}
-        >confirm new password</Button>
+    <Button onClick={handleChangePassword}>
+      Confirm New Password
+    </Button>
 
 
 
 
   // ====== Render ======
   return (
-    <div
-      className="Home"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      {changeUser_TextField}
-      {changeUser_button}
-      <br></br>
-      {changePassword_TextField}
-      {changePassword_button}
-    </div>
+    <SettingsForm>
+      <h1>Settings</h1>
+        {changeUser_TextField}
+        {changeUser_button}
+        {changePassword_TextField}
+        {changePassword_button}
+    </SettingsForm>
   );
 }
 export default AccountPage;
