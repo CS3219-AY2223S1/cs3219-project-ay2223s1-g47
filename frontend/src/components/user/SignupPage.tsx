@@ -30,7 +30,7 @@ const SignupCard = styled.div`
   }
 
   > h1 {
-    color: rgb(255, 210, 150);
+    color: rgb(255, 179, 117);
     grid-area: heading;
     margin: 0 auto 4rem auto;
     text-align: center;
@@ -64,7 +64,7 @@ const Logo = styled.div`
     text-align: center;
 
     > span:first-of-type {
-        color: rgb(255, 210, 150);
+        color: rgb(255, 179, 117);
         text-shadow: 5px 2px 20px rgba(255, 90, 8, .8);
     }
     > span:last-of-type {

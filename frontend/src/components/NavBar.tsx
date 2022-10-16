@@ -61,7 +61,7 @@ const Logo = styled.span`
     font-weight: bold;
 
     > span:first-of-type {
-        color: rgb(255, 210, 150);
+        color: rgb(255, 179, 117);
         text-shadow: 5px 2px 20px rgba(255, 90, 8, .8);
     }
     > span:last-of-type {

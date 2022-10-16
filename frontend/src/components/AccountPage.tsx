@@ -23,7 +23,7 @@ const SettingsCard = styled.form`
   }
 
   > h1 {
-    color: rgb(255, 210, 150);
+    color: rgb(255, 179, 117);
     grid-area: heading;
     margin: 0 auto 4rem auto;
     text-align: center;
