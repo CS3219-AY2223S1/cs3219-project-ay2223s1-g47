@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 const TextFieldWrapper = styled.div`
   > label {
-    color: ${(props: any) => props.hasError? "rgb(255, 77, 118)" : "#bbb"};
+    color: ${(props: any) => props.hasError? "rgb(255, 77, 118)" : "#aaa"};
     margin: 0 0 .8em .8em;
   }
 ` as any;

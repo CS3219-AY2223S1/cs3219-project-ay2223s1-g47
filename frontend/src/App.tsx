@@ -14,6 +14,7 @@ import styled from "styled-components";
 
 import 'react-toastify/dist/ReactToastify.css';
 import { NavBar } from "./components/NavBar";
+import { HistoryPage } from "./components/HistoryPage";
 
 const AppComponent = styled.div`
   background: rgb(48, 48, 51);
@@ -103,8 +104,18 @@ function App() {
               element={
                 <ProtectedRoute
                   redirectPath={"/"}
-                  isAllowed={loggedIn} // if logged in, redirect to home
+                  isAllowed={loggedIn} // if not logged in, redirect to home
                   children={<AccountPage />}
+                />
+              }
+            />
+            <Route
+              path="/history"
+              element={
+                <ProtectedRoute
+                  redirectPath={"/"}
+                  isAllowed={loggedIn} // if not logged in, redirect to home
+                  children={<HistoryPage />}
                 />
               }
             />

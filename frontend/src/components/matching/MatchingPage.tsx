@@ -28,6 +28,7 @@ const Card = styled.div`
 
   p {
     flex: 1;
+    margin: 1rem 0 2rem 0;
   }
 
   h2 {
