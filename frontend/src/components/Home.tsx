@@ -7,14 +7,34 @@ import {
   Button,
   Typography,
 } from "@mui/material";
+import { editableInputTypes } from "@testing-library/user-event/dist/utils";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
+import styled from "styled-components";
 import { UserContext, UserContextType } from "../contexts/UserContext";
 import useIsMobile from "../hooks/useIsMobile";
+import { ActiveRoomComponent } from "./collaboration/ActiveRoomComponent";
 import MatchingPage from "./matching/MatchingPage";
 
+const HomeComponent = styled.div`
+  display: grid;
+  grid-row-gap: 4rem;
+  grid-template-rows: auto auto;
+`;
 
+const MatchingSection = styled.div`
+  > h1 {
+    margin: 0 auto;
+    text-align: center;
+    text-shadow: 8px 2px 30px rgba(255, 255, 255, .4);
+  }
 
+  > p {
+    margin: 2rem auto 4rem auto;
+    max-width: 600px;
+    text-align: center;
+  }
+`;
 
 function Home() {
 
@@ -57,13 +77,16 @@ function Home() {
 
   // ====== Render ======
   return (
-    <div>
-      <h1>Find a Match</h1>
-      <p>
-        Join a paired-programming session with a similarlly skilled programmer
-      </p>
-      <MatchingPage/>
-    </div>
+    <HomeComponent>
+      <ActiveRoomComponent/>
+      <MatchingSection>
+        <h1>Find a Match</h1>
+        <p>
+          Join a paired-programming session with a similarlly skilled programmer
+        </p>
+        <MatchingPage/>
+      </MatchingSection>
+    </HomeComponent>
   );
 }
 export default Home;

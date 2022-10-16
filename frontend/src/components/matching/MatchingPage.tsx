@@ -18,8 +18,8 @@ const Grid = styled.div`
 const Card = styled.div`
   align-items: center;
   border-radius: 20px;
-  box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, .5),
-      -5px -5px 15px 5px rgba(255, 255, 255, .2);
+  box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, .4),
+      -5px -5px 15px 5px rgba(255, 255, 255, .1);
   display: flex;
   flex-direction: column;
   justify-content: center;

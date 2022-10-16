@@ -25,6 +25,7 @@ const AppComponent = styled.div`
 const Content = styled.div`
   margin: 0 auto;
   max-width: 1000px;
+  padding: 3rem 0;
 `;
 
 function App() {
