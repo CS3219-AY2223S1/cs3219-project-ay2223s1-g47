@@ -13,12 +13,18 @@ import CollaborationPage from "./components/collaboration/CollaborationPage";
 import styled from "styled-components";
 
 import 'react-toastify/dist/ReactToastify.css';
+import { NavBar } from "./components/NavBar";
 
 const AppComponent = styled.div`
   background: #444;
   color: #fff;
   font-family: sans-serif;
   min-height: 100vh;
+`;
+
+const Content = styled.div`
+  margin: 0 auto;
+  max-width: 1000px;
 `;
 
 function App() {
@@ -32,58 +38,61 @@ function App() {
   return (
     <AppComponent>
       <Router>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute
-                redirectPath={"/login"}
-                isAllowed={loggedIn}
-                children={<Home />}
-              />
-            }
-          />
-          <Route
-            path="/match"
-            element={
-              <ProtectedRoute
-                redirectPath={"/"}
-                isAllowed={loggedIn}
-                children={<MatchingPage />}
-              />
-            }
-          />
-          <Route
-            path="/room"
-            element={
-              <ProtectedRoute
-                redirectPath={"/"}
-                isAllowed={loggedIn}
-                children={<CollaborationPage />}
-              />
-            }
-          />
-          <Route
-            path="/signup"
-            element={
-              <ProtectedRoute
-                redirectPath={"/"}
-                isAllowed={true} // if logged in, redirect to home
-                children={<SignupPage />}
-              />
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              <ProtectedRoute
-                redirectPath={"/"}
-                isAllowed={!loggedIn} // if logged in, redirect to home
-                children={<LoginPage />}
-              />
-            }
-          />
-        </Routes>
+        <NavBar/>
+        <Content>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute
+                  redirectPath={"/login"}
+                  isAllowed={loggedIn}
+                  children={<Home />}
+                />
+              }
+            />
+            <Route
+              path="/match"
+              element={
+                <ProtectedRoute
+                  redirectPath={"/"}
+                  isAllowed={loggedIn}
+                  children={<MatchingPage />}
+                />
+              }
+            />
+            <Route
+              path="/room"
+              element={
+                <ProtectedRoute
+                  redirectPath={"/"}
+                  isAllowed={loggedIn}
+                  children={<CollaborationPage />}
+                />
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <ProtectedRoute
+                  redirectPath={"/"}
+                  isAllowed={true} // if logged in, redirect to home
+                  children={<SignupPage />}
+                />
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <ProtectedRoute
+                  redirectPath={"/"}
+                  isAllowed={!loggedIn} // if logged in, redirect to home
+                  children={<LoginPage />}
+                />
+              }
+            />
+          </Routes>
+        </Content>
       </Router>
     </AppComponent>
   );

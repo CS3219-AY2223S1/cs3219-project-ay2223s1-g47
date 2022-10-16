@@ -11,16 +11,24 @@ const serverUri = process.env.MATCHING_SERVICE_URI || "http://localhost:8001";
 
 const Grid = styled.div`
   display: grid;
-  grid-column-gap: 2rem;
+  grid-column-gap: 3rem;
   grid-template-columns: 1fr 1fr 1fr;
 `;
 
 const Card = styled.div`
+  align-items: center;
   border-radius: 20px;
   box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, .5),
       -5px -5px 15px 5px rgba(255, 255, 255, .2);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
   padding: 2em 1em;
   text-align: center;
+
+  p {
+    flex: 1;
+  }
 
   h2 {
     color: rgb(255, 210, 150);
@@ -37,6 +45,7 @@ const Button = styled.button`
   font-family: inherit;
   font-size: inherit;
   font-weight: bold;
+  min-width: 0;
   padding: .8em 1.6em;
 
   &:hover {
