@@ -18,16 +18,16 @@ const NavBarWrapper = styled.div`
 
     li {
         margin: 0 0 0 1em;
+
+        a {
+            color: inherit;
+            text-decoration: none;
+        }
     }
 
     li:first-of-type {
         flex: 1;
         margin: 0;
-    }
-
-    a {
-        color: inherit;
-        text-decoration: none;
     }
 
     a:hover {

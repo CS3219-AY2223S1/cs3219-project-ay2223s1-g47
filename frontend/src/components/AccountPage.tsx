@@ -6,28 +6,33 @@ import { UserContext, UserContextType } from "../contexts/UserContext";
 import useIsMobile from "../hooks/useIsMobile";
 import { TextField } from "./TextField";
 
-const SettingsForm = styled.form`
+const SettingsCard = styled.form`
   border-radius: 20px;
   box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, .4),
-      -5px -5px 15px 5px rgba(255, 255, 255, .1);
-  display: grid;
-  grid-column-gap: 1rem;
-  grid-row-gap: 3rem;
-  grid-template-columns: 1fr auto;
-  grid-template-areas: 'heading heading'
-                       'field1 field1'
-                       'field2 field2';
+      -5px -5px 15px 5px rgba(63, 63, 74, 1);
   margin: 0 auto;
   max-width: 600px;
-  padding: 4rem 2rem;
+  padding: 3rem 2rem 4rem 2rem;
+
+  > form {
+    display: grid;
+    grid-column-gap: 1rem;
+    grid-row-gap: 3rem;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto;
+  }
 
   > h1 {
     color: rgb(255, 210, 150);
     grid-area: heading;
-    margin: 0 auto 2rem auto;
+    margin: 0 auto 4rem auto;
     text-align: center;
     text-shadow: 5px 2px 20px rgba(255, 90, 8, .8);
   }
+`;
+
+const ButtonContainer = styled.div`
+  margin: 1.2em 0 0 0;
 `;
 
 const Button = styled.button`
@@ -70,7 +75,8 @@ function AccountPage() {
   const navigate = useNavigate();
 
   // ================ Event handlers ==================
-  const handleChangeUsername = async () => {
+  const handleChangeUsername = async (e: any) => {
+    e.preventDefault();
     await apiCallUserChangeUsername(username, "")
     .then((response) => {
       if (response.status === 200) {
@@ -87,7 +93,8 @@ function AccountPage() {
     });
   }
 
-  const handleChangePassword = async () => {
+  const handleChangePassword = async (e: any) => {
+    e.preventDefault();
     await apiCallUserChangePassword("", password)
     .then((response) => {
       if (response.status === 200) {
@@ -140,14 +147,19 @@ function AccountPage() {
 
 
   // ====== Render ======
-  return (
-    <SettingsForm>
-      <h1>Settings</h1>
-        {changeUser_TextField}
+  return (<SettingsCard>
+    <h1>Settings</h1>
+    <form>
+      {changeUser_TextField}
+      <ButtonContainer>
         {changeUser_button}
-        {changePassword_TextField}
+      </ButtonContainer>
+      {changePassword_TextField}
+      <ButtonContainer>
         {changePassword_button}
-    </SettingsForm>
+      </ButtonContainer>
+    </form>
+  </SettingsCard>
   );
 }
 export default AccountPage;

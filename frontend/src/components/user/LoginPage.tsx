@@ -101,8 +101,6 @@ function LoginPage() {
     if (!validateUsernameAndPassword()) {
       return;
     }
-    
-    console.log(username)
 
     // try to login in the backend
     await login(username, password)
