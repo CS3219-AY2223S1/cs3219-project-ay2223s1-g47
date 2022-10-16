@@ -28,7 +28,6 @@ const PORT = process.env.PORT || DEFAULT_PORT;
 if (require.main === module) {
     app.listen(PORT, async () => {
       await db.connectDb(false);
-    app.listen(PORT, () => console.log("user-service listening on port " + PORT));
     });
   }
   

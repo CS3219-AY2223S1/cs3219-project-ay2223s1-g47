@@ -73,9 +73,9 @@ const populateDevDb = () => {
   } as ConnectOptions);
 
   // 2. initialization
-  if (!test) {
+  // if (!test) {
     populateDevDb();
-  }
+  // }
 
   // 3. log
   console.log("DB connection complete!");
