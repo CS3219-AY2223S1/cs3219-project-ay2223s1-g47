@@ -16,10 +16,14 @@ import 'react-toastify/dist/ReactToastify.css';
 import { NavBar } from "./components/NavBar";
 
 const AppComponent = styled.div`
-  background: #444;
+  background: rgb(48, 48, 51);
   color: #fff;
   font-family: sans-serif;
   min-height: 100vh;
+
+  a {
+    color: rgb(64, 159, 255);
+  }
 `;
 
 const Content = styled.div`
@@ -39,7 +43,9 @@ function App() {
   return (
     <AppComponent>
       <Router>
-        <NavBar/>
+        { loggedIn &&
+          <NavBar/>
+        }
         <Content>
           <Routes>
             <Route

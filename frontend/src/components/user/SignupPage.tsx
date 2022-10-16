@@ -1,11 +1,6 @@
 import {
-  Box,
-  Button,
   Link,
-  Paper,
   Snackbar,
-  Stack,
-  TextField,
   Typography,
 } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
@@ -14,6 +9,69 @@ import { useState } from "react";
 import { apiCallUserSignup } from "../../api/UserServiceApi";
 import useIsMobile from "../../hooks/useIsMobile";
 import { validatePassword, validateUsername } from "./utils";
+import styled from "styled-components";
+import { TextField } from "../TextField";
+
+const SignupCard = styled.div`
+  border-radius: 20px;
+  box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, .4),
+      -5px -5px 15px 5px rgba(63, 63, 74, 1);
+  margin: 0 auto;
+  max-width: 500px;
+  padding: 3rem 2rem 4rem 2rem;
+
+  > form {
+    display: grid;
+    grid-row-gap: 2rem;
+  }
+
+  a {
+    margin: 0 0 1rem 0;
+  }
+
+  > h1 {
+    color: rgb(255, 210, 150);
+    grid-area: heading;
+    margin: 0 auto 4rem auto;
+    text-align: center;
+    text-shadow: 5px 2px 20px rgba(255, 90, 8, .8);
+  }
+`;
+
+const Button = styled.button`
+  background: rgb(46, 137, 255);
+  border: none;
+  border-radius: 2rem;
+  box-shadow: 5px 5px 15px 5px rgba(34, 0, 224, .5);
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: bold;
+  min-width: 0;
+  padding: .8em 1.6em;
+
+  &:hover {
+    background: rgb(64, 159, 255);
+    box-shadow: 5px 5px 15px 5px rgba(43, 54, 255, .5);
+    cursor: pointer;
+  }
+`;
+
+const Logo = styled.div`
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 0 0 4rem 0;
+    text-align: center;
+
+    > span:first-of-type {
+        color: rgb(255, 210, 150);
+        text-shadow: 5px 2px 20px rgba(255, 90, 8, .8);
+    }
+    > span:last-of-type {
+        color: rgb(46, 137, 255);
+        text-shadow: 5px 2px 20px rgba(34, 0, 224, .5);
+    }
+`;
 
 function SignupPage() {
   // =============== State management ===============
@@ -36,7 +94,8 @@ function SignupPage() {
   /**
    * Makes the API call to sign up.
    */
-  const handleSignup = async () => {
+  const handleSignup = async (e: any) => {
+    e.preventDefault();
     // check and validate inputs
     if (!validateUsernameAndPassword()) {
       return;
@@ -72,72 +131,44 @@ function SignupPage() {
 
   // =============== UI rendering ===============
 
-  const signUpFormInputFields = (
-    <Stack>
-      <TextField
-        label="Username"
-        variant="outlined"
-        type="username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        sx={{ marginBottom: "1rem" }}
-        error={isUsernameError}
-        helperText={
-          isUsernameError &&
-          "3-20 characters, only letters, numbers, and underscores"
-        }
-        autoFocus
-      />
-      <TextField
-        label="Password"
-        variant="outlined"
-        type="password"
-        value={password}
-        error={isPasswordError}
-        helperText={isPasswordError && "Passwords must match!"}
-        onChange={(e) => setPassword(e.target.value)}
-        sx={{ marginBottom: "2rem" }}
-      />
-      <TextField
-        label="Confirm Password"
-        variant="outlined"
-        type="password"
-        value={reenteredPassword}
-        onChange={(e) => setReenteredPassword(e.target.value)}
-        error={isPasswordError}
-        helperText={isPasswordError && "Passwords must match!"}
-        sx={{ marginBottom: "1rem" }}
-      />
-      <Link href="/login" underline="always" sx={{ marginBottom: "2rem" }}>
-        <Typography noWrap={true} variant={"subtitle2"}>
-          Already have an account?
-        </Typography>
-      </Link>
-    </Stack>
-  );
-
-  const signUpFormButtons = (
-    <Box>
-      <Button
-        style={{ width: "100%", textTransform: "none" }}
-        variant="contained"
-        onClick={handleSignup}
-      >
-        <Typography align="center" variant="subtitle1">
-          Sign up
-        </Typography>
-      </Button>
-    </Box>
-  );
-
   /**
    * This renders the sign up form.
    */
   const signUpForm = (
-    <Box display={"flex"} flexDirection={"column"} padding={"2rem"}>
-      {signUpFormInputFields}
-      {signUpFormButtons}
-    </Box>
+    <form>
+      <TextField
+        label="Username"
+        type="username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        hasError={isUsernameError}
+        helperText={
+          isUsernameError ?
+          "3-20 characters, only letters, numbers, and underscores"
+          : null
+        }
+      />
+      <TextField
+        label="Password"
+        type="password"
+        value={password}
+        hasError={isPasswordError}
+        helperText={isPasswordError ? "Passwords must match!" : null}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+      <TextField
+        label="Confirm Password"
+        type="password"
+        value={reenteredPassword}
+        onChange={(e) => setReenteredPassword(e.target.value)}
+        hasError={isPasswordError}
+        helperText={isPasswordError ? "Passwords must match!" : null}
+      />
+      <Link href="/login">
+          Already have an account?
+      </Link>
+      <Button onClick={handleSignup}>Sign Up</Button>
+    </form>
   );
 
   /**
@@ -157,25 +188,14 @@ function SignupPage() {
     </Snackbar>
   );
 
-  return (
-    <Box display={"flex"} alignItems={"center"} flexDirection={"column"}>
-      <Paper
-        elevation={24}
-        style={{
-          width: isMobile ? "90%" : "30rem",
-          paddingTop: "40px",
-          paddingLeft: isMobile ? "0px" : "20px",
-          paddingRight: isMobile ? "0px" : "20px",
-          paddingBottom: "40px",
-        }}
-      >
-        <Typography variant={"h2"} marginBottom={"2rem"} textAlign={"center"}>
-          Sign Up
-        </Typography>
-        {signUpForm}
-        {errorSnackbar}
-      </Paper>
-    </Box>
+  return (<>
+    <Logo><span>Peer</span><span>Prep</span></Logo>
+    <SignupCard>
+      <h1>Sign Up</h1>
+      {signUpForm}
+      {errorSnackbar}
+    </SignupCard>
+  </>
   );
 }
 

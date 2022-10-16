@@ -1,12 +1,6 @@
 import {
-  Box,
-  Button,
   Link,
-  Paper,
   Snackbar,
-  Stack,
-  TextField,
-  Typography,
 } from "@mui/material";
 import { useContext, useState } from "react";
 import { useNavigate } from "react-router-dom";
@@ -14,6 +8,69 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { validateUsername } from "./utils";
 import MuiAlert from "@mui/material/Alert";
 import { UserContext, UserContextType } from "../../contexts/UserContext";
+import styled from "styled-components";
+import { TextField } from "../TextField";
+
+const LoginCard = styled.div`
+  border-radius: 20px;
+  box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, .4),
+      -5px -5px 15px 5px rgba(63, 63, 74, 1);
+  margin: 0 auto;
+  max-width: 500px;
+  padding: 3rem 2rem 4rem 2rem;
+
+  > form {
+    display: grid;
+    grid-row-gap: 2rem;
+  }
+
+  a {
+    margin: 0 0 1rem 0;
+  }
+
+  > h1 {
+    color: rgb(255, 210, 150);
+    grid-area: heading;
+    margin: 0 auto 4rem auto;
+    text-align: center;
+    text-shadow: 5px 2px 20px rgba(255, 90, 8, .8);
+  }
+`;
+
+const Button = styled.button`
+  background: rgb(46, 137, 255);
+  border: none;
+  border-radius: 2rem;
+  box-shadow: 5px 5px 15px 5px rgba(34, 0, 224, .5);
+  color: inherit;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: bold;
+  min-width: 0;
+  padding: .8em 1.6em;
+
+  &:hover {
+    background: rgb(64, 159, 255);
+    box-shadow: 5px 5px 15px 5px rgba(43, 54, 255, .5);
+    cursor: pointer;
+  }
+`;
+
+const Logo = styled.div`
+    font-size: 3rem;
+    font-weight: bold;
+    margin: 0 0 4rem 0;
+    text-align: center;
+
+    > span:first-of-type {
+        color: rgb(255, 210, 150);
+        text-shadow: 5px 2px 20px rgba(255, 90, 8, .8);
+    }
+    > span:last-of-type {
+        color: rgb(46, 137, 255);
+        text-shadow: 5px 2px 20px rgba(34, 0, 224, .5);
+    }
+`;
 
 function LoginPage() {
   // =============== State management ===============
@@ -38,11 +95,14 @@ function LoginPage() {
   /**
    * Makes the API call to login.
    */
-  const handleLogin = async () => {
+  const handleLogin = async (e: any) => {
+    e.preventDefault();
     // check and validate inputs
     if (!validateUsernameAndPassword()) {
       return;
     }
+    
+    console.log(username)
 
     // try to login in the backend
     await login(username, password)
@@ -76,67 +136,34 @@ function LoginPage() {
     return usernameIsValid && passwordIsValid;
   };
 
-  // ================== UI components ================
-  /**
-   * Renders the login form.
-   */
-  const loginFormButtons = (
-    <Box>
-      <Button
-        style={{ width: "100%", textTransform: "none" }}
-        variant="contained"
-        onClick={handleLogin}
-      >
-        <Typography align="center" variant="subtitle1">
-          Log in
-        </Typography>
-      </Button>
-    </Box>
-  );
-
-  const loginFormInputFields = (
-    <Stack>
-      <TextField
-        label="Username"
-        variant="outlined"
-        type="username"
-        value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        sx={{ marginBottom: "1rem" }}
-        error={isUsernameError}
-        helperText={
-          isUsernameError &&
-          "3-20 characters, only letters, numbers, and underscores"
-        }
-        autoFocus
-      />
-      <TextField
-        label="Password"
-        variant="outlined"
-        type="password"
-        value={password}
-        error={isPasswordError}
-        helperText={isPasswordError && "Password cannot be empty!"}
-        onChange={(e) => setPassword(e.target.value)}
-        sx={{ marginBottom: "2rem" }}
-      />
-
-      <Link href="/signup" underline="always" sx={{ marginBottom: "2rem" }}>
-        <Typography noWrap={true} variant={"subtitle2"}>
-          Don't have an account?
-        </Typography>
-      </Link>
-    </Stack>
-  );
-
   /**
    * This renders the login form.
    */
   const loginForm = (
-    <Box display={"flex"} flexDirection={"column"} padding={"2rem"}>
-      {loginFormInputFields}
-      {loginFormButtons}
-    </Box>
+    <form onSubmit={handleLogin}>
+      <TextField
+        label="Username"
+        type="username"
+        value={username}
+        onChange={(e) => setUsername(e.target.value)}
+        hasError={isUsernameError}
+        helperText={
+          isUsernameError ? "3-20 characters, only letters, numbers, and underscores" : null
+        }
+      />
+      <TextField
+        label="Password"
+        type="password"
+        value={password}
+        hasError={isPasswordError}
+        helperText={isPasswordError ? "Password cannot be empty!" : null}
+        onChange={(e) => setPassword(e.target.value)}
+      />
+
+      <Link href="/signup">Don't have an account?</Link>
+      
+      <Button>Login In</Button>
+    </form>
   );
 
   /**
@@ -156,25 +183,14 @@ function LoginPage() {
     </Snackbar>
   );
 
-  return (
-    <Box display={"flex"} alignItems={"center"} flexDirection={"column"}>
-      <Paper
-        elevation={24}
-        style={{
-          width: isMobile ? "90%" : "30rem",
-          paddingTop: "40px",
-          paddingLeft: isMobile ? "0px" : "20px",
-          paddingRight: isMobile ? "0px" : "20px",
-          paddingBottom: "40px",
-        }}
-      >
-        <Typography variant={"h2"} marginBottom={"2rem"} textAlign={"center"}>
-          Log in
-        </Typography>
-        {loginForm}
-        {errorSnackbar}
-      </Paper>
-    </Box>
+  return (<>
+    <Logo><span>Peer</span><span>Prep</span></Logo>
+    <LoginCard>
+      <h1>Log In</h1>
+      {loginForm}
+      {errorSnackbar}
+    </LoginCard>
+  </>
   );
 }
 
