@@ -10,7 +10,7 @@ let mock_db: MongoMemoryServer | null = null;
 
 
 // initialization CRUD handler
-const populateDevDb = () => {
+const populateDevDb = async () => {
   const db = mongoose.connection;
   // 1. if dev, populate
   if (ENV_IS_DEV) {
@@ -40,10 +40,10 @@ const populateDevDb = () => {
 
       // for each specified table, we populate the db
       console.log("Repopulating tables");
-      tables.forEach((table: string) => {
+      tables.forEach(async (table: string) => {
         console.log("Reading table: " + table);
         const entries = devData[table];
-        db.collection(table).insertMany(entries);
+        await db.collection(table).insertMany(entries);
       });
     } catch (error) {
       throw error;
@@ -74,7 +74,7 @@ const populateDevDb = () => {
 
   // 2. initialization
   // if (!test) {
-    populateDevDb();
+    await populateDevDb();
   // }
 
   // 3. log
