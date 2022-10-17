@@ -4,7 +4,6 @@ from pydantic import BaseModel
 
 class RoomState(BaseModel):
 
-    chat_history: List[ChatMessage]
     code: str
 
     @staticmethod
@@ -13,6 +12,5 @@ class RoomState(BaseModel):
         Updates the room state from a frontend state.
         """
         return RoomState(
-            chat_history = frontend_state["chatHistory"],
             code = frontend_state["code"]
         )

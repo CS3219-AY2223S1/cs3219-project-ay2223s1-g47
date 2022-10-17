@@ -5,10 +5,12 @@ import {
   modifyUser,
   loginUser,
   userWithIdExists,
+  getUserWithId,
 } from "./services/user-services";
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import {
+  createBadRequestResponse,
   createInternalServerErrorResponse,
   createOkResponse,
   createUnauthorizedResponse,
@@ -253,4 +255,24 @@ export async function get_jwt(request: Request, response: Response) {
   // 3. return user
   const jwt = await signJWT(user);
   return createOkResponse(response, { jwt: jwt });
+}
+
+/**
+ * Handles a get request to get a username given the id.
+ */
+export async function getUsernameFromId(request: Request, response: Response) {
+  // 1. authenticate
+  // TODO: we do this next time
+
+  // 2. get id from request
+  const id = request.query.id as unknown as string;
+  if (!id) {
+    return createBadRequestResponse(response, "Missing id");
+  }
+
+  // 3. get username from id
+  const user = await getUserWithId(id);
+
+  // 4. return username
+  return createOkResponse(response, { username: user.username });
 }

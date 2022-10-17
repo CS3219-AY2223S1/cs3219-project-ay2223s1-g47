@@ -10,6 +10,7 @@ import {
   changeUsername,
   changePassword,
   get_jwt,
+  getUsernameFromId,
 } from "./controller/user-controller";
 import db from "./db/db";
 
@@ -79,6 +80,11 @@ app.post("/auth/jwt", auth_server);
  * services that require explicit jwt's, like socket connections.
  */
 app.get("/get_jwt", get_jwt);
+
+/**
+ * Endpoint to ping to get a username from a user id.
+ */
+app.get("/username", getUsernameFromId);
 
 // listen only if launched directly
 if (require.main === module) {

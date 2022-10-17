@@ -10,8 +10,6 @@ services:
       - "8001:8001"
     depends_on:
       - rabbitmq
-      - user-service
-      - collaboration-service
     restart: on-failure
     environment:
       - MODE=DEV

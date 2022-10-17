@@ -1,16 +1,15 @@
-import asyncio
-import logging
 from typing import Dict, List
+from fastapi import WebSocket
+from three_merge import merge
 
 from src.collaboration.interfaces.events import ChatRoomEvent, ChatRoomEventType
-
-from src.constants import CLEANUP_TIMEOUT_IN_SECONDS
 from src.collaboration.interfaces.user import User
 from src.collaboration.interfaces.room_state import RoomState
 from src.collaboration.interfaces.room import Room
 from src.collaboration.services.room_crud_services import RoomCrudService
-from src.collaboration.exceptions import RoomConnectionException, RoomEntryNotAuthorizedException, RoomNotFoundException
-from fastapi import WebSocket
+from src.collaboration.exceptions import RoomEntryNotAuthorizedException, RoomNotFoundException
+
+
 
 import time
 
@@ -23,6 +22,7 @@ class RoomConnectionManager:
         self.crud_service = crud_service
         self.room_id = room_id
         self.room: Room = None
+        self.user_states: Dict[str, RoomState] = dict() # userid -> room state
 
     async def initialize(self, user: User,  websocket: WebSocket):
         """
@@ -42,22 +42,64 @@ class RoomConnectionManager:
         if user.id not in allowed_users_ids:
             raise RoomEntryNotAuthorizedException("User not allowed in room.")
 
-        # check that room is not closed
-        if self.room.is_closed:
-            raise RoomConnectionException("Room already closed, cannot enter.", detail = self.room)
-
         # add socket to room
         await self.add_socket_to_room(user.id, websocket)
 
-        # # send message 
-        # connected_event = ChatRoomEvent(
-        #     user_ids = [user.id],
-        #     message = f"{user.username} has joined the room.",
-        #     event_type = ChatRoomEventType.USER_JOIN
-        # )
-        
-        # for connection in self.active_connections.values():
-        #     await connection.send_json(self.room.dict())
+        # publish join room event
+        join_event = ChatRoomEvent(
+            event_type=ChatRoomEventType.USER_JOIN,
+            user_id=user.id,
+            room_id=self.room_id,
+            timestamp=time.time()
+        )
+
+        # update state
+        self.room.num_in_room += 1
+        self.room.events.append(join_event)
+
+        # send room state to user
+        await self.publish_room_excluding([], self.room)
+
+        # save to db
+        self.crud_service.update_room(self.room)
+
+    async def publish_room_to(self, include_ids: List[str]):
+        """
+        Publishes a room to specified sockets.
+        """
+        # merge room states
+        self.merge_room_states()
+
+        # publish to sockets
+        for id, connection in self.active_connections.items():
+            if id in include_ids:
+                await connection.send_json(self.room.dict())
+    
+    async def publish_room_excluding(self, exclude_ids: List[str]):
+        """
+        Publishes a room to all sockets except the specified ones.
+        """
+        # merge room states
+        self.merge_room_states()
+
+        # publish to sockets
+        for id, connection in self.active_connections.items():
+            if id not in exclude_ids:
+                await connection.send_json(self.room.dict())
+
+    def merge_room_states(self): 
+        """
+        Merges the room states of the two users into one.
+        """
+        # merge room code
+        user1_id = self.room.user1_id
+        if self.user_states.get(user1_id) is None: 
+            self.user_states[user1_id] = self.room.state
+        user2_id = self.room.user1_id
+        if self.user_states.get(user2_id) is None: 
+            self.user_states[user2_id] = self.room.state
+        self.room.state.code = merge(self.user_states[user1_id].code, self.user_states[user2_id].code, self.room.state.code)
+    
 
     async def add_socket_to_room(self, id: str, websocket: WebSocket):
         """
@@ -68,16 +110,11 @@ class RoomConnectionManager:
         if id in self.active_connections:
             await self.active_connections.pop(id).close()
             
-
         # add connection
         self.active_connections[id] = websocket
         await websocket.accept()
 
-        # update state
-        self.room.num_in_room += 1
-
-        # save to db
-        self.crud_service.update_room(self.room)
+        
 
     async def disconnect_user(self, user: User):
         """
@@ -86,38 +123,37 @@ class RoomConnectionManager:
         # remove socket from room
         await self.remove_socket_from_room(user.id)
 
-        # # send message 
-        # disconnected_event = ChatRoomEvent(
-        #     user_ids = [user.id],
-        #     message = f"{user.username} has left the room.",
-        #     event_type = ChatRoomEventType.USER_LEFT
-        # )
-        # for connection in self.active_connections.values():
-        #     await connection.send_json(self.room.dict())
+        # publish join room event
+        leave_event = ChatRoomEvent(
+            event_type=ChatRoomEventType.USER_LEFT,
+            user_id=user.id,
+            room_id=self.room_id,
+            timestamp=time.time()
+        )
+
+        # update state
+        self.room.num_in_room -= 1
+        self.room.events.append(leave_event)
+
+        # send room state to user
+        await self.publish_room_excluding([user.id], self.room)
+
+        # save to db
+        self.crud_service.update_room(self.room)
         
 
     async def remove_socket_from_room(self, id: str):
         """
         Removes a websocket object from the list of active connections.
         """
-        # 1. remove
         print(self.active_connections)
         if id in self.active_connections:
             websocket = self.active_connections.pop(id)
         print(self.active_connections)
 
-        # 2. update state
-        self.room.num_in_room -= 1
-        if self.room.num_in_room == 0: # empty room
-            # start async worker to close room in timeout
-            self.handle_cleanup(CLEANUP_TIMEOUT_IN_SECONDS)
-
-        # 3. push to db
-        self.crud_service.update_room(self.room)
 
 
-
-    async def update_room_state(self, room_state: RoomState):
+    async def update_room_state(self, user: User, room_state: RoomState):
         """
         Updates the room state in the database.
         """
@@ -133,24 +169,9 @@ class RoomConnectionManager:
         self.crud_service.update_room(self.room)
 
         # publish to all sockets
-        
         for id, connection in self.active_connections.items():
             print("sending to socket", id)
             await connection.send_json(self.room.dict())
-    
-    async def handle_cleanup(self, timeout_in_seconds: int):
-        """
-        Handles the cleanup of the room after a timeout.
-        """
-        
-        # sleep for timeout_in_seconds
-        time.sleep(timeout_in_seconds)
 
-        # check if room is empty. if empty, close. else, do nothing.
-        if self.room.num_in_room == 0 and not self.room.is_closed and len(self.active_connections) == 0:
-            self.room.is_closed = True
-            await self.crud_service.update_room(self.room)
-            logging.debug(f"Room {self.room.room_id} closed.")
-        del self # cleanup
 
 global_room_connection_store: Dict[str, RoomConnectionManager] = dict() # room id -> room connection manager
