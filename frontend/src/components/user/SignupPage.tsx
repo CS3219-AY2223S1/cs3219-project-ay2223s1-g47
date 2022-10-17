@@ -11,6 +11,7 @@ import useIsMobile from "../../hooks/useIsMobile";
 import { validatePassword, validateUsername } from "./utils";
 import styled from "styled-components";
 import { TextField } from "../TextField";
+import { Button } from "../Button";
 
 const SignupCard = styled.div`
   border-radius: 20px;
@@ -35,25 +36,6 @@ const SignupCard = styled.div`
     margin: 0 auto 4rem auto;
     text-align: center;
     text-shadow: 5px 2px 20px rgba(255, 90, 8, .8);
-  }
-`;
-
-const Button = styled.button`
-  background: rgb(46, 137, 255);
-  border: none;
-  border-radius: 2rem;
-  box-shadow: 5px 5px 15px 5px rgba(34, 0, 224, .5);
-  color: inherit;
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: bold;
-  min-width: 0;
-  padding: .8em 1.6em;
-
-  &:hover {
-    background: rgb(64, 159, 255);
-    box-shadow: 5px 5px 15px 5px rgba(43, 54, 255, .5);
-    cursor: pointer;
   }
 `;
 

@@ -4,6 +4,7 @@ import styled from "styled-components";
 import { apiCallUserChangeUsername,apiCallUserChangePassword } from "../api/UserServiceApi";
 import { UserContext, UserContextType } from "../contexts/UserContext";
 import useIsMobile from "../hooks/useIsMobile";
+import { Button } from "./Button";
 import { TextField } from "./TextField";
 
 const SettingsCard = styled.form`
@@ -33,25 +34,6 @@ const SettingsCard = styled.form`
 
 const ButtonContainer = styled.div`
   margin: 1.2em 0 0 0;
-`;
-
-const Button = styled.button`
-  background: rgb(46, 137, 255);
-  border: none;
-  border-radius: 2rem;
-  box-shadow: 5px 5px 15px 5px rgba(34, 0, 224, .5);
-  color: inherit;
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: bold;
-  min-width: 0;
-  padding: .8em 1.6em;
-
-  &:hover {
-    background: rgb(64, 159, 255);
-    box-shadow: 5px 5px 15px 5px rgba(43, 54, 255, .5);
-    cursor: pointer;
-  }
 `;
 
 function AccountPage() {
@@ -125,9 +107,7 @@ function AccountPage() {
         }
       />
   const changeUser_button = 
-  <Button onClick={handleChangeUsername}>
-    Confirm New Username
-  </Button>
+  <Button onClick={handleChangeUsername}>Confirm New Username</Button>
 
       const changePassword_TextField = 
       <TextField

@@ -42,7 +42,7 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
   const defaultUser: User = {
     username: "",
     userId: "",
-    loggedIn: false,
+    loggedIn: true,
   };
   const [user, setUser] = useState<User>(defaultUser);
 
