@@ -36,6 +36,7 @@ async def room_socket(websocket: WebSocket, room_id: str = Query(default=""), us
             activity_state = RoomState.from_frontend_state(frontend_state)
 
             # pass to connection manager to handle
+            print("here")
             await room_manager.update_room_state(user, activity_state)
 
             

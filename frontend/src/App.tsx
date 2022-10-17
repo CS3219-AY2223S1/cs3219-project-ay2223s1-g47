@@ -11,15 +11,14 @@ import MatchingPage from "./components/matching/MatchingPage";
 import { ToastContainer } from "react-toastify";
 import CollaborationPage from "./components/collaboration/CollaborationPage";
 
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 
 function App() {
   // =============== State management ===============
   // user context on login state
-  const { user } = useContext(UserContext) as UserContextType;
-  const { loggedIn } = user;
+  const { isLoggedIn } = useContext(UserContext) as UserContextType;
 
-  console.log("App.tsx: loggedIn = " + loggedIn);
+  console.log("App.tsx: loggedIn = " + isLoggedIn);
 
   return (
     <div className="App" style={{ minHeight: "100vh" }}>
@@ -30,7 +29,7 @@ function App() {
             element={
               <ProtectedRoute
                 redirectPath={"/login"}
-                isAllowed={loggedIn}
+                isAllowed={isLoggedIn}
                 children={<Home />}
               />
             }
@@ -40,7 +39,7 @@ function App() {
             element={
               <ProtectedRoute
                 redirectPath={"/"}
-                isAllowed={loggedIn}
+                isAllowed={isLoggedIn}
                 children={<MatchingPage />}
               />
             }
@@ -50,7 +49,7 @@ function App() {
             element={
               <ProtectedRoute
                 redirectPath={"/"}
-                isAllowed={loggedIn}
+                isAllowed={isLoggedIn}
                 children={<CollaborationPage />}
               />
             }
@@ -70,7 +69,7 @@ function App() {
             element={
               <ProtectedRoute
                 redirectPath={"/"}
-                isAllowed={!loggedIn} // if logged in, redirect to home
+                isAllowed={!isLoggedIn} // if logged in, redirect to home
                 children={<LoginPage />}
               />
             }

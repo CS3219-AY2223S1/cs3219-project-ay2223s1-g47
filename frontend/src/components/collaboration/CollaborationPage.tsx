@@ -72,7 +72,7 @@ function CollaborationPage() {
     language: string;
   }>({ languageGrammer: languages.js, language: "js" });
   const [code, setCode] = useState("");
-  const debouncedCode = useDebounce(code, 500); // debounce code for half second
+  const debouncedCode = useDebounce(code, 200); // debounce code for half second
 
   // =============== functions =================
 
@@ -161,6 +161,9 @@ function CollaborationPage() {
         if (roomFromResponse !== room) {
           console.log("updating");
           setRoom(roomFromResponse);
+        }
+        if (roomFromResponse.state.code !== code) {
+          console.log("updating code");
           setCode(roomFromResponse.state.code);
         }
       };

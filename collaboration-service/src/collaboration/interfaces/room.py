@@ -60,6 +60,10 @@ class RoomInResponse(RoomMetadata):
     @staticmethod
     def from_room(room: Room):
         return RoomInResponse(
+            user1_id=room.user1_id,
+            username1=room.username1,
+            user2_id=room.user2_id,
+            username2=room.username2,
             room_id=room.room_id,
             created_at=room.created_at,
             state=room.state,

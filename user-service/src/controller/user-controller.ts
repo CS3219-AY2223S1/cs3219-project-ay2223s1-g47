@@ -117,8 +117,11 @@ export async function logout(request: Request, response: Response) {
  */
 export async function changeUsername(request: Request, response: Response) {
   try {
+    // 0. check that the request has a JWT
+    const jwtCookie = request.cookies ? request.cookies.JWT : undefined;
+
     // 1. check jwt
-    const jwtPayload = (await checkJWT(request)) as unknown as User;
+    const jwtPayload = (await checkJWT(jwtCookie)) as unknown as User;
     if (!jwtPayload) {
       return createUnauthorizedResponse(response, "Invalid JWT");
     }
@@ -152,8 +155,11 @@ export async function changeUsername(request: Request, response: Response) {
  */
 export async function changePassword(request: Request, response: Response) {
   try {
+    // 0. check that the request has a JWT
+    const jwtCookie = request.cookies ? request.cookies.JWT : undefined;
+
     // 1. check jwt
-    const jwtPayload = (await checkJWT(request)) as unknown as User;
+    const jwtPayload = (await checkJWT(jwtCookie)) as unknown as User;
     if (!jwtPayload) {
       return createUnauthorizedResponse(response, "Invalid JWT");
     }
@@ -193,8 +199,12 @@ export async function changePassword(request: Request, response: Response) {
  */
 export async function auth(request: Request, response: Response) {
   console.debug("Called auth");
+
+  // 0. check that the request has a JWT
+  const jwtCookie = request.cookies ? request.cookies.JWT : undefined;
+
   // 1. check jwt
-  const jwtPayload = (await checkJWT(request)) as unknown as User;
+  const jwtPayload = (await checkJWT(jwtCookie)) as unknown as User;
   if (!jwtPayload) {
     return createUnauthorizedResponse(response, "Invalid JWT");
   }
@@ -238,10 +248,14 @@ export async function auth_server(request: Request, response: Response) {
  */
 export async function get_jwt(request: Request, response: Response) {
   console.debug("Called get jwt");
+
+  // 0. check that the request has a JWT
+  const jwtCookie = request.cookies ? request.cookies.JWT : undefined;
+
   // 1. check jwt
-  const jwtCookie = request.cookies.JWT;
   const user = (await checkJWT(jwtCookie)) as unknown as User;
   if (!user) {
+    console.log(user);
     return createUnauthorizedResponse(response, "Invalid JWT");
   }
 

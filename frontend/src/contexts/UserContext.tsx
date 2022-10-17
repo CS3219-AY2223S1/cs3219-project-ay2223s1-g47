@@ -1,4 +1,4 @@
-import React, { useState, createContext, useEffect } from "react";
+import React, { useState, createContext, useEffect, useMemo } from "react";
 import { io, Socket } from "socket.io-client";
 import {
   apiCallUserAuthentication,
@@ -15,6 +15,7 @@ import { User } from "../interfaces/users/User";
 export interface UserContextType {
   socket: Socket | null;
   user: User;
+  isLoggedIn: boolean;
   login: (
     username: string,
     password: string
@@ -42,9 +43,11 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
   const defaultUser: User = {
     username: "",
     userId: "",
-    loggedIn: true,
   };
   const [user, setUser] = useState<User>(defaultUser);
+
+  // logged in
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   // socket.io state
   const [socket, setSocket] = useState<Socket | null>(null);
@@ -58,7 +61,7 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
    * Note the empty dependency array, which means this function will only be called
    * once.
    */
-  useEffect(() => {
+  useMemo(() => {
     console.log("here");
     apiCallUserAuthentication()
       .then((response) => {
@@ -70,19 +73,18 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
             const user: User = {
               username: response.data.username,
               userId: response.data.id,
-              loggedIn: true,
             };
             setUser(user);
           }
         } else {
           // else, log the user out
-          setUser({ ...defaultUser, loggedIn: false });
+          setIsLoggedIn(false);
         }
       })
       .catch((error) => {
         console.log(error);
       });
-  }, [defaultUser]);
+  }, [isLoggedIn]);
 
   /**
    * Handles logging in and setting the global user state.
@@ -95,9 +97,9 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
         const user: User = {
           username: response.data.username,
           userId: response.data.id,
-          loggedIn: true,
         };
         setUser(user);
+        setIsLoggedIn(true);
       }
     }
 
@@ -111,6 +113,7 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
     const response = await apiCallUserLogout();
     if (response.status === 200) {
       setUser(defaultUser);
+      setIsLoggedIn(false);
     }
     return response; // in either case, return data to caller
   };
@@ -155,6 +158,7 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
     <UserContext.Provider
       value={{
         user,
+        isLoggedIn,
         login,
         logout,
         socket: socket,

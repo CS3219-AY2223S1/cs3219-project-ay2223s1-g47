@@ -48,8 +48,8 @@ class RoomConnectionManager:
         # publish join room event
         join_event = ChatRoomEvent(
             event_type=ChatRoomEventType.USER_JOIN,
-            user_id=user.id,
-            room_id=self.room_id,
+            user_ids=[user.id],
+            message=f"{user.username} joined the room.",
             timestamp=time.time()
         )
 
@@ -57,8 +57,11 @@ class RoomConnectionManager:
         self.room.num_in_room += 1
         self.room.events.append(join_event)
 
+        # merge room states
+        self.merge_room_states()
+
         # send room state to user
-        await self.publish_room_excluding([], self.room)
+        await self.publish_room_excluding([])
 
         # save to db
         self.crud_service.update_room(self.room)
@@ -67,8 +70,6 @@ class RoomConnectionManager:
         """
         Publishes a room to specified sockets.
         """
-        # merge room states
-        self.merge_room_states()
 
         # publish to sockets
         for id, connection in self.active_connections.items():
@@ -79,8 +80,6 @@ class RoomConnectionManager:
         """
         Publishes a room to all sockets except the specified ones.
         """
-        # merge room states
-        self.merge_room_states()
 
         # publish to sockets
         for id, connection in self.active_connections.items():
@@ -92,14 +91,19 @@ class RoomConnectionManager:
         Merges the room states of the two users into one.
         """
         # merge room code
+        print("merging room states")
         user1_id = self.room.user1_id
-        if self.user_states.get(user1_id) is None: 
+        if user1_id not in self.user_states: 
             self.user_states[user1_id] = self.room.state
-        user2_id = self.room.user1_id
-        if self.user_states.get(user2_id) is None: 
+        user2_id = self.room.user2_id
+        if user2_id not in self.user_states: 
             self.user_states[user2_id] = self.room.state
+        
+        print("before merge")
+        print(self.user_states[user1_id].dict(), self.user_states[user2_id].dict(), self.room.state.dict())
         self.room.state.code = merge(self.user_states[user1_id].code, self.user_states[user2_id].code, self.room.state.code)
-    
+        print("after merge")
+        print(self.user_states[user1_id].dict(), self.user_states[user2_id].dict(), self.room.state.dict())
 
     async def add_socket_to_room(self, id: str, websocket: WebSocket):
         """
@@ -135,6 +139,9 @@ class RoomConnectionManager:
         self.room.num_in_room -= 1
         self.room.events.append(leave_event)
 
+        # merge room states
+        self.merge_room_states()
+
         # send room state to user
         await self.publish_room_excluding([user.id], self.room)
 
@@ -161,9 +168,12 @@ class RoomConnectionManager:
         if room_state == self.room.state:
             return
 
-        # update tracked state
-        self.room.state = room_state
-        print("updating room state", self.room.state)
+        # update user state
+        self.user_states[user.id] = room_state
+        print("updating room state from user", user.id , room_state)
+
+        # merge room states
+        self.merge_room_states()
 
         # update db
         self.crud_service.update_room(self.room)

@@ -6,7 +6,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from src.collaboration.routes.crud_routes import router as crud_router
 from src.collaboration.routes.collaboration_routes import router as collaboration_router
-from src.constants import HOST, PORT
+from src.constants import FRONTEND_HOST, HOST, MATCHING_SERVICE_HOST, PORT, QUESTION_SERVICE_HOST, USER_SERVICE_HOST
 from fastapi_socketio import SocketManager
 
 import uvicorn
@@ -19,10 +19,10 @@ app = FastAPI()
 # cors middleware
 app.add_middleware(
         CORSMiddleware,
-        allow_origins=["*"],  # can alter with time
+        allow_origins=[FRONTEND_HOST, USER_SERVICE_HOST, QUESTION_SERVICE_HOST, MATCHING_SERVICE_HOST],  
         allow_credentials=True,
-        allow_methods=["*"],
-        allow_headers=["*"],
+        allow_methods=[FRONTEND_HOST, USER_SERVICE_HOST, QUESTION_SERVICE_HOST, MATCHING_SERVICE_HOST],
+        allow_headers=[FRONTEND_HOST, USER_SERVICE_HOST, QUESTION_SERVICE_HOST, MATCHING_SERVICE_HOST],
     )
 
 # add routers

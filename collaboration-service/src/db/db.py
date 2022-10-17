@@ -74,6 +74,7 @@ class DatabaseWrapper:
         result = self.db[table].replace_one(index_keys, data, upsert=False)
         if result.modified_count == 0:
             raise DatabaseException("Could not update item in table")
+        print("Updated item in table", table, "with index keys", index_keys, "to", data, "successfully. With result", result)
         
 
 db = DatabaseWrapper()
