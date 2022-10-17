@@ -55,6 +55,7 @@ class RoomInResponse(RoomMetadata):
     """
 
     question: Question
+    events: List[ChatRoomEvent]
 
     @staticmethod
     def from_room(room: Room):
@@ -63,5 +64,6 @@ class RoomInResponse(RoomMetadata):
             created_at=room.created_at,
             state=room.state,
             num_in_room=room.num_in_room,
-            question=room.question
+            question=room.question,
+            events=room.events,
         )

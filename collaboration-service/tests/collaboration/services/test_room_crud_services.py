@@ -22,17 +22,21 @@ class TestRoomCrudService:
         service = RoomCrudService(test_db)
         room_id = str(uuid4())
         user1_id = str(uuid4())
+        username1 = "user1"
         user2_id = str(uuid4())
+        username2 = "user2"
         question = create_question()
 
         # when 
-        service.create_room(user1_id, user2_id, question, room_id)
+        service.create_room(user1_id, username1, user2_id, username2, question, room_id)
         room = service.get_room_by_id(room_id)
 
         # then
         assert room.room_id == room_id
         assert room.user1_id == user1_id
+        assert room.username1 == username1
         assert room.user2_id == user2_id
+        assert room.username2 == username2
         assert room.question == question        
 
 
@@ -54,7 +58,7 @@ class TestRoomCrudService:
         test_db = DatabaseWrapper(_client=mongomock.MongoClient())
         service = RoomCrudService(test_db)
         for room in rooms_in_db:
-            service.create_room(room.user1_id, room.user2_id, room.question, room.room_id)
+            service.create_room(room.user1_id, room.username1, room.user2_id, room.username2, room.question, room.room_id)
         
         # when
         for room in updated_rooms:

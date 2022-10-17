@@ -1,9 +1,11 @@
 import { useContext, useEffect, useState } from "react";
-import { ChatMessage, Room } from "../../interfaces/collaboration/Room";
-import { apiGetRoom } from "../../api/CollaborationServiceApi";
+import { Room } from "../../interfaces/collaboration/Room";
+import {
+  apiGetRoom,
+  convertRoomApiResponseToRoom,
+} from "../../api/CollaborationServiceApi";
 import useIsMobile from "../../hooks/useIsMobile";
 import { useSearchParams } from "react-router-dom";
-import CloseIcon from "@mui/icons-material/Close";
 import Editor from "react-simple-code-editor";
 
 import { highlight, Grammar, languages } from "prismjs";
@@ -72,28 +74,7 @@ function CollaborationPage() {
   const [code, setCode] = useState("");
   const debouncedCode = useDebounce(code, 500); // debounce code for half second
 
-  // chat
-  const [chatText, setChatText] = useState("");
-  const chatMessageList = room?.state.chatHistory || [];
-
   // =============== functions =================
-  const handleChatSendMessage: (text: string) => void = (text: string) => {
-    console.log("called");
-    // update room state for chat history via appending
-    // hook will handle update
-    room?.state.chatHistory.push({
-      message: chatText,
-      username: user.username,
-      id: user.userId,
-      timestamp: new Date().toISOString(),
-    });
-
-    if (!!room && !!webSocket && webSocket.readyState === 1) {
-      webSocket.send(JSON.stringify(room.state));
-      // clear chat message
-      setChatText("");
-    }
-  };
 
   // =========== hooks =========================
   /**
@@ -103,24 +84,9 @@ function CollaborationPage() {
     // get and set room by api call
     apiGetRoom(roomId).then((response) => {
       if (response.status === 200) {
-        const roomFromResponse: Room = {
-          roomId: response.data.room_id ?? "",
-          createdAt: response.data.created_at ?? "",
-          closedAt: response.data.closed_at ?? "",
-          isClosed: response.data.is_closed ?? false,
-          state: {
-            chatHistory: response.data.state?.chat_history ?? [],
-            code: response.data.state?.code ?? "",
-          },
-          numInRoom: response.data.num_in_room ?? 1,
-          question: {
-            qid: response.data.question?.qid ?? "",
-            title: response.data.question?.title ?? "",
-            description: response.data.question?.description ?? "",
-            difficulty: response.data.question?.difficulty ?? 0,
-            topic: response.data.question?.topic ?? 0,
-          },
-        };
+        const roomFromResponse: Room = convertRoomApiResponseToRoom(
+          response.data
+        );
         setRoom(roomFromResponse);
         setCode(roomFromResponse.state.code);
       } else {
@@ -143,7 +109,7 @@ function CollaborationPage() {
     if (!!room && !!webSocket && webSocket.readyState === 1) {
       webSocket.send(JSON.stringify(room.state));
     }
-  }, [room, debouncedCode, room?.state.chatHistory, webSocket, socketJwt]);
+  }, [room, debouncedCode, webSocket, socketJwt]);
 
   /**
    * Hook that initializes authentication in preparation for the websocket connection.
@@ -188,30 +154,11 @@ function CollaborationPage() {
       webSocket.onmessage = (event) => {
         // 1. set room state
         const updatedRoom = JSON.parse(event.data);
-        const roomFromResponse: Room = {
-          roomId: updatedRoom.room_id ?? "",
-          createdAt: updatedRoom.created_at ?? "",
-          closedAt: updatedRoom.closed_at ?? room?.closedAt,
-          isClosed: updatedRoom.is_closed ?? room?.isClosed,
-          state: {
-            chatHistory:
-              updatedRoom.state?.chat_history ?? room?.state.chatHistory,
-            code: updatedRoom.state?.code ?? room?.state.code,
-          },
-          numInRoom: updatedRoom.num_in_room ?? 1,
-          question: {
-            qid: updatedRoom.question?.qid ?? room?.question.qid,
-            title: updatedRoom.question?.title ?? room?.question.title,
-            description:
-              updatedRoom.question?.description ?? room?.question.description,
-            difficulty:
-              updatedRoom.question?.difficulty ?? room?.question.difficulty,
-            topic: updatedRoom.question?.topic ?? room?.question.topic,
-          },
-        };
+        const roomFromResponse: Room =
+          convertRoomApiResponseToRoom(updatedRoom);
 
         // 2. if not the same, then update
-        if (updatedRoom !== room) {
+        if (roomFromResponse !== room) {
           console.log("updating");
           setRoom(roomFromResponse);
           setCode(roomFromResponse.state.code);
@@ -257,62 +204,6 @@ function CollaborationPage() {
     </Box>
   );
 
-  const chatMessageListComponent = chatMessageList.map(
-    (chatMessage: ChatMessage, index: number) => {
-      return (
-        <ListItem key={index}>
-          <ListItemText
-            primary={
-              chatMessage.id === user.userId ? "You" : chatMessage.username
-            }
-            secondary={
-              <>
-                <Typography
-                  sx={{ display: "inline" }}
-                  component="span"
-                  variant="body2"
-                  color="text.primary"
-                >
-                  {chatMessage.timestamp}
-                </Typography>
-                <Typography>{chatMessage.message}</Typography>
-              </>
-            }
-          />
-        </ListItem>
-      );
-    }
-  );
-
-  /**
-   * Chat component
-   */
-  const chatWindowComponent = (
-    <Grid container spacing={4} component={Paper}>
-      <Grid item xs={12}>
-        <List style={{ maxHeight: "50vh", overflow: "auto" }}>
-          {chatMessageListComponent}
-        </List>
-      </Grid>
-      <Grid item xs={12}>
-        <FormControl fullWidth>
-          <TextField
-            onChange={(event) => setChatText(event.target.value)}
-            onKeyDown={(event) => {
-              const ENTER_KEY_CODE = 13;
-              if (event.keyCode === ENTER_KEY_CODE) {
-                handleChatSendMessage(chatText);
-              }
-            }}
-            value={chatText}
-            label="Type your message..."
-            variant="outlined"
-          />
-        </FormControl>
-      </Grid>
-    </Grid>
-  );
-
   /**
    * Question component
    */
@@ -347,7 +238,7 @@ function CollaborationPage() {
     </Box>
   );
 
-  const roomIsOpenComponent = (
+  const roomComponent = (
     <Grid container direction="row" justifyContent="space-evenly">
       <Grid item xs={4}>
         <Grid
@@ -361,7 +252,7 @@ function CollaborationPage() {
           </Grid>
           <Divider />
           <Grid item xs={12}>
-            {chatWindowComponent}
+            dummy
           </Grid>
         </Grid>
       </Grid>
@@ -371,9 +262,7 @@ function CollaborationPage() {
     </Grid>
   );
 
-  const toShow = room?.isClosed ? roomIsClosedComponent : roomIsOpenComponent;
-
-  return toShow;
+  return roomComponent;
 }
 
 export default CollaborationPage;

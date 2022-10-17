@@ -24,9 +24,11 @@ class RoomModel(BaseModel):
 
     # ====== user 1 ======
     user1_id: str
-    
+    username1: str
+
     # ====== user 2 ======
     user2_id: str
+    username2: str
 
     # ====== question ======
     question_id: str # question id

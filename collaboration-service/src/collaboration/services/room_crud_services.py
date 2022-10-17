@@ -34,13 +34,10 @@ class RoomCrudService:
         # 1. create object
         room_initial_state = RoomState(
             code = "", # no code
-            chat_history = [] # no history
         )
         room_model = RoomModel(
             room_id = _room_id or str(uuid4()),
             created_at = str(datetime.now()),
-            closed_at = None,
-            is_closed = False,
             state = room_initial_state,
             num_in_room=0,
             user1_id = user1_id,
@@ -48,7 +45,8 @@ class RoomCrudService:
             user2_id = user2_id,
             username2 = username2,
             question = question,
-            question_id=question.qid
+            question_id=question.qid,
+            events=[] # no events
         )
 
         # 2. check that object isn't inside
