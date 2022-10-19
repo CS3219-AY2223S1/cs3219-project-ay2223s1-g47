@@ -35,7 +35,8 @@ import {
 import { Box } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import { useDebounce } from "../../hooks/useDebounce";
-import userEvent from "@testing-library/user-event";
+
+import RealTimeCollaborativeEditor from "./RealTimeCollaborativeEditor";
 
 function CollaborationPage() {
   // =========== query params ==================
@@ -72,6 +73,7 @@ function CollaborationPage() {
     language: string;
   }>({ languageGrammer: languages.js, language: "js" });
   const [code, setCode] = useState("");
+  const [lastLoggedCode, setLastLoggedCode] = useState<string>("");
   const debouncedCode = useDebounce(code, 200); // debounce code for half second
 
   // =============== functions =================
@@ -107,6 +109,7 @@ function CollaborationPage() {
    */
   useEffect(() => {
     if (!!room && !!webSocket && webSocket.readyState === 1) {
+      room.state.code = debouncedCode;
       webSocket.send(JSON.stringify(room.state));
     }
   }, [room, debouncedCode, webSocket, socketJwt]);
@@ -165,6 +168,7 @@ function CollaborationPage() {
         if (roomFromResponse.state.code !== code) {
           console.log("updating code");
           setCode(roomFromResponse.state.code);
+          setLastLoggedCode(roomFromResponse.state.code);
         }
       };
     }
@@ -265,7 +269,30 @@ function CollaborationPage() {
     </Grid>
   );
 
-  return roomComponent;
+  /**
+   * yMonaco editor
+   * 
+   *   roomId: string;
+  username: string;
+  userId: string;
+  language: string;
+  initialCode: string;
+  codeCallback: (code: string) => void;
+   */
+  const editor = (
+    <RealTimeCollaborativeEditor
+      roomId={roomId}
+      username={user.username}
+      userId={user.userId}
+      language={"python"}
+      initialCode={room?.state.code ?? ""}
+      codeCallback={(code: string) => {
+        setCode(code);
+      }}
+    />
+  );
+
+  return editor;
 }
 
 export default CollaborationPage;

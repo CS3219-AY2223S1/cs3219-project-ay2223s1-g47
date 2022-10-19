@@ -101,7 +101,7 @@ class RoomConnectionManager:
         
         print("before merge")
         print(self.user_states[user1_id].dict(), self.user_states[user2_id].dict(), self.room.state.dict())
-        self.room.state.code = merge(self.user_states[user1_id].code, self.user_states[user2_id].code, self.room.state.code)
+        # self.room.state.code = merge(self.user_states[user1_id].code, self.user_states[user2_id].code, self.room.state.code)
         print("after merge")
         print(self.user_states[user1_id].dict(), self.user_states[user2_id].dict(), self.room.state.dict())
 
@@ -181,7 +181,7 @@ class RoomConnectionManager:
         # publish to all sockets
         for id, connection in self.active_connections.items():
             print("sending to socket", id)
-            await connection.send_json(self.room.dict())
+            # await connection.send_json(self.room.dict())
 
 
 global_room_connection_store: Dict[str, RoomConnectionManager] = dict() # room id -> room connection manager
