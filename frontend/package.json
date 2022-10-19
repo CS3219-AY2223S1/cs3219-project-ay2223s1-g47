@@ -35,6 +35,7 @@
     "react-simple-code-editor": "^0.13.1",
     "react-toastify": "^9.0.8",
     "socket.io-client": "^4.5.2",
+    "styled-components": "^5.3.6",
     "typescript": "^4.8.2",
     "web-vitals": "^2.1.4",
     "websocket": "^1.0.34",
@@ -70,6 +71,7 @@
     "@types/lodash": "^4.14.184",
     "@types/prismjs": "^1.26.0",
     "@types/randomcolor": "^0.5.6",
+    "@types/styled-components": "^5.1.26",
     "@types/websocket": "^1.0.5"
   }
 }

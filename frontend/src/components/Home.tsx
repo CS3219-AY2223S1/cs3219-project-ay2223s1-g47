@@ -1,125 +1,77 @@
-import {
-  Card,
-  CardActionArea,
-  CardContent,
-  Grid,
-  Paper,
-  Button,
-  Typography,
-} from "@mui/material";
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { UserContext, UserContextType } from "../contexts/UserContext";
+import styled from "styled-components";
 import useIsMobile from "../hooks/useIsMobile";
+import { ActiveRoomComponent } from "./collaboration/ActiveRoomComponent";
+import MatchingPage from "./matching/MatchingPage";
 
+const HomeComponent = styled.div`
+  display: grid;
+  grid-row-gap: 4rem;
+  grid-template-rows: auto auto;
+`;
 
+const MatchingSection = styled.div`
+  > h1 {
+    color: rgb(255, 179, 117);
+    margin: 0 auto;
+    text-align: center;
+    text-shadow: 5px 2px 20px rgba(255, 90, 8, .8);
+  }
 
+  > p {
+    margin: 2rem auto 4rem auto;
+    max-width: 600px;
+    text-align: center;
+  }
+`;
 
 function Home() {
-
-  const { logout } = useContext(UserContext) as UserContextType;
-
-
   // TODO: add user context
   // ================ State management ================
+  const [activeRoom, setActiveRoom] = useState<any>();
   // UI states
   const isMobile = useIsMobile();
   const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] =
     useState<Boolean>(false);
   const [errorSnackBarContent, setErrorSnackbarContent] = useState<String>("");
 
-  // contexts
-  const { user } = useContext(UserContext) as UserContextType;
-
-  // history
   const navigate = useNavigate();
 
-  // ================ Event handlers ==================
-  const goToMatchingPage: () => void = () => {
-    navigate("/match");
-  };
-  const goToAccountPage: () => void = () => {
-    navigate("/account");
-  };
-
-  const handleLogout = async () => {
-    await logout().then((response) => {
-      if (response.status === 201) {
-        navigate("/login");
-      } else {
-        const errorMessage: string =
-          "Something went wrong! Please try again later.";
-        setErrorSnackbarContent(errorMessage);
-      }
-      setIsErrorSnackbarOpen(true);
-    })
-    .catch((error) => {
-      console.error(error);
-    });
+  const handleCheckMostRecentRoom = () => {
+    const room = {};
+    setActiveRoom(room);
   }
 
+  const handleJoinRoom = () => {
+    navigate(`/room?roomId=${activeRoom.room_id}`);
+  }
 
-  // ================ UI rendering ===================
-  const quickRedirectCard = (
-    title: string,
-    description: string,
-    onClick?: () => void
-  ) => {
-    return (
-      <Card elevation={24}>
-        <CardActionArea onClick={onClick ?? undefined}>
-          {/*some image*/}
-          <CardContent>
-            <Typography gutterBottom variant="h5" component="div">
-              {title}
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              {description}
-            </Typography>
-          </CardContent>
-        </CardActionArea>
-      </Card>
-    );
-  };
+  const handleDisconnectRoom = () => {
 
-  const quickActionsPanel = (
-    <Grid container direction="row" alignItems="center" justifyContent="center">
-      <Grid item xs={12} md={4}>
-        {quickRedirectCard(
-          "Find a match",
-          "Join a paired-programming session with a similarlly skilled programmer",
-          goToMatchingPage
-        )}
-      </Grid>
+  }
 
-      <Grid item xs={12} md={4}>
-        {quickRedirectCard(
-          "Account Settings",
-          "change account info",
-          goToAccountPage
-        )}
-      </Grid>
-    </Grid>
-  );
+  useEffect(() => {
+    handleCheckMostRecentRoom();
+  }, []);
 
   // ====== Render ======
   return (
-    <div
-      className="Home"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
-      {quickActionsPanel}
-      <br/>
-      <Button
-        style={{ width: "100%", textTransform: "none" }}
-        variant="contained"
-        onClick={handleLogout}
-      >logout</Button>
-    </div>
+    <HomeComponent>
+      {activeRoom &&
+        <ActiveRoomComponent
+          onJoin={handleJoinRoom}
+          onDisconnect={handleDisconnectRoom}
+        />
+      }
+      <MatchingSection>
+        <h1>Find a Match</h1>
+        <p>
+          Join a paired-programming session with a similarlly skilled programmer
+        </p>
+        <MatchingPage/>
+      </MatchingSection>
+    </HomeComponent>
   );
 }
 export default Home;

@@ -24,7 +24,27 @@ export const apiGetRoom = async (roomId: string) => {
   return response;
 };
 
-interface RoomApiResponseData {
+export const apiGetRoomHistory = async () => {
+  const response = axios
+    .get(COLLABORATION_SERVICE_GET_ROOM_URL + "/crud/get_room_history", {
+      withCredentials: true,
+    })
+    .catch((error: Error | AxiosError) => {
+      if (axios.isAxiosError(error)) {
+        return error.response?.data; // return response data from backend
+      } else {
+        console.error(error);
+        return error; // propagate up the call stack
+      }
+    }) as Promise<{
+    status: number;
+    detail: { message?: string; detail?: any };
+    data: RoomApiResponseData[];
+  }>;
+  return response;
+};
+
+export interface RoomApiResponseData {
   message?: string; // error message
 
   room_id?: string;
