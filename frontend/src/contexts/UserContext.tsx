@@ -13,7 +13,7 @@ import { User } from "../interfaces/users/User";
  * It contains the user data and the functions to update the user data.
  */
 export interface UserContextType {
-  socket: Socket | null;
+  socket: Socket | undefined;
   user: User;
   isLoggedIn: boolean;
   login: (
@@ -21,7 +21,7 @@ export interface UserContextType {
     password: string
   ) => Promise<{ status: number; data: UserInfoApiResponseData }>;
   logout: () => Promise<{ status: number; data: {} }>;
-  webSocket: WebSocket | null;
+  webSocket: WebSocket | undefined;
   createWebSocket: (url: string) => Promise<WebSocket>;
   clearWebSocket: () => Promise<void>;
   createSocket: (url: string) => Promise<Socket>;
@@ -50,10 +50,10 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
   const [isLoggedIn, setIsLoggedIn] = useState(true);
 
   // socket.io state
-  const [socket, setSocket] = useState<Socket | null>(null);
+  const [socket, setSocket] = useState<Socket | undefined>(undefined);
 
   // websocket state
-  const [webSocket, setWebSocket] = useState<WebSocket | null>(null);
+  const [webSocket, setWebSocket] = useState<WebSocket | undefined>(undefined);
 
   // ================ Functions =================
   /**
@@ -135,7 +135,7 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
    * Clears the socket io connection.
    */
   const clearSocket = async () => {
-    setSocket(null);
+    setSocket(undefined);
   };
 
   /**
@@ -151,7 +151,7 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
    * Clears the websocket connection.
    */
   const clearWebSocket = async () => {
-    setWebSocket(null);
+    setWebSocket(undefined);
   };
 
   return (

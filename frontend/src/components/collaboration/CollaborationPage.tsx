@@ -6,21 +6,11 @@ import {
 } from "../../api/CollaborationServiceApi";
 import useIsMobile from "../../hooks/useIsMobile";
 import { useSearchParams } from "react-router-dom";
-import Editor from "react-simple-code-editor";
-
-import { highlight, Grammar, languages } from "prismjs";
-import "prismjs/components/prism-clike";
-import "prismjs/components/prism-javascript";
-import "prismjs/themes/prism.css";
 
 import { UserContext, UserContextType } from "../../contexts/UserContext";
 import { apiGetNewJwt } from "../../api/UserServiceApi";
 import { COLLABORATION_SERVICE_COLLABRATION_ROOM_URL } from "../../constants";
 import {
-  Avatar,
-  Button,
-  Card,
-  CardActions,
   Divider,
   FormControl,
   Grid,
@@ -55,6 +45,7 @@ function CollaborationPage() {
 
   // room data
   const [room, setRoom] = useState<Room | undefined>(undefined);
+  const [initialCode, setInitialCode] = useState<string | undefined>(undefined); // for initial code to populate editor
 
   // auth state
   const [socketJwt, setSocketJwt] = useState<string>("");
@@ -63,55 +54,85 @@ function CollaborationPage() {
   // mobile
   const isMobile = useIsMobile();
 
-  // errors
-  const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState(false);
-  const [errorSnackBarContent, setErrorSnackbarContent] = useState("");
-
-  // code editor language and code
-  const [codeLanguage, setCodeLanguage] = useState<{
-    languageGrammer: Grammar;
-    language: string;
-  }>({ languageGrammer: languages.js, language: "js" });
-  const [code, setCode] = useState("");
-  const [lastLoggedCode, setLastLoggedCode] = useState<string>("");
-  const debouncedCode = useDebounce(code, 200); // debounce code for half second
+  // code state
+  const [code, setCode] = useState<string>(""); // for tracking code changes
+  const debouncedCode = useDebounce(code, 500); // debounce code for half second for debounced updates
 
   // =============== functions =================
-
-  // =========== hooks =========================
   /**
-   * Hook that initializes the room state.
+   * Handles socket jwt auth by requesting a new jwt from the backend
+   * and then setting the state.
    */
-  useEffect(() => {
+  const handleJwtSocketAuth = () => {
+    apiGetNewJwt().then((response) => {
+      if (response.status === 200) {
+        setSocketJwt(response.data.jwt);
+      } else {
+        // TODO: error notifcation
+      }
+    });
+  };
+
+  /**
+   * Handles room initialization by making an API call to the backend
+   * to get the room, from the room id, then sets the state.
+   */
+  const handleRoomInitialization = (roomId: string) => {
     // get and set room by api call
     apiGetRoom(roomId).then((response) => {
       if (response.status === 200) {
+        // 1. convert
         const roomFromResponse: Room = convertRoomApiResponseToRoom(
           response.data
         );
+
+        // 2. set states
         setRoom(roomFromResponse);
         setCode(roomFromResponse.state.code);
+        setInitialCode(roomFromResponse.state.code);
       } else {
         console.error(response);
         navigate("/match");
         const errorMessage =
           response.detail.message ??
           "Something went wrong! Please try again later.";
-        setErrorSnackbarContent(errorMessage);
-        console.log(errorMessage);
-        setIsErrorSnackbarOpen(true);
+
+        // TODO: error notification
       }
     });
+  };
+
+  /**
+   * Handle room update by posting to the websocket connection
+   * a json string of the room.
+   */
+  const handleRoomUpdate = (
+    room?: Room,
+    debouncedCode?: string,
+    webSocket?: WebSocket | null,
+    socketJwt?: string
+  ) => {
+    if (room && debouncedCode && webSocket && socketJwt) {
+      room.state.code = debouncedCode;
+
+      // stringify and send room state
+      webSocket.send(JSON.stringify(room.state));
+    }
+  };
+
+  // =========== hooks =========================
+  /**
+   * Hook that initializes the room state.
+   */
+  useEffect(() => {
+    handleRoomInitialization(roomId);
   }, [roomId]);
 
   /**
    * Hook that updates the room state via the websocket connection.
    */
   useEffect(() => {
-    if (!!room && !!webSocket && webSocket.readyState === 1) {
-      room.state.code = debouncedCode;
-      webSocket.send(JSON.stringify(room.state));
-    }
+    handleRoomUpdate(room, debouncedCode, webSocket, socketJwt);
   }, [room, debouncedCode, webSocket, socketJwt]);
 
   /**
@@ -119,16 +140,7 @@ function CollaborationPage() {
    * Specifically, it gets a new JWT for the websocket connection.
    */
   useEffect(() => {
-    apiGetNewJwt().then((response) => {
-      if (response.status === 200) {
-        setSocketJwt(response.data.jwt);
-      } else {
-        setErrorSnackbarContent(
-          "Something went wrong! Please try again later."
-        );
-        setIsErrorSnackbarOpen(true);
-      }
-    });
+    handleJwtSocketAuth();
   }, []);
 
   /**
@@ -165,11 +177,9 @@ function CollaborationPage() {
           console.log("updating");
           setRoom(roomFromResponse);
         }
-        if (roomFromResponse.state.code !== code) {
-          console.log("updating code");
-          setCode(roomFromResponse.state.code);
-          setLastLoggedCode(roomFromResponse.state.code);
-        }
+
+        // 3. event logging
+        // TODO: event notification
       };
     }
   }, [webSocket]);
@@ -180,69 +190,31 @@ function CollaborationPage() {
    * Code editor
    */
   const codeEditorComponent = (
-    <Box
-      style={{
-        height: "100%",
-        width: "100%",
+    <RealTimeCollaborativeEditor
+      roomId={roomId}
+      username={user.username}
+      userId={user.userId}
+      language={"python"} // TODO: not hard code this
+      initialCode={initialCode ?? ""}
+      codeCallback={(code: string) => {
+        setCode(code);
       }}
-    >
-      <Editor
-        value={code}
-        onValueChange={(code: string) => {
-          setCode(code);
-          if (room) {
-            room.state.code = code;
-            setRoom(room);
-          }
-        }}
-        highlight={(code) =>
-          highlight(code, codeLanguage.languageGrammer, codeLanguage.language)
-        }
-        padding={10}
-        style={{
-          fontFamily: '"Fira code", "Fira Mono", monospace',
-          fontSize: 14,
-          outline: 0,
-          boxShadow: "none",
-          minHeight: "100%",
-        }}
-        tabSize={4}
-      />
-    </Box>
+    />
   );
 
   /**
    * Question component
    */
   const questionComponent = (
-    <Grid container component={Paper}>
+    <Grid container component={Paper} direction={"column"}>
       <Grid item xs={12} padding={"12px"}>
         <Typography variant="h4">{room?.question.title}</Typography>
       </Grid>
+      <Grid item xs={12} padding={"12px"}>
+        <Typography variant="body1">{room?.question.description}</Typography>
+      </Grid>
       <Grid item xs={12}></Grid>
     </Grid>
-  );
-
-  /**
-   * Room is closed component
-   */
-  const roomIsClosedComponent = (
-    <Box
-      style={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      <Card elevation={24} style={{ padding: "24px", borderRadius: "12px" }}>
-        <Typography variant="h2">Room is closed</Typography>
-        <CardActions>
-          <Button onClick={() => navigate("/match")}>
-            <Typography>Return to matching page</Typography>
-          </Button>
-        </CardActions>
-      </Card>
-    </Box>
   );
 
   const roomComponent = (
@@ -258,9 +230,6 @@ function CollaborationPage() {
             {questionComponent}
           </Grid>
           <Divider />
-          <Grid item xs={12}>
-            dummy
-          </Grid>
         </Grid>
       </Grid>
       <Grid item xs={8}>
@@ -269,30 +238,7 @@ function CollaborationPage() {
     </Grid>
   );
 
-  /**
-   * yMonaco editor
-   * 
-   *   roomId: string;
-  username: string;
-  userId: string;
-  language: string;
-  initialCode: string;
-  codeCallback: (code: string) => void;
-   */
-  const editor = (
-    <RealTimeCollaborativeEditor
-      roomId={roomId}
-      username={user.username}
-      userId={user.userId}
-      language={"python"}
-      initialCode={room?.state.code ?? ""}
-      codeCallback={(code: string) => {
-        setCode(code);
-      }}
-    />
-  );
-
-  return editor;
+  return roomComponent;
 }
 
 export default CollaborationPage;

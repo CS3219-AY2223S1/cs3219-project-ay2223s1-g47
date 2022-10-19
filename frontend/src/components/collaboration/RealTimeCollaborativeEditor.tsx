@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import { useEffect, useRef } from "react";
 import * as Y from "yjs";
 import { WebrtcProvider } from "y-webrtc";
 import { javascript } from "@codemirror/lang-javascript";
@@ -8,7 +8,6 @@ import { EditorView, basicSetup } from "codemirror";
 import { ViewUpdate } from "@codemirror/view";
 import { EditorState } from "@codemirror/state";
 import { yCollab } from "y-codemirror.next";
-import CodeMirror, { ReactCodeMirrorRef } from "@uiw/react-codemirror";
 
 /**
  * Real-time collaborative editor. The actual editor is based on codemirror and binds yjs's Y.text type to
@@ -28,14 +27,8 @@ export default function RealTimeCollaborativeEditor(props: {
   const { roomId, username, language, codeCallback, initialCode } = props;
 
   // =========== state management ==============
-  // editor references
-  const [editorRef, setEditorRef] = useState<ReactCodeMirrorRef>({});
-
   // editor stuff for state
   const editor = useRef<HTMLDivElement>(null);
-
-  // code
-  const [code, setCode] = useState("");
 
   // ================== functions ==================
   /**
@@ -60,16 +53,15 @@ export default function RealTimeCollaborativeEditor(props: {
    */
   useEffect(() => {
     try {
-      console.log("creating yjs document");
-      // create yjs document and get text from codemirror editor
+      // 1. create yjs document and get text from codemirror editor
       const yDoc = new Y.Doc();
       const yText = yDoc.getText("codemirror");
       yText.insert(0, initialCode);
 
-      // signalling servers for y-webrtc
+      // TODO: as import signalling servers for y-webrtc
       const signallingServers = ["ws://localhost:4444"];
 
-      // create webrtc provider
+      // 2. create webrtc provider
       // we do tsignore due to a bug in the soource code with overly strict typing
       //@ts-ignore
       const provider = new WebrtcProvider(roomId, yDoc, {
@@ -77,10 +69,11 @@ export default function RealTimeCollaborativeEditor(props: {
         maxConns: 2, // only support 2 for now
       });
 
-      // include a undo manager
+      // 3. include a undo manager
       const yUndoManager = new Y.UndoManager(yText);
 
-      // set awareness state
+      // 4. set awareness state
+      // TODO: fix bug here with name
       const color = RandomColor();
       const awareness = provider.awareness;
       awareness.setLocalState({
@@ -88,29 +81,41 @@ export default function RealTimeCollaborativeEditor(props: {
         color: color,
       });
 
-      // create codemirror editor state
+      // 5. create codemirror editor state
+      console.log(language, convertLanguage(language));
       const state = EditorState.create({
         doc: yText.toString(),
         extensions: [
-          basicSetup,
+          basicSetup, // TODO: tweak this
           convertLanguage(language),
           yCollab(yText, provider.awareness, { undoManager: yUndoManager }),
+          EditorView.updateListener.of((v: ViewUpdate) => {
+            if (v.docChanged) {
+              console.log("changed");
+              codeCallback(yText.toString());
+            }
+          }),
         ],
       });
 
-      // create view from state
+      // 6. create view from state
       console.log(state, editor.current);
       //@ts-ignore
       const view = new EditorView({
         state,
-        // parent: refs.current.editor.parentElement,
-        parent: editor.current ?? undefined,
       });
 
+      // 7. attach view
+      editor.current?.appendChild(view.dom);
+
       return () => {
+        // 8. cleanup
         if (provider) {
           provider.destroy(); // disconnect
           yDoc.destroy(); // destroy ydoc to stop propagating when user leaves editor
+        }
+        if (editor.current) {
+          editor.current.removeChild(view.dom); // remove editor
         }
       };
     } catch (e) {
@@ -119,29 +124,5 @@ export default function RealTimeCollaborativeEditor(props: {
   }, []);
 
   // ================== render ==================
-  // const codeEditor = (
-  //   <CodeMirror
-  //     ref={refs}
-  //     onChange={(value: string, viewUpdate: any) => {
-  //       console.log("callbacks");
-  //       codeCallback(value);
-  //     }}
-  //     autoFocus
-  //     aria-autocomplete="list"
-  //     theme="light"
-  //     extensions={[convertLanguage(language)]}
-  //   />
-  // );
-  return (
-    <div
-      ref={editor}
-      style={{
-        display: "flex",
-        height: "100%",
-        width: "100%",
-        fontSize: "20px",
-        overflowY: "auto",
-      }}
-    ></div>
-  );
+  return <div ref={editor}></div>;
 }

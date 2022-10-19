@@ -97,7 +97,7 @@ function AccountPage() {
       value={password}
       error={isPasswordError}
       helperText={isPasswordError && "Password cannot be empty!"}
-      onChange={(e) => setPassword(e.target.value)}
+      onChange={(e: any) => setPassword(e.target.value)}
       sx={{ marginBottom: "2rem" }}
     />
   );
