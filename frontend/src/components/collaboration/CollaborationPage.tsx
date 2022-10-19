@@ -159,7 +159,7 @@ function CollaborationPage() {
           socketJwt
       );
     }
-  }, [socketJwt, room?.roomId, socketJwt]);
+  }, [socketJwt, room?.roomId]);
 
   /**
    * Hook that listens for updates to the room state from the socket.

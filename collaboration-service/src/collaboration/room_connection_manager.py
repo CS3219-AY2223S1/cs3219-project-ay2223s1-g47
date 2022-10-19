@@ -71,7 +71,7 @@ class RoomConnectionManager:
         """
 
         # publish to sockets
-        for id, connection in self.active_connections.items():
+        for id, connection in self.active_connections.copy().items():
             if id in include_ids:
                 await connection.send_json(self.room.dict())
     
@@ -81,7 +81,7 @@ class RoomConnectionManager:
         """
 
         # publish to sockets
-        for id, connection in self.active_connections.items():
+        for id, connection in self.active_connections.copy().items():
             if id not in exclude_ids:
                 await connection.send_json(self.room.dict())
 

@@ -42,13 +42,22 @@ services:
       context: ./frontend
     ports:
       - "3000:3000"
+    depends_on:
+      - ywebrtc
     environment:
       - PORT=3000
       - MATCHING_SERVICE_URI=http://matching-service:8001
       - USER_SERVICE_DOMAIN=http://user-service:8000
       - COLLABORATION_SERVICE_DOMAIN=http://collaboration-service:8003
       - COLLABORATION_SERVICE_SOCKET_DOMAIN=ws://collaboration-service:8003
-      - Y_JS_SIGNALLING_SERVER=ws://localhost:4444
+      - Y_JS_SIGNALLING_SERVER=ws://ywebrtc:4444
+
+  ywebrtc:
+    container_name: "ywebrtc"
+    ports:
+      - "4444:4444"
+    build: 
+      context: ./frontend/ywebrtc
 
   question-service:
     container_name: question-service
