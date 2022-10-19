@@ -24,7 +24,7 @@ export const Y_JS_SIGNALLING_SERVERS = [
 // ================ API ==================
 // user service
 const USER_SERVICE_DOMAIN =
-  process.env.URI_USER_SERVICE || "http://localhost:8000";
+  process.env.USER_SERVICE_DOMAIN || "http://localhost:8000";
 export const USER_SERVICE_SIGNUP_URL = USER_SERVICE_DOMAIN + "/signup";
 export const USER_SERVICE_LOGIN_URL = USER_SERVICE_DOMAIN + "/login";
 export const USER_SERVICE_LOGOUT_URL = USER_SERVICE_DOMAIN + "/logout";
@@ -37,8 +37,10 @@ export const USER_SERVICE_NEW_JWT_URL = USER_SERVICE_DOMAIN + "/get_jwt";
 
 // collaboration service
 const COLLABORATION_SERVICE_DOMAIN =
-  process.env.URI_COLLABORATION_SERVICE || "http://localhost:8003";
+  process.env.COLLABORATION_SERVICE_DOMAIN || "http://localhost:8003";
+const COLLABORATION_SERVICE_SOCKET_DOMAIN =
+  process.env.COLLABORATION_SERVICE_SOCKET_DOMAIN || "localhost:8003";
 export const COLLABORATION_SERVICE_GET_ROOM_URL =
   COLLABORATION_SERVICE_DOMAIN + "/crud/get_room";
 export const COLLABORATION_SERVICE_COLLABRATION_ROOM_URL =
-  "localhost:8003/room";
+  COLLABORATION_SERVICE_SOCKET_DOMAIN + "/room";

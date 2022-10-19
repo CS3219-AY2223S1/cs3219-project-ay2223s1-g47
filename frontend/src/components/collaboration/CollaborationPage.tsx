@@ -80,6 +80,7 @@ function CollaborationPage() {
   const handleRoomInitialization = (roomId: string) => {
     // get and set room by api call
     apiGetRoom(roomId).then((response) => {
+      console.log(response);
       if (response.status === 200) {
         // 1. convert
         const roomFromResponse: Room = convertRoomApiResponseToRoom(
@@ -151,8 +152,7 @@ function CollaborationPage() {
     clearWebSocket();
     if (room && socketJwt) {
       createWebSocket(
-        "ws://" +
-          COLLABORATION_SERVICE_COLLABRATION_ROOM_URL +
+        COLLABORATION_SERVICE_COLLABRATION_ROOM_URL +
           "?room_id=" +
           room?.roomId +
           "&jwt=" +

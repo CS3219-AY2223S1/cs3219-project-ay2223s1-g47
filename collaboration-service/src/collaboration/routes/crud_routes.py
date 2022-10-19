@@ -42,4 +42,5 @@ def get_room(room_id: str, user: User=Depends(jwt_auth_from_cookie)) -> RoomInRe
         raise AuthorizationException("User not in room")
     
     # 2. convert to exposable interface
+    print("Returning room. Room:", room)
     return RoomInResponse.from_room(room)
