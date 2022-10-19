@@ -8,6 +8,7 @@ import { EditorView, basicSetup } from "codemirror";
 import { ViewUpdate } from "@codemirror/view";
 import { EditorState } from "@codemirror/state";
 import { yCollab } from "y-codemirror.next";
+import { Y_JS_SIGNALLING_SERVERS } from "../../constants";
 
 /**
  * Real-time collaborative editor. The actual editor is based on codemirror and binds yjs's Y.text type to
@@ -59,7 +60,7 @@ export default function RealTimeCollaborativeEditor(props: {
       yText.insert(0, initialCode);
 
       // TODO: as import signalling servers for y-webrtc
-      const signallingServers = ["ws://localhost:4444"];
+      const signallingServers = Y_JS_SIGNALLING_SERVERS;
 
       // 2. create webrtc provider
       // we do tsignore due to a bug in the soource code with overly strict typing
@@ -91,7 +92,6 @@ export default function RealTimeCollaborativeEditor(props: {
           yCollab(yText, provider.awareness, { undoManager: yUndoManager }),
           EditorView.updateListener.of((v: ViewUpdate) => {
             if (v.docChanged) {
-              console.log("changed");
               codeCallback(yText.toString());
             }
           }),
@@ -99,7 +99,6 @@ export default function RealTimeCollaborativeEditor(props: {
       });
 
       // 6. create view from state
-      console.log(state, editor.current);
       //@ts-ignore
       const view = new EditorView({
         state,

@@ -62,13 +62,11 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
    * once.
    */
   useMemo(() => {
-    console.log("here");
     apiCallUserAuthentication()
       .then((response) => {
         console.log(response);
         // if ok, set the user state
         if (response.status >= 200 && response.status < 300) {
-          console.log(response);
           if (response.data.username && response.data.id) {
             const user: User = {
               username: response.data.username,
@@ -82,7 +80,7 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
         }
       })
       .catch((error) => {
-        console.log(error);
+        console.error(error);
       });
   }, [isLoggedIn]);
 

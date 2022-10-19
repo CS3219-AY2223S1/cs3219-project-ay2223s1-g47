@@ -174,7 +174,6 @@ function CollaborationPage() {
 
         // 2. if not the same, then update
         if (roomFromResponse !== room) {
-          console.log("updating");
           setRoom(roomFromResponse);
         }
 

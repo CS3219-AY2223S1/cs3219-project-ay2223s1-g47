@@ -1,6 +1,5 @@
 from typing import Dict, List
 from fastapi import WebSocket
-from three_merge import merge
 
 from src.collaboration.interfaces.events import ChatRoomEvent, ChatRoomEventType
 from src.collaboration.interfaces.user import User

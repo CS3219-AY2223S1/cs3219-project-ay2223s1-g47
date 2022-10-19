@@ -16,6 +16,11 @@ export const colours = {
 export const STATUS_CODE_CREATED = 201;
 export const STATUS_CODE_CONFLICT = 409;
 
+// ================ YJS =================
+export const Y_JS_SIGNALLING_SERVERS = [
+  process.env.Y_JS_SIGNALLING_SERVER || "ws://localhost:4444",
+];
+
 // ================ API ==================
 // user service
 const USER_SERVICE_DOMAIN =
