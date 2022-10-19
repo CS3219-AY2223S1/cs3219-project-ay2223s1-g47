@@ -16,13 +16,16 @@ import time
 
 
 class RoomConnectionManager:
+    """
+    Handles room connections. Primary responsbility is to listen to updates from users and
+    update the backend db for persistence, and handle event publishing (e.g. leave/enter)
+    """
 
     def __init__(self, room_id: str, crud_service: RoomCrudService):
         self.active_connections: Dict[str, WebSocket] = dict() # userid -> socket
         self.crud_service = crud_service
         self.room_id = room_id
         self.room: Room = None
-        self.user_states: Dict[str, RoomState] = dict() # userid -> room state
 
     async def initialize(self, user: User,  websocket: WebSocket):
         """
@@ -57,9 +60,6 @@ class RoomConnectionManager:
         self.room.num_in_room += 1
         self.room.events.append(join_event)
 
-        # merge room states
-        self.merge_room_states()
-
         # send room state to user
         await self.publish_room_excluding([])
 
@@ -86,25 +86,6 @@ class RoomConnectionManager:
             if id not in exclude_ids:
                 await connection.send_json(self.room.dict())
 
-    def merge_room_states(self): 
-        """
-        Merges the room states of the two users into one.
-        """
-        # merge room code
-        print("merging room states")
-        user1_id = self.room.user1_id
-        if user1_id not in self.user_states: 
-            self.user_states[user1_id] = self.room.state
-        user2_id = self.room.user2_id
-        if user2_id not in self.user_states: 
-            self.user_states[user2_id] = self.room.state
-        
-        print("before merge")
-        print(self.user_states[user1_id].dict(), self.user_states[user2_id].dict(), self.room.state.dict())
-        # self.room.state.code = merge(self.user_states[user1_id].code, self.user_states[user2_id].code, self.room.state.code)
-        print("after merge")
-        print(self.user_states[user1_id].dict(), self.user_states[user2_id].dict(), self.room.state.dict())
-
     async def add_socket_to_room(self, id: str, websocket: WebSocket):
         """
         Takes in a websocket object and adds it to the list of active connections.
@@ -117,8 +98,6 @@ class RoomConnectionManager:
         # add connection
         self.active_connections[id] = websocket
         await websocket.accept()
-
-        
 
     async def disconnect_user(self, user: User):
         """
@@ -139,16 +118,12 @@ class RoomConnectionManager:
         self.room.num_in_room -= 1
         self.room.events.append(leave_event)
 
-        # merge room states
-        self.merge_room_states()
-
         # send room state to user
         await self.publish_room_excluding([user.id], self.room)
 
         # save to db
         self.crud_service.update_room(self.room)
         
-
     async def remove_socket_from_room(self, id: str):
         """
         Removes a websocket object from the list of active connections.
@@ -158,8 +133,6 @@ class RoomConnectionManager:
             websocket = self.active_connections.pop(id)
         print(self.active_connections)
 
-
-
     async def update_room_state(self, user: User, room_state: RoomState):
         """
         Updates the room state in the database.
@@ -167,21 +140,12 @@ class RoomConnectionManager:
         # check
         if room_state == self.room.state:
             return
-
-        # update user state
-        self.user_states[user.id] = room_state
+    
+        # update room state
         print("updating room state from user", user.id , room_state)
-
-        # merge room states
-        self.merge_room_states()
+        self.room.state = room_state
 
         # update db
         self.crud_service.update_room(self.room)
-
-        # publish to all sockets
-        for id, connection in self.active_connections.items():
-            print("sending to socket", id)
-            # await connection.send_json(self.room.dict())
-
 
 global_room_connection_store: Dict[str, RoomConnectionManager] = dict() # room id -> room connection manager

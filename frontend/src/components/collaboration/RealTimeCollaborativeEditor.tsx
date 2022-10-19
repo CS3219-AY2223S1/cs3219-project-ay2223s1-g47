@@ -121,7 +121,7 @@ export default function RealTimeCollaborativeEditor(props: {
     } catch (e) {
       console.error(e);
     }
-  }, []);
+  }, [initialCode]);
 
   // ================== render ==================
   return <div ref={editor}></div>;
