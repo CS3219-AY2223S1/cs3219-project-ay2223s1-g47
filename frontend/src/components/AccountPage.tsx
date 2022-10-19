@@ -1,16 +1,40 @@
-import {
-  Button,
-  TextField
-} from "@mui/material";
 import { useState, useContext } from "react";
 import { useNavigate } from "react-router-dom";
-import { apiCallUserChangeUsername,apiCallUserChangePassword } from "../api/userServiceApi";
+import styled from "styled-components";
+import { apiCallUserChangeUsername,apiCallUserChangePassword } from "../api/UserServiceApi";
 import { UserContext, UserContextType } from "../contexts/UserContext";
 import useIsMobile from "../hooks/useIsMobile";
+import { Button } from "./Button";
+import { TextField } from "./TextField";
 
+const SettingsCard = styled.form`
+  border-radius: 20px;
+  box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, .4),
+      -5px -5px 15px 5px rgba(63, 63, 74, 1);
+  margin: 0 auto;
+  max-width: 600px;
+  padding: 3rem 2rem 4rem 2rem;
 
+  > form {
+    display: grid;
+    grid-column-gap: 1rem;
+    grid-row-gap: 3rem;
+    grid-template-columns: 1fr auto;
+    grid-template-rows: auto;
+  }
 
+  > h1 {
+    color: rgb(255, 179, 117);
+    grid-area: heading;
+    margin: 0 auto 4rem auto;
+    text-align: center;
+    text-shadow: 5px 2px 20px rgba(255, 90, 8, .8);
+  }
+`;
 
+const ButtonContainer = styled.div`
+  margin: 1.2em 0 0 0;
+`;
 
 function AccountPage() {
   const [username, setUsername] = useState("");
@@ -33,7 +57,8 @@ function AccountPage() {
   const navigate = useNavigate();
 
   // ================ Event handlers ==================
-  const handleChangeUsername = async () => {
+  const handleChangeUsername = async (e: any) => {
+    e.preventDefault();
     await apiCallUserChangeUsername(username, "")
     .then((response) => {
       if (response.status === 200) {
@@ -50,7 +75,8 @@ function AccountPage() {
     });
   }
 
-  const handleChangePassword = async () => {
+  const handleChangePassword = async (e: any) => {
+    e.preventDefault();
     await apiCallUserChangePassword("", password)
     .then((response) => {
       if (response.status === 200) {
@@ -71,61 +97,49 @@ function AccountPage() {
   const changeUser_TextField = 
     <TextField
         label="Username"
-        variant="outlined"
         type="username"
         value={username}
         onChange={(e) => setUsername(e.target.value)}
-        sx={{ marginBottom: "1rem" }}
-        error={isUsernameError}
+        hasError={isUsernameError}
         helperText={
-          isUsernameError &&
-          "3-20 characters, only letters, numbers, and underscores"
+          isUsernameError ?
+          "3-20 characters, only letters, numbers, and underscores" : null
         }
       />
   const changeUser_button = 
-  <Button
-        style={{ width: "100%", textTransform: "none" }}
-        variant="contained"
-        onClick={handleChangeUsername}
-      >confirm new username</Button>
+  <Button onClick={handleChangeUsername}>Confirm New Username</Button>
 
       const changePassword_TextField = 
       <TextField
         label="Password"
-        variant="outlined"
         type="password"
         value={password}
-        error={isPasswordError}
-        helperText={isPasswordError && "Password cannot be empty!"}
+        hasError={isPasswordError}
+        helperText={isPasswordError ? "Password cannot be empty" : null}
         onChange={(e) => setPassword(e.target.value)}
-        sx={{ marginBottom: "2rem" }}
       />
     const changePassword_button = 
-    <Button
-          style={{ width: "100%", textTransform: "none" }}
-          variant="contained"
-          onClick={handleChangePassword}
-        >confirm new password</Button>
+    <Button onClick={handleChangePassword}>
+      Confirm New Password
+    </Button>
 
 
 
 
   // ====== Render ======
-  return (
-    <div
-      className="Home"
-      style={{
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
-    >
+  return (<SettingsCard>
+    <h1>Settings</h1>
+    <form>
       {changeUser_TextField}
-      {changeUser_button}
-      <br></br>
+      <ButtonContainer>
+        {changeUser_button}
+      </ButtonContainer>
       {changePassword_TextField}
-      {changePassword_button}
-    </div>
+      <ButtonContainer>
+        {changePassword_button}
+      </ButtonContainer>
+    </form>
+  </SettingsCard>
   );
 }
 export default AccountPage;

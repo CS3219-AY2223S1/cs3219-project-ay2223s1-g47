@@ -10,8 +10,28 @@ import { UserContext, UserContextType } from "./contexts/UserContext";
 import MatchingPage from "./components/matching/MatchingPage";
 import { ToastContainer } from "react-toastify";
 import CollaborationPage from "./components/collaboration/CollaborationPage";
+import styled from "styled-components";
 
 import 'react-toastify/dist/ReactToastify.css';
+import { NavBar } from "./components/NavBar";
+import { HistoryPage } from "./components/HistoryPage";
+
+const AppComponent = styled.div`
+  background: rgb(48, 48, 51);
+  color: #fff;
+  font-family: sans-serif;
+  min-height: 100vh;
+
+  a {
+    color: rgb(64, 159, 255);
+  }
+`;
+
+const Content = styled.div`
+  margin: 0 auto;
+  max-width: 1000px;
+  padding: 3rem 0;
+`;
 
 function App() {
   // =============== State management ===============
@@ -22,62 +42,87 @@ function App() {
   console.log("App.tsx: loggedIn = " + loggedIn);
 
   return (
-    <div className="App" style={{ minHeight: "100vh" }}>
+    <AppComponent>
       <Router>
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <ProtectedRoute
-                redirectPath={"/login"}
-                isAllowed={loggedIn}
-                children={<Home />}
-              />
-            }
-          />
-          <Route
-            path="/match"
-            element={
-              <ProtectedRoute
-                redirectPath={"/"}
-                isAllowed={loggedIn}
-                children={<MatchingPage />}
-              />
-            }
-          />
-          <Route
-            path="/room"
-            element={
-              <ProtectedRoute
-                redirectPath={"/"}
-                isAllowed={loggedIn}
-                children={<CollaborationPage />}
-              />
-            }
-          />
-          <Route
-            path="/signup"
-            element={
-              <ProtectedRoute
-                redirectPath={"/"}
-                isAllowed={true} // if logged in, redirect to home
-                children={<SignupPage />}
-              />
-            }
-          />
-          <Route
-            path="/login"
-            element={
-              <ProtectedRoute
-                redirectPath={"/"}
-                isAllowed={!loggedIn} // if logged in, redirect to home
-                children={<LoginPage />}
-              />
-            }
-          />
-        </Routes>
+        { loggedIn &&
+          <NavBar/>
+        }
+        <Content>
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <ProtectedRoute
+                  redirectPath={"/login"}
+                  isAllowed={loggedIn}
+                  children={<Home />}
+                />
+              }
+            />
+            <Route
+              path="/match"
+              element={
+                <ProtectedRoute
+                  redirectPath={"/"}
+                  isAllowed={loggedIn}
+                  children={<MatchingPage />}
+                />
+              }
+            />
+            <Route
+              path="/room"
+              element={
+                <ProtectedRoute
+                  redirectPath={"/"}
+                  isAllowed={loggedIn}
+                  children={<CollaborationPage />}
+                />
+              }
+            />
+            <Route
+              path="/signup"
+              element={
+                <ProtectedRoute
+                  redirectPath={"/"}
+                  isAllowed={true} // if logged in, redirect to home
+                  children={<SignupPage />}
+                />
+              }
+            />
+            <Route
+              path="/login"
+              element={
+                <ProtectedRoute
+                  redirectPath={"/"}
+                  isAllowed={!loggedIn} // if logged in, redirect to home
+                  children={<LoginPage />}
+                />
+              }
+            />
+            <Route
+              path="/settings"
+              element={
+                <ProtectedRoute
+                  redirectPath={"/"}
+                  isAllowed={loggedIn} // if not logged in, redirect to home
+                  children={<AccountPage />}
+                />
+              }
+            />
+            <Route
+              path="/history"
+              element={
+                <ProtectedRoute
+                  redirectPath={"/"}
+                  isAllowed={loggedIn} // if not logged in, redirect to home
+                  children={<HistoryPage />}
+                />
+              }
+            />
+          </Routes>
+        </Content>
       </Router>
-    </div>
+    </AppComponent>
   );
 }
 
