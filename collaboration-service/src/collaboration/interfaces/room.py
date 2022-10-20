@@ -1,5 +1,6 @@
 from typing import List
 
+from src.integrations.daily_video.interfaces.daily_video_room import DailyVideoRoom
 from src.collaboration.interfaces.events import ChatRoomEvent
 from src.collaboration.models.room import RoomModel
 from src.collaboration.interfaces.room_state import RoomState
@@ -39,6 +40,9 @@ class Room(RoomMetadata):
     # ====== history =======
     events: List[ChatRoomEvent]
 
+    # ======= video room ===
+    video_room: DailyVideoRoom
+
     @staticmethod
     def from_room_model(room_model: RoomModel):
         
@@ -56,6 +60,7 @@ class RoomInResponse(RoomMetadata):
 
     question: Question
     events: List[ChatRoomEvent]
+    video_room: DailyVideoRoom
 
     @staticmethod
     def from_room(room: Room):
@@ -70,4 +75,5 @@ class RoomInResponse(RoomMetadata):
             num_in_room=room.num_in_room,
             question=room.question,
             events=room.events,
+            video_room=room.video_room
         )

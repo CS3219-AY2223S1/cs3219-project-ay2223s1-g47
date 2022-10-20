@@ -12,6 +12,7 @@ assert os.environ.get("QUESTION_SERVICE_HOST") is not None
 assert os.environ.get("USER_SERVICE_HOST") is not None
 assert os.environ.get("MATCHING_SERVICE_HOST") is not None
 assert os.environ.get("FRONTEND_HOST") is not None
+assert os.environ.get("DAILY_VIDEO_TOKEN") is not None
 
 # enviroment
 ENV_IS_PROD = os.environ.get("ENV") == 'PROD'
@@ -36,7 +37,7 @@ MONGODB_TABLES = [
 
 # daily video service
 DAILY_VIDEO_DOMAIN = "https://api.daily.co/v1" # "https://tanyjnaaman.daily.co"
-
+DAILY_VIDEO_TOKEN = os.environ.get("DAILY_VIDEO_TOKEN") or ""
 
 # ======================== question service ========================
 QUESTION_SERVICE_HOST = os.environ.get("QUESTION_SERVICE_HOST")

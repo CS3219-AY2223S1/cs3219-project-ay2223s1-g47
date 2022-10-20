@@ -1,7 +1,7 @@
 from typing import List
 
+from src.integrations.daily_video.interfaces.daily_video_room import DailyVideoRoom
 from src.exceptions import CrudException, CrudItemNotFoundException
-
 from src.collaboration.interfaces.question import Question
 from src.collaboration.interfaces.room import Room
 from src.collaboration.interfaces.room_state import RoomState
@@ -25,7 +25,16 @@ class RoomCrudService:
         self.db = _db if _db is not None else db
         self.table = ROOM_TABLE_NAME
 
-    def create_room(self, user1_id: str, username1: str, user2_id: str, username2: str, question: Question, _room_id: str = None) -> Room:
+    def create_room(
+        self, 
+        user1_id: str, 
+        username1: str, 
+        user2_id: str, 
+        username2: str, 
+        video_room: DailyVideoRoom,
+        question: Question, 
+        _room_id: str = None
+    ) -> Room:
         """
         Creates a new room in db and sets a worker to close the room after some predefined time.
         """
@@ -46,7 +55,8 @@ class RoomCrudService:
             username2 = username2,
             question = question,
             question_id=question.qid,
-            events=[] # no events
+            events=[], # no events
+            video_room = video_room
         )
 
         # 2. check that object isn't inside

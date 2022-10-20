@@ -5,7 +5,7 @@ from src.integrations.daily_video.interfaces.daily_video_room import DailyVideoR
 
 import aiohttp
 import json
-class DailyVideoServices:
+class DailyVideoService:
     """
     Service class that wraps around the daily video API. 
     """
