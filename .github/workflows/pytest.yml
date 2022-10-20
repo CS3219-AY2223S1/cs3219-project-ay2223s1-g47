@@ -18,6 +18,8 @@ jobs:
       MONGODB_LOCAL_URI: mongodb://localhost:27017/
       QUESTION_SERVICE_HOST: http://localhost:8002
       USER_SERVICE_HOST: http://localhost:8000
+      FRONTEND_HOST: http://localhost:3000
+      MATCHING_SERVICE_HOST: http://localhost:8001
 
     runs-on: ubuntu-latest
     strategy:
