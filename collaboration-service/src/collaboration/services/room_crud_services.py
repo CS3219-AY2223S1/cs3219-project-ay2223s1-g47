@@ -1,6 +1,6 @@
 from typing import List
 
-from src.collaboration.exceptions import CrudException, CrudItemNotFoundException
+from src.exceptions import CrudException, CrudItemNotFoundException
 
 from src.collaboration.interfaces.question import Question
 from src.collaboration.interfaces.room import Room

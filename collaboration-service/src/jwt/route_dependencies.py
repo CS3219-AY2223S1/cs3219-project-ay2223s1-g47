@@ -1,4 +1,4 @@
-from src.collaboration.exceptions import AuthorizationException
+from src.exceptions import AuthorizationException
 from fastapi import Cookie, Query
 from src.api.user_service_api import UserServiceApiHandler
 

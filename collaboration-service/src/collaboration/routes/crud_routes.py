@@ -1,9 +1,9 @@
 from typing import List
 
 from src.api.user_service_api import UserServiceApiHandler
-from src.collaboration.exceptions import AuthorizationException
+from src.exceptions import AuthorizationException
 from src.collaboration.interfaces.user import User
-from src.collaboration.routes.route_dependencies import jwt_auth_from_cookie
+from src.jwt.route_dependencies import jwt_auth_from_cookie
 from src.collaboration.services.room_crud_services import RoomCrudService
 from src.api.question_service_api import QuestionServiceApiHandler
 from src.db.db import db

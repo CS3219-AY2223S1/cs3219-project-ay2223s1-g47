@@ -6,7 +6,7 @@ from src.collaboration.interfaces.user import User
 from src.collaboration.interfaces.room_state import RoomState
 from src.collaboration.interfaces.room import Room
 from src.collaboration.services.room_crud_services import RoomCrudService
-from src.collaboration.exceptions import RoomEntryNotAuthorizedException, RoomNotFoundException
+from src.exceptions import RoomEntryNotAuthorizedException, RoomNotFoundException
 
 
 

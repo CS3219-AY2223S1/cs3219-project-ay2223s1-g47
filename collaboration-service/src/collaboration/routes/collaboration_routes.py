@@ -1,5 +1,5 @@
 
-from src.collaboration.routes.route_dependencies import jwt_auth_from_query
+from src.jwt.route_dependencies import jwt_auth_from_query
 from src.collaboration.services.room_crud_services import RoomCrudService
 from src.db.db import db
 from src.collaboration.interfaces.room_state import RoomState
