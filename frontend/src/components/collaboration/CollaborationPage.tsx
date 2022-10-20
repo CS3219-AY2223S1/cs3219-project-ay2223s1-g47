@@ -21,19 +21,79 @@ import {
   CardActions,
   Divider,
   FormControl,
-  Grid,
   List,
   ListItem,
   ListItemAvatar,
   ListItemText,
   Paper,
-  TextField,
   Typography,
 } from "@mui/material";
 import { Box } from "@mui/system";
 import { useNavigate } from "react-router-dom";
 import { useDebounce } from "../../hooks/useDebounce";
 import userEvent from "@testing-library/user-event";
+import styled from "styled-components";
+import { TextField } from "../TextField";
+
+const Grid = styled.div`
+  display: grid;
+  grid-column-gap: 2rem;
+  grid-row-gap: 2rem;
+  grid-template-areas: "heading editor editor"
+                       "chat editor editor"
+                       "chat editor editor";
+  grid-template-columns: 20rem 1fr;
+`;
+
+const ChatBox =  styled.div`
+  display: grid;
+  grid-area: chat;
+  grid-row-gap: 2rem;
+  grid-template-rows: 1fr auto;
+`;
+
+const EditorBox = styled.div`
+  grid-area: editor;
+`;
+
+const ChatList = styled.ul`
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+`;
+
+const Chat = styled.li`
+  margin: ${(props: any) => props.primary ? "0 0 2rem 2rem" : "0 2rem 2rem 0" };
+
+  .chat-msg {
+    background: ${(props: any) => props.primary ? "rgb(46, 137, 255)" : "none" };
+    border-radius: ${(props: any) => props.primary ? "1rem 1rem 0 1rem" : "1rem 1rem 1rem 0" };
+    box-shadow: ${(props: any) => props.primary ? "1px 1px 10px 5px rgba(34, 0, 224, .5)" : "-1px -1px 3px 1px rgba(63, 63, 74, 1), 5px 5px 15px 5px rgba(0, 0, 0, .2)"};
+    margin: .5rem 0;
+    padding: 1rem;
+  }
+
+  .chat-from {
+    font-weight: bold;
+    font-size: .9em;
+    margin: 0 0 0 1rem;
+  }
+
+  .chat-time {
+    color: #aaa;
+    font-size: .9em;
+    margin: ${(props: any) => props.primary ? "0 1rem 0 0" : "0 0 0 1rem" };
+    text-align: ${(props: any) => props.primary ? "right" : "left" };
+  }
+` as any;
+
+const Question = styled.h1`
+  color: rgb(255, 179, 117);
+  font-size: 2rem;
+  grid-area: heading;
+  margin: 0;
+  text-shadow: 5px 2px 20px rgba(255, 90, 8, .8);
+`;
 
 function CollaborationPage() {
   // =========== query params ==================
@@ -226,12 +286,6 @@ function CollaborationPage() {
    * Code editor
    */
   const codeEditorComponent = (
-    <Box
-      style={{
-        height: "100%",
-        width: "100%",
-      }}
-    >
       <Editor
         value={code}
         onValueChange={(code: string) => {
@@ -254,32 +308,16 @@ function CollaborationPage() {
         }}
         tabSize={4}
       />
-    </Box>
   );
 
   const chatMessageListComponent = chatMessageList.map(
     (chatMessage: ChatMessage, index: number) => {
       return (
-        <ListItem key={index}>
-          <ListItemText
-            primary={
-              chatMessage.id === user.userId ? "You" : chatMessage.username
-            }
-            secondary={
-              <>
-                <Typography
-                  sx={{ display: "inline" }}
-                  component="span"
-                  variant="body2"
-                  color="text.primary"
-                >
-                  {chatMessage.timestamp}
-                </Typography>
-                <Typography>{chatMessage.message}</Typography>
-              </>
-            }
-          />
-        </ListItem>
+        <Chat key={index} primary={chatMessage.id === user.userId}>
+          <div className="chat-from">{chatMessage.id === user.userId ? "You" : chatMessage.username}</div>
+          <div className="chat-msg">{chatMessage.message}</div>
+          <div className="chat-time">{chatMessage.timestamp}</div>
+        </Chat>
       );
     }
   );
@@ -288,15 +326,15 @@ function CollaborationPage() {
    * Chat component
    */
   const chatWindowComponent = (
-    <Grid container spacing={4} component={Paper}>
-      <Grid item xs={12}>
-        <List style={{ maxHeight: "50vh", overflow: "auto" }}>
-          {chatMessageListComponent}
-        </List>
-      </Grid>
-      <Grid item xs={12}>
-        <FormControl fullWidth>
+    <ChatBox>
+      <ChatList>
+        {chatMessageListComponent}
+      </ChatList>
+      <div>
           <TextField
+            label="Message"
+            type="text"
+            value={chatText}
             onChange={(event) => setChatText(event.target.value)}
             onKeyDown={(event) => {
               const ENTER_KEY_CODE = 13;
@@ -304,25 +342,16 @@ function CollaborationPage() {
                 handleChatSendMessage(chatText);
               }
             }}
-            value={chatText}
-            label="Type your message..."
-            variant="outlined"
           />
-        </FormControl>
-      </Grid>
-    </Grid>
+      </div>
+      </ChatBox>
   );
 
   /**
    * Question component
    */
   const questionComponent = (
-    <Grid container component={Paper}>
-      <Grid item xs={12} padding={"12px"}>
-        <Typography variant="h4">{room?.question.title}</Typography>
-      </Grid>
-      <Grid item xs={12}></Grid>
-    </Grid>
+    <Question>{room?.question.title}</Question>
   );
 
   /**
@@ -348,26 +377,12 @@ function CollaborationPage() {
   );
 
   const roomIsOpenComponent = (
-    <Grid container direction="row" justifyContent="space-evenly">
-      <Grid item xs={4}>
-        <Grid
-          container
-          direction="column"
-          justifyContent="space-evenly"
-          spacing={12}
-        >
-          <Grid item xs={12}>
-            {questionComponent}
-          </Grid>
-          <Divider />
-          <Grid item xs={12}>
-            {chatWindowComponent}
-          </Grid>
-        </Grid>
-      </Grid>
-      <Grid item xs={8}>
+    <Grid>
+      {questionComponent}
+      {chatWindowComponent}
+      <EditorBox>
         {codeEditorComponent}
-      </Grid>
+      </EditorBox>
     </Grid>
   );
 
