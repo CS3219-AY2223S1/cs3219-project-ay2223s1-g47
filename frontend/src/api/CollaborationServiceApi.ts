@@ -1,5 +1,8 @@
 import axios, { AxiosError } from "axios";
-import { COLLABORATION_SERVICE_GET_ROOM_URL } from "../constants";
+import {
+  COLLABORATION_SERVICE_GET_ROOM_HISTORY_URL,
+  COLLABORATION_SERVICE_GET_ROOM_URL,
+} from "../constants";
 import { ChatRoomEventType, Question } from "../interfaces/collaboration/Room";
 
 export const apiGetRoom = async (roomId: string) => {
@@ -26,7 +29,7 @@ export const apiGetRoom = async (roomId: string) => {
 
 export const apiGetRoomHistory = async () => {
   const response = axios
-    .get(COLLABORATION_SERVICE_GET_ROOM_URL + "/crud/get_room_history", {
+    .get(COLLABORATION_SERVICE_GET_ROOM_HISTORY_URL, {
       withCredentials: true,
     })
     .catch((error: Error | AxiosError) => {

@@ -108,8 +108,8 @@ class RoomConnectionManager:
         # publish join room event
         leave_event = ChatRoomEvent(
             event_type=ChatRoomEventType.USER_LEFT,
-            user_id=user.id,
-            room_id=self.room_id,
+            user_ids=[user.id],
+            message=f"{user.username} left the room.",
             timestamp=time.time()
         )
 

@@ -24,10 +24,10 @@ async def create_room(user1_id: str = Body(), user2_id: str= Body(), difficulty:
 
 
 @router.get("/get_room_history", dependencies=[]) # TODO: add auth in dependencies
-def get_room_history(user_id: str) -> List[RoomInResponse]:
+def get_room_history(user: User=Depends(jwt_auth_from_cookie)) -> List[RoomInResponse]:
     # 1. create manager and ask it to get room history
     manager = CrudManager(RoomCrudService(db), QuestionServiceApiHandler(), UserServiceApiHandler())
-    room_history = manager.get_room_history(user_id)
+    room_history = manager.get_room_history(user.id)
 
     # 2. convert to exposable interface
     return [RoomInResponse.from_room(room) for room in room_history]
