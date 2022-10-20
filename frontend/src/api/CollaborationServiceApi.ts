@@ -3,7 +3,7 @@ import {
   COLLABORATION_SERVICE_GET_ROOM_HISTORY_URL,
   COLLABORATION_SERVICE_GET_ROOM_URL,
 } from "../constants";
-import { ChatRoomEventType, Question } from "../interfaces/collaboration/Room";
+import { ChatRoomEventType } from "../interfaces/collaboration/Room";
 
 export const apiGetRoom = async (roomId: string) => {
   // 1. post request

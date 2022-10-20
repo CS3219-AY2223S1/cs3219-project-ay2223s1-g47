@@ -24,23 +24,22 @@ class TestDailyVideoServices:
         """
         Tests that creating rooms is possible, and then immediately deletes it
         """
-        async with aiohttp.ClientSession() as session:
-             # given
-            service= DailyVideoService(_session=session)
-            unique_room_name = service.generate_unique_name()
-            try: 
-            
-                # when
-                room = await service.create_video_room(unique_room_name)
-                gotten_room = await service.get_video_room_by_id(unique_room_name)
+        # given
+        service= DailyVideoService()
+        unique_room_name = service.generate_unique_name()
+        try: 
+        
+            # when
+            room = await service.create_video_room(unique_room_name)
+            gotten_room = await service.get_video_room_by_id(unique_room_name)
 
-                # then
-                assert room.name == unique_room_name
-                assert gotten_room.name == unique_room_name
+            # then
+            assert room.name == unique_room_name
+            assert gotten_room.name == unique_room_name
 
-            finally:
-                # after
-                await service.delete_video_room(room.name)
+        finally:
+            # after
+            await service.delete_video_room(room.name)
 
 
 

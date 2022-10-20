@@ -37,7 +37,7 @@ class CrudManager:
         username2 = await self.user_service.get_username(user2_id)
 
         # 3. asynchronously create the video call room
-        video_room_name = await self.video_service.generate_unique_name()
+        video_room_name = self.video_service.generate_unique_name()
         video_room = await self.video_service.create_video_room(video_room_name)
 
         # 4. yield
