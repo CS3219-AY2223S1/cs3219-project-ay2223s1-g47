@@ -26,7 +26,7 @@ class TestDailyVideoServices:
         """
         async with aiohttp.ClientSession() as session:
              # given
-            service= DailyVideoService(session=session)
+            service= DailyVideoService(_session=session)
             unique_room_name = service.generate_unique_name()
             try: 
             

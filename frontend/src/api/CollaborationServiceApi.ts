@@ -58,6 +58,7 @@ export interface RoomApiResponseData {
   num_in_room?: number;
   question?: QuestionInResponse;
   events?: ChatRoomEventInResponse[];
+  video_room_url?: string;
 }
 
 export interface QuestionInResponse {
@@ -102,5 +103,6 @@ export const convertRoomApiResponseToRoom = (response: RoomApiResponseData) => {
           };
         })
       : [],
+    videoRoomUrl: response.video_room_url ?? "",
   };
 };

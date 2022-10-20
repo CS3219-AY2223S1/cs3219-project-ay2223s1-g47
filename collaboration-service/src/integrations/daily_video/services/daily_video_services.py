@@ -5,14 +5,17 @@ from src.integrations.daily_video.interfaces.daily_video_room import DailyVideoR
 
 import aiohttp
 import json
+
+AIOHTTP_SESSION = aiohttp.ClientSession()
+
 class DailyVideoService:
     """
     Service class that wraps around the daily video API. 
     """
 
-    def __init__(self, session: aiohttp.ClientSession, _daily_server_host: str = DAILY_VIDEO_DOMAIN):
+    def __init__(self, _session: aiohttp.ClientSession = AIOHTTP_SESSION, _daily_server_host: str = DAILY_VIDEO_DOMAIN):
         self.daily_server_host = _daily_server_host
-        self.session = session
+        self.session = _session
         self.headers ={
             "Authorization":"Bearer " + "a4648e74d5bc82c51a31925d61ec9a015c7b6c83ce56140754622bf9d285d79d",
             "Content-Type": "application/json"

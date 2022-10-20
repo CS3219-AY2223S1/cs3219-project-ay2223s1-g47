@@ -11,8 +11,9 @@ import MatchingPage from "./components/matching/MatchingPage";
 import { ToastContainer } from "react-toastify";
 import CollaborationPage from "./components/collaboration/CollaborationPage";
 import styled from "styled-components";
+import { DailyProvider } from "@daily-co/daily-react-hooks";
 
-import 'react-toastify/dist/ReactToastify.css';
+import "react-toastify/dist/ReactToastify.css";
 import { NavBar } from "./components/NavBar";
 import { HistoryPage } from "./components/HistoryPage";
 
@@ -43,9 +44,7 @@ function App() {
   return (
     <AppComponent>
       <Router>
-        { isLoggedIn &&
-          <NavBar/>
-        }
+        {isLoggedIn && <NavBar />}
         <Content>
           <Routes>
             <Route

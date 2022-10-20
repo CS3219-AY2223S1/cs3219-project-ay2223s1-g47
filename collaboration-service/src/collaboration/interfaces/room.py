@@ -60,7 +60,7 @@ class RoomInResponse(RoomMetadata):
 
     question: Question
     events: List[ChatRoomEvent]
-    video_room: DailyVideoRoom
+    video_room_url: str
 
     @staticmethod
     def from_room(room: Room):
@@ -75,5 +75,5 @@ class RoomInResponse(RoomMetadata):
             num_in_room=room.num_in_room,
             question=room.question,
             events=room.events,
-            video_room=room.video_room
+            video_room_url=room.video_room.url
         )
