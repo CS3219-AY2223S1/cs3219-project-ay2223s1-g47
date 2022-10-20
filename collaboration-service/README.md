@@ -4,6 +4,9 @@ The responsibilities of the collaboration service are to manage everything to do
 
 ## Get set up
 
+- requirements
+- dependencies: [judge0](https://github.com/judge0/judge0/blob/master/CHANGELOG.md#deployment-procedure)
+
 ## Development and testing
 
 ## Deployment

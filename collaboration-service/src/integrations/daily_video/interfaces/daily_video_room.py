@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Any, Dict
 from pydantic import BaseModel
 
 class DailyVideoRoom(BaseModel):
@@ -13,4 +13,4 @@ class DailyVideoRoom(BaseModel):
     privacy: str
     url: str
     created_at: str
-    config: Dict[str, any]
+    config: Dict[str, Any]

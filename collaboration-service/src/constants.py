@@ -34,6 +34,9 @@ MONGODB_TABLES = [
     ROOM_TABLE_NAME
 ]
 
+# daily video service
+DAILY_VIDEO_DOMAIN = "https://api.daily.co/v1" # "https://tanyjnaaman.daily.co"
+
 
 # ======================== question service ========================
 QUESTION_SERVICE_HOST = os.environ.get("QUESTION_SERVICE_HOST")
