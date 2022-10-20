@@ -6,6 +6,15 @@ on: [push]
 jobs:
   build:
 
+  # same contents as .env.sample
+  ENV: DEV
+  PORT: 8003
+  HOST: 0.0.0.0
+  MONGODB_LOCAL_URI: mongodb://localhost:27017/
+  QUESTION_SERVICE_HOST: http://localhost:8002
+  USER_SERVICE_HOST: http://localhost:8000
+
+
     runs-on: ubuntu-latest
     strategy:
       matrix:
