@@ -79,7 +79,7 @@ const connectDb = async (test: boolean) => {
 
   // 2. initialization
   if (!test) {
-    populateDevDb();
+    await populateDevDb();
   }
 
   // 3. log

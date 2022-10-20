@@ -7,13 +7,12 @@ from src.collaboration.interfaces.room import Room
 from src.collaboration.interfaces.room_state import RoomState
 from src.collaboration.models.room import RoomModel
 
-from src.constants import CLEANUP_TIMEOUT_IN_SECONDS, ROOM_TABLE_NAME
+from src.constants import ROOM_TABLE_NAME
 from src.db.db import db, DatabaseWrapper
 
 from datetime import datetime
 from uuid import uuid4
 
-import time
 import logging
 
 class RoomCrudService:
@@ -26,7 +25,7 @@ class RoomCrudService:
         self.db = _db if _db is not None else db
         self.table = ROOM_TABLE_NAME
 
-    def create_room(self, user1_id: str, user2_id: str, question: Question, _room_id: str = None) -> Room:
+    def create_room(self, user1_id: str, username1: str, user2_id: str, username2: str, question: Question, _room_id: str = None) -> Room:
         """
         Creates a new room in db and sets a worker to close the room after some predefined time.
         """
@@ -35,19 +34,19 @@ class RoomCrudService:
         # 1. create object
         room_initial_state = RoomState(
             code = "", # no code
-            chat_history = [] # no history
         )
         room_model = RoomModel(
             room_id = _room_id or str(uuid4()),
             created_at = str(datetime.now()),
-            closed_at = None,
-            is_closed = False,
             state = room_initial_state,
             num_in_room=0,
             user1_id = user1_id,
+            username1 = username1,
             user2_id = user2_id,
+            username2 = username2,
             question = question,
-            question_id=question.qid
+            question_id=question.qid,
+            events=[] # no events
         )
 
         # 2. check that object isn't inside
@@ -57,46 +56,12 @@ class RoomCrudService:
         # 3. insert into db
         self.db.insert(self.table, room_model.dict())
 
-        # 4. schedule an async cleanup job
-        logging.debug("Scheduling cleanup ...")
-        RoomCrudService.handle_room_cleanup(timeout_in_seconds=CLEANUP_TIMEOUT_IN_SECONDS, room_id=room_model.room_id, db=self.db)
-
-        # 5. return room object
+        # 4. return room object
         room = Room.from_room_model(room_model)
         return room
 
 
-    @staticmethod
-    async def handle_room_cleanup(timeout_in_seconds: int, room_id: str, db: DatabaseWrapper):
-        """
-        Sleeps, then checks if the room is empty. If it is, it closes the room. 
-        """
-        # sleep for timeout_in_seconds
-        time.sleep(timeout_in_seconds)
-
-        # get from db
-        logging.debug("Checking if room is empty ...")
-        rooms = db.get_items(ROOM_TABLE_NAME, dict(room_id=room_id))
-        if len(rooms) == 0:
-            raise CrudException("Room not found in db.")
-        elif len(rooms) > 1:
-            raise CrudException("Multiple rooms found in db.")
-        room = rooms[0] # we have exactly one room (as expected)
-        room_as_model = RoomModel(**room)
-
-        # check if room is empty. if empty, close. else, do nothing.
-        if room_as_model.num_in_room == 0 and not room_as_model.is_closed:
-            # update state
-            room_as_model.is_closed = True
-
-            # push to db
-            key = [dict(room_id=room_id)]
-            db.update_item(ROOM_TABLE_NAME, key, room_as_model)
-            logging.debug(f"Room {room_id} closed.")
-        else:
-            # do nothing
-            logging.debug("Room is not empty. Doing nothing.")
-        
+     
 
     def get_room_by_id(self, room_id:str) -> Room:
         """

@@ -36,15 +36,14 @@ const Content = styled.div`
 function App() {
   // =============== State management ===============
   // user context on login state
-  const { user } = useContext(UserContext) as UserContextType;
-  const { loggedIn } = user;
+  const { isLoggedIn } = useContext(UserContext) as UserContextType;
 
-  console.log("App.tsx: loggedIn = " + loggedIn);
+  console.log("App.tsx: loggedIn = " + isLoggedIn);
 
   return (
     <AppComponent>
       <Router>
-        { loggedIn &&
+        { isLoggedIn &&
           <NavBar/>
         }
         <Content>
@@ -54,7 +53,7 @@ function App() {
               element={
                 <ProtectedRoute
                   redirectPath={"/login"}
-                  isAllowed={loggedIn}
+                  isAllowed={isLoggedIn}
                   children={<Home />}
                 />
               }
@@ -64,7 +63,7 @@ function App() {
               element={
                 <ProtectedRoute
                   redirectPath={"/"}
-                  isAllowed={loggedIn}
+                  isAllowed={isLoggedIn}
                   children={<MatchingPage />}
                 />
               }
@@ -74,7 +73,7 @@ function App() {
               element={
                 <ProtectedRoute
                   redirectPath={"/"}
-                  isAllowed={loggedIn}
+                  isAllowed={isLoggedIn}
                   children={<CollaborationPage />}
                 />
               }
@@ -94,7 +93,7 @@ function App() {
               element={
                 <ProtectedRoute
                   redirectPath={"/"}
-                  isAllowed={!loggedIn} // if logged in, redirect to home
+                  isAllowed={!isLoggedIn} // if logged in, redirect to home
                   children={<LoginPage />}
                 />
               }
@@ -104,7 +103,7 @@ function App() {
               element={
                 <ProtectedRoute
                   redirectPath={"/"}
-                  isAllowed={loggedIn} // if not logged in, redirect to home
+                  isAllowed={isLoggedIn} // if not logged in, redirect to home
                   children={<AccountPage />}
                 />
               }
@@ -114,7 +113,7 @@ function App() {
               element={
                 <ProtectedRoute
                   redirectPath={"/"}
-                  isAllowed={loggedIn} // if not logged in, redirect to home
+                  isAllowed={isLoggedIn} // if not logged in, redirect to home
                   children={<HistoryPage />}
                 />
               }

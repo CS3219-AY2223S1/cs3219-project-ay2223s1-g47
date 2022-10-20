@@ -1,4 +1,6 @@
-from typing import Optional
+from typing import List
+
+from src.collaboration.interfaces.events import ChatRoomEvent
 from src.collaboration.models.room import RoomModel
 from src.collaboration.interfaces.room_state import RoomState
 from src.collaboration.interfaces.question import Question
@@ -9,13 +11,19 @@ class RoomMetadata(BaseModel):
     """
     Metadata about a room.
     """
-
+    # ====== room info ======
     room_id: str # room id
     created_at: str # created at
-    closed_at: Optional[str] = None # closed at
-    is_closed: bool # is closed
     state: RoomState # state of room
     num_in_room: int # number in room
+
+    # ====== user 1 ======
+    user1_id: str
+    username1: str
+    
+    # ====== user 2 ======
+    user2_id: str
+    username2: str
 
 
 class Room(RoomMetadata):
@@ -24,15 +32,12 @@ class Room(RoomMetadata):
     inherits from the room metadata interface.
     """
 
-    # ====== user 1 ======
-    user1_id: str
-    
-    # ====== user 2 ======
-    user2_id: str
-
     # ====== question ======
     question_id: str # question id
     question: Question # question
+
+    # ====== history =======
+    events: List[ChatRoomEvent]
 
     @staticmethod
     def from_room_model(room_model: RoomModel):
@@ -50,15 +55,19 @@ class RoomInResponse(RoomMetadata):
     """
 
     question: Question
+    events: List[ChatRoomEvent]
 
     @staticmethod
     def from_room(room: Room):
         return RoomInResponse(
+            user1_id=room.user1_id,
+            username1=room.username1,
+            user2_id=room.user2_id,
+            username2=room.username2,
             room_id=room.room_id,
             created_at=room.created_at,
-            closed_at=room.closed_at,
-            is_closed=room.is_closed,
             state=room.state,
             num_in_room=room.num_in_room,
-            question=room.question
+            question=room.question,
+            events=room.events,
         )

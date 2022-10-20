@@ -5,10 +5,12 @@ import {
   modifyUser,
   loginUser,
   userWithIdExists,
+  getUserWithId,
 } from "./services/user-services";
 import bcrypt from "bcrypt";
 import { Request, Response } from "express";
 import {
+  createBadRequestResponse,
   createInternalServerErrorResponse,
   createOkResponse,
   createUnauthorizedResponse,
@@ -115,8 +117,11 @@ export async function logout(request: Request, response: Response) {
  */
 export async function changeUsername(request: Request, response: Response) {
   try {
+    // 0. check that the request has a JWT
+    const jwtCookie = request.cookies ? request.cookies.JWT : undefined;
+
     // 1. check jwt
-    const jwtPayload = (await checkJWT(request)) as unknown as User;
+    const jwtPayload = (await checkJWT(jwtCookie)) as unknown as User;
     if (!jwtPayload) {
       return createUnauthorizedResponse(response, "Invalid JWT");
     }
@@ -150,8 +155,11 @@ export async function changeUsername(request: Request, response: Response) {
  */
 export async function changePassword(request: Request, response: Response) {
   try {
+    // 0. check that the request has a JWT
+    const jwtCookie = request.cookies ? request.cookies.JWT : undefined;
+
     // 1. check jwt
-    const jwtPayload = (await checkJWT(request)) as unknown as User;
+    const jwtPayload = (await checkJWT(jwtCookie)) as unknown as User;
     if (!jwtPayload) {
       return createUnauthorizedResponse(response, "Invalid JWT");
     }
@@ -191,8 +199,12 @@ export async function changePassword(request: Request, response: Response) {
  */
 export async function auth(request: Request, response: Response) {
   console.debug("Called auth");
+
+  // 0. check that the request has a JWT
+  const jwtCookie = request.cookies ? request.cookies.JWT : undefined;
+
   // 1. check jwt
-  const jwtPayload = (await checkJWT(request)) as unknown as User;
+  const jwtPayload = (await checkJWT(jwtCookie)) as unknown as User;
   if (!jwtPayload) {
     return createUnauthorizedResponse(response, "Invalid JWT");
   }
@@ -236,10 +248,14 @@ export async function auth_server(request: Request, response: Response) {
  */
 export async function get_jwt(request: Request, response: Response) {
   console.debug("Called get jwt");
+
+  // 0. check that the request has a JWT
+  const jwtCookie = request.cookies ? request.cookies.JWT : undefined;
+
   // 1. check jwt
-  const jwtCookie = request.cookies.JWT;
   const user = (await checkJWT(jwtCookie)) as unknown as User;
   if (!user) {
+    console.log(user);
     return createUnauthorizedResponse(response, "Invalid JWT");
   }
 
@@ -253,4 +269,24 @@ export async function get_jwt(request: Request, response: Response) {
   // 3. return user
   const jwt = await signJWT(user);
   return createOkResponse(response, { jwt: jwt });
+}
+
+/**
+ * Handles a get request to get a username given the id.
+ */
+export async function getUsernameFromId(request: Request, response: Response) {
+  // 1. authenticate
+  // TODO: we do this next time
+
+  // 2. get id from request
+  const id = request.query.id as unknown as string;
+  if (!id) {
+    return createBadRequestResponse(response, "Missing id");
+  }
+
+  // 3. get username from id
+  const user = await getUserWithId(id);
+
+  // 4. return username
+  return createOkResponse(response, { username: user.username });
 }

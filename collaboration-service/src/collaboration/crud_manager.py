@@ -1,5 +1,6 @@
 from typing import List
 
+from src.api.user_service_api import UserServiceApiHandler
 from src.collaboration.services.room_crud_services import RoomCrudService
 from src.api.question_service_api import QuestionServiceApiHandler
 from src.collaboration.interfaces.room import Room
@@ -11,9 +12,14 @@ class CrudManager:
     in the collaboration service database.
     """
 
-    def __init__(self, crud_service: RoomCrudService, question_service: QuestionServiceApiHandler):
+    def __init__(self, 
+        crud_service: RoomCrudService, 
+        question_service: QuestionServiceApiHandler,
+        user_service: UserServiceApiHandler
+    ):
         self.crud_service = crud_service
         self.question_service = question_service
+        self.user_service = user_service
 
     async def create_room(self, user1_id: str, user2_id: str, difficulty: int) -> Room:
         """
@@ -22,8 +28,12 @@ class CrudManager:
         # 1. asynchronously ask for a question for question service
         question = await self.question_service.get_question(difficulty)
 
-        # 2. create object
-        room = self.crud_service.create_room(user1_id, user2_id, question)
+        # 2. asynchronously ask for the usernames of the specified users
+        username1 = await self.user_service.get_username(user1_id)
+        username2 = await self.user_service.get_username(user2_id)
+
+        # 3. create object
+        room = self.crud_service.create_room(user1_id, username1, user2_id, username2, question)
 
         return room
     

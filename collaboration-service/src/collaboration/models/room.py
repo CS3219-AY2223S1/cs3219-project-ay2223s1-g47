@@ -1,4 +1,6 @@
-from typing import Optional
+from typing import List, Optional
+
+from src.collaboration.interfaces.events import ChatRoomEvent
 from src.collaboration.interfaces.room_state import RoomState
 from src.db.interfaces import DatabaseIndexWrapper
 from src.collaboration.interfaces.question import Question
@@ -17,22 +19,23 @@ class RoomModel(BaseModel):
     # ====== room data ======
     room_id: str # room id
     created_at: str # created at
-    closed_at: Optional[str] = None # closed at
-    is_closed: bool # is closed
     state: RoomState # state of room
     num_in_room: int # number in room
 
     # ====== user 1 ======
     user1_id: str
-    
+    username1: str
+
     # ====== user 2 ======
     user2_id: str
+    username2: str
 
     # ====== question ======
     question_id: str # question id
     question: Question # question
 
-
+    # ====== history =======
+    events: List[ChatRoomEvent]
 
 
 # ====== indices =======

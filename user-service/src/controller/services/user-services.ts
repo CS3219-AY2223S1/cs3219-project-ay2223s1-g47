@@ -82,7 +82,6 @@ export async function modifyUser(id: string, signupDetails: SignUpDetails) {
     return user;
   } catch (error) {
     if (error instanceof UserServiceException) {
-      console.log("h");
       throw error;
     }
     throw new DbWriteException("Error creating user!");
@@ -101,8 +100,29 @@ export async function userWithUsernameExists(username: string) {
  * Checks that a user with the given id exists.
  */
 export async function userWithIdExists(id: string) {
-  return Boolean(await UserModel.exists({ id }));
+  return Boolean(await UserModel.exists({ id: id }));
 }
+
+/**
+ * Gets a user with the specified id.
+ */
+export async function getUserWithId(id: string) {
+  // find
+  const user_from_db = await UserModel.findOne({ id: id });
+  if (user_from_db == null) {
+    throw new DbReadException("User does not exist.");
+  }
+
+  // cast
+  const user: User = {
+    username: user_from_db.username,
+    password: user_from_db.password,
+    id: user_from_db.id,
+  };
+
+  return user;
+}
+
 /**
  * Tries to delete a user with the specified username.
  */

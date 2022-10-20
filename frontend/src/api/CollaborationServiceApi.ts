@@ -1,9 +1,13 @@
 import axios, { AxiosError } from "axios";
-import { COLLABORATION_SERVICE_GET_ROOM_URL } from "../constants";
-import { ChatMessage } from "../interfaces/collaboration/Room";
+import {
+  COLLABORATION_SERVICE_GET_ROOM_HISTORY_URL,
+  COLLABORATION_SERVICE_GET_ROOM_URL,
+} from "../constants";
+import { ChatRoomEventType, Question } from "../interfaces/collaboration/Room";
 
 export const apiGetRoom = async (roomId: string) => {
-  const response = axios
+  // 1. post request
+  const response = (await axios
     .get(COLLABORATION_SERVICE_GET_ROOM_URL + "/" + roomId, {
       withCredentials: true,
     })
@@ -14,17 +18,18 @@ export const apiGetRoom = async (roomId: string) => {
         console.error(error);
         return error; // propagate up the call stack
       }
-    }) as Promise<{
+    })) as Promise<{
     status: number;
     detail: { message?: string; detail?: any };
     data: RoomApiResponseData;
   }>;
+
   return response;
 };
 
 export const apiGetRoomHistory = async () => {
   const response = axios
-    .get(COLLABORATION_SERVICE_GET_ROOM_URL + "/crud/get_room_history", {
+    .get(COLLABORATION_SERVICE_GET_ROOM_HISTORY_URL, {
       withCredentials: true,
     })
     .catch((error: Error | AxiosError) => {
@@ -52,6 +57,7 @@ export interface RoomApiResponseData {
   state?: RoomStateInResponse;
   num_in_room?: number;
   question?: QuestionInResponse;
+  events?: ChatRoomEventInResponse[];
 }
 
 export interface QuestionInResponse {
@@ -62,7 +68,39 @@ export interface QuestionInResponse {
   difficulty?: number;
 }
 
+export interface ChatRoomEventInResponse {
+  event_type: ChatRoomEventType;
+  message: string;
+  user_ids: string[];
+}
+
 interface RoomStateInResponse {
-  chat_history?: Array<ChatMessage>;
   code?: string;
 }
+
+export const convertRoomApiResponseToRoom = (response: RoomApiResponseData) => {
+  return {
+    roomId: response.room_id ?? "",
+    createdAt: response.created_at ?? "",
+    state: {
+      code: response.state?.code ?? "",
+    },
+    numInRoom: response.num_in_room ?? 0,
+    question: {
+      qid: response.question?.qid ?? "",
+      title: response.question?.title ?? "",
+      description: response.question?.description ?? "",
+      difficulty: response.question?.difficulty ?? 0,
+      topic: response.question?.topic ?? 0,
+    },
+    events: !!response.events
+      ? response.events.map((event) => {
+          return {
+            eventType: event.event_type ?? 0,
+            message: event.message ?? "",
+            userIds: event.user_ids ?? [],
+          };
+        })
+      : [],
+  };
+};

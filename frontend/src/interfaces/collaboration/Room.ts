@@ -1,15 +1,13 @@
 export interface Room {
   roomId: string;
   createdAt: string;
-  closedAt: string;
-  isClosed: boolean;
   state: RoomState;
   numInRoom: number;
   question: Question;
+  events: ChatRoomEvent[];
 }
 
 export interface RoomState {
-  chatHistory: Array<ChatMessage>;
   code: string;
 }
 
@@ -31,9 +29,13 @@ export enum QuestionTopic {
   ARRAYS_AND_HASHING = 0,
 }
 
-export interface ChatMessage {
+export enum ChatRoomEventType {
+  USER_JOIN = 0,
+  USER_LEFT = 1,
+}
+
+export interface ChatRoomEvent {
+  eventType: ChatRoomEventType;
   message: string;
-  id: string; // user id
-  username: string;
-  timestamp: string;
+  userIds: string[];
 }

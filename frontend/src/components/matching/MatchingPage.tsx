@@ -19,8 +19,8 @@ const Grid = styled.div`
 const Card = styled.div`
   align-items: center;
   border-radius: 20px;
-  box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, .4),
-      -5px -5px 15px 5px rgba(63, 63, 74, 1);
+  box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.4),
+    -5px -5px 15px 5px rgba(63, 63, 74, 1);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -34,14 +34,14 @@ const Card = styled.div`
 
   h2 {
     color: rgb(255, 179, 117);
-    text-shadow: 5px 2px 20px rgba(255, 90, 8, .8);
+    text-shadow: 5px 2px 20px rgba(255, 90, 8, 0.8);
   }
 `;
 
 function MatchingPage() {
   // ====== State management ======
   // UI states
-    useState<Boolean>(false);
+  useState<Boolean>(false);
   const [isMatching, setIsMatching] = useState<Boolean>(false);
   const [socket, setSocket] = useState<Socket>();
   const [socketJwt, setSocketJwt] = useState<string>("");
@@ -49,9 +49,7 @@ function MatchingPage() {
   const navigate = useNavigate();
 
   // contexts
-  const { user } = useContext(
-    UserContext
-  ) as UserContextType;
+  const { user } = useContext(UserContext) as UserContextType;
 
   socket?.on("matchSuccess", (room: string) => {
     navigate(`/room?roomId=${room}`);
@@ -61,7 +59,7 @@ function MatchingPage() {
    * Hook that initializes authentication in preparation for the websocket connection.
    * Specifically, it gets a new JWT for the websocket connection.
    */
-   useEffect(() => {
+  useEffect(() => {
     apiGetNewJwt().then((response) => {
       if (response.status === 200) {
         setSocketJwt(response.data.jwt);
@@ -73,27 +71,27 @@ function MatchingPage() {
 
   // ====== Event handlers ======
 
-    const onMatchingTimeout = () => {
-        setIsMatching(false);
-        toast("Matching timeout! Please make another match.");
-    }
+  const onMatchingTimeout = () => {
+    setIsMatching(false);
+    toast("Matching timeout! Please make another match.");
+  };
 
-    const createPendingMatch = (difficulty: number) => {
-        const newSocket = io(serverUri, {
-            query: {
-                userId: user.userId,
-                socketJwt,
-            },
-        });
-        setSocket(newSocket);
-        newSocket.emit("match", {
-            userId: user.userId,
-            difficulty,
-        });
-        console.log("in createPendingMatch: ", newSocket);
-        setIsMatching(true);
-        setTimeout(onMatchingTimeout, 60 * 1000);
-    }
+  const createPendingMatch = (difficulty: number) => {
+    const newSocket = io(serverUri, {
+      query: {
+        userId: user.userId,
+        socketJwt,
+      },
+    });
+    setSocket(newSocket);
+    newSocket.emit("match", {
+      userId: user.userId,
+      difficulty,
+    });
+    console.log("in createPendingMatch: ", newSocket);
+    setIsMatching(true);
+    setTimeout(onMatchingTimeout, 60 * 1000);
+  };
 
   // ====== UI components ======
   const matchOptionCard = (
@@ -103,9 +101,9 @@ function MatchingPage() {
   ) => {
     return (
       <Card>
-        <h2>{ title }</h2>
-        <p>{ description }</p>
-        <Button onClick={ onClick }>Select</Button>
+        <h2>{title}</h2>
+        <p>{description}</p>
+        <Button onClick={onClick}>Select</Button>
       </Card>
     );
   };
@@ -115,7 +113,7 @@ function MatchingPage() {
       {matchOptionCard(
         "Easy",
         "Choose this if you're new to programming",
-        () => createPendingMatch(0)
+        () => createPendingMatch(0) // TODO: use enums rather than magic numbers
       )}
       {matchOptionCard("Medium", "For most people.", () =>
         createPendingMatch(1)
@@ -127,13 +125,9 @@ function MatchingPage() {
   );
 
   // ====== Render ======
-  if (isMatching) return <MatchLoadingComponent/>
+  if (isMatching) return <MatchLoadingComponent />;
 
-  return (
-    <Grid>
-      {matchingSelection}
-    </Grid>
-  );
+  return <Grid>{matchingSelection}</Grid>;
 }
 
 export default MatchingPage;
