@@ -1,0 +1,50 @@
+# test for collaboration service
+name: Python test
+
+# on: [push]
+on:
+  pull_request:
+    branches: [master, main]
+
+
+jobs:
+  build:
+
+    # same contents as .env.sample
+    env:
+      ENV: DEV
+      PORT: 8003
+      HOST: 0.0.0.0
+      MONGODB_LOCAL_URI: mongodb://localhost:27017/
+      QUESTION_SERVICE_HOST: http://localhost:8002
+      USER_SERVICE_HOST: http://localhost:8000
+      FRONTEND_HOST: http://localhost:3000
+      MATCHING_SERVICE_HOST: http://localhost:8001
+
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8"]
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v4
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Install dependencies
+        run: |
+          cd collaboration-service
+          python -m pip install --upgrade pip
+          pip install pytest
+          if [ -f requirements.txt ]; then pip install -r requirements.txt; fi
+
+      - name: Start MongoDB
+        uses: supercharge/mongodb-github-action@1.8.0
+
+      - name: Test with pytest
+        run: |
+          cd collaboration-service
+          pytest
