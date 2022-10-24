@@ -28,7 +28,10 @@ const Grid = styled.div`
 
 const Video = styled.div`
   grid-area: video;
-  min-height: 300px;
+
+  iframe {
+    min-height: 250px;
+  }
 `;
 
 const Editor = styled.div`

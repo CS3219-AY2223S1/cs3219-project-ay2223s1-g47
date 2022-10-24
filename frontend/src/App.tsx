@@ -30,7 +30,7 @@ const AppComponent = styled.div`
 
 const Content = styled.div`
   margin: 0 auto;
-  max-width: 1000px;
+  max-width: 1200px;
   padding: 3rem 0;
 `;
 
