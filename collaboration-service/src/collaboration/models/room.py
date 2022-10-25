@@ -1,5 +1,5 @@
-from typing import List, Optional
-
+from typing import List
+from src.integrations.daily_video.interfaces.daily_video_room import DailyVideoRoom
 from src.collaboration.interfaces.events import ChatRoomEvent
 from src.collaboration.interfaces.room_state import RoomState
 from src.db.interfaces import DatabaseIndexWrapper
@@ -36,6 +36,9 @@ class RoomModel(BaseModel):
 
     # ====== history =======
     events: List[ChatRoomEvent]
+
+    # ======= video room ===
+    video_room: DailyVideoRoom
 
 
 # ====== indices =======

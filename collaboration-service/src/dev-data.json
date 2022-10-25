@@ -19,7 +19,16 @@
                 "difficulty": 0,
                 "topic": 0
             },
-            "events": []
+            "events": [],
+            "video_room": {
+                "id": "3c770d1a-5947-44f3-bb48-3173ed7a2b23",
+                "name": "C3dCcHuZV1Th5DrEHiXd",
+                "api_created": false,
+                "privacy": "public",
+                "created_at": "2020-10-19T00:00:00Z",
+                "url": "https://tanyjnaaman.daily.co/C3dCcHuZV1Th5DrEHiXd",
+                "config": {}
+            }
         }
     ]
 }

@@ -3,7 +3,7 @@ import {
   COLLABORATION_SERVICE_GET_ROOM_HISTORY_URL,
   COLLABORATION_SERVICE_GET_ROOM_URL,
 } from "../constants";
-import { ChatRoomEventType, Question } from "../interfaces/collaboration/Room";
+import { ChatRoomEventType } from "../interfaces/collaboration/Room";
 
 export const apiGetRoom = async (roomId: string) => {
   // 1. post request
@@ -58,6 +58,7 @@ export interface RoomApiResponseData {
   num_in_room?: number;
   question?: QuestionInResponse;
   events?: ChatRoomEventInResponse[];
+  video_room_url?: string;
 }
 
 export interface QuestionInResponse {
@@ -102,5 +103,6 @@ export const convertRoomApiResponseToRoom = (response: RoomApiResponseData) => {
           };
         })
       : [],
+    videoRoomUrl: response.video_room_url ?? "",
   };
 };

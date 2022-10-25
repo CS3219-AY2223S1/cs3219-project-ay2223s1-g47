@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Room } from "../../interfaces/collaboration/Room";
 import {
   apiGetRoom,
@@ -10,19 +10,7 @@ import { useSearchParams } from "react-router-dom";
 import { UserContext, UserContextType } from "../../contexts/UserContext";
 import { apiGetNewJwt } from "../../api/UserServiceApi";
 import { COLLABORATION_SERVICE_COLLABRATION_ROOM_URL } from "../../constants";
-import {
-  Divider,
-  FormControl,
-  Grid,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemText,
-  Paper,
-  TextField,
-  Typography,
-} from "@mui/material";
-import { Box } from "@mui/system";
+import { Divider, Grid, Paper, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useDebounce } from "../../hooks/useDebounce";
 
@@ -53,6 +41,11 @@ function CollaborationPage() {
   // UI states
   // mobile
   const isMobile = useIsMobile();
+
+  // video call
+  const [videoCallUrl, setVideoCallUrl] = useState<string | undefined>(
+    undefined
+  );
 
   // code state
   const [code, setCode] = useState<string>(""); // for tracking code changes
@@ -91,6 +84,7 @@ function CollaborationPage() {
         setRoom(roomFromResponse);
         setCode(roomFromResponse.state.code);
         setInitialCode(roomFromResponse.state.code);
+        setVideoCallUrl(roomFromResponse.videoRoomUrl);
       } else {
         console.error(response);
         navigate("/match");
@@ -183,6 +177,38 @@ function CollaborationPage() {
     }
   }, [webSocket]);
 
+  /**
+   * Hook that handles video call rendering.
+   */
+  useEffect(() => {
+    // 0. if video call url is undefined, cannot
+    if (!videoCallUrl) {
+      return;
+    }
+
+    // 1. create script to run video
+    const script = document.createElement("script");
+    script.innerHTML = `window.DailyIframe.createFrame(document.getElementById('callframe'), {
+            iframeStyle: {
+              width: "100%",
+              height: "100%",
+              border: "0",
+              zIndex: 9999
+            },
+            showLeaveButton: true,
+            showFullscreenButton: true,
+          }).join({
+            url: "${videoCallUrl}",
+          });`;
+
+    // 2. bind elements
+    const videoRef = document.getElementById("video");
+    const videoFrameRef = document.getElementById("callframe");
+    if (videoRef && videoFrameRef && videoFrameRef.children.length === 0) {
+      videoRef.appendChild(script);
+    }
+  }, [videoCallUrl]);
+
   // =========== components ====================
 
   /**
@@ -217,16 +243,25 @@ function CollaborationPage() {
   );
 
   const roomComponent = (
-    <Grid container direction="row" justifyContent="space-evenly">
+    <Grid
+      container
+      direction="row"
+      justifyContent="space-evenly"
+      style={{ minHeight: "100vh" }}
+    >
       <Grid item xs={4}>
         <Grid
           container
           direction="column"
-          justifyContent="space-evenly"
-          spacing={12}
+          // justifyContent="space-evenly"
+          style={{ height: "100%" }}
+          // spacing={12}
         >
-          <Grid item xs={12}>
+          <Grid item xs={6}>
             {questionComponent}
+          </Grid>
+          <Grid item xs={6}>
+            <div style={{ height: "100%" }} id="callframe"></div>
           </Grid>
           <Divider />
         </Grid>
@@ -237,7 +272,12 @@ function CollaborationPage() {
     </Grid>
   );
 
-  return roomComponent;
+  return (
+    <div style={{ minHeight: "100vh" }}>
+      <div id="video"></div>
+      {roomComponent}
+    </div>
+  );
 }
 
 export default CollaborationPage;

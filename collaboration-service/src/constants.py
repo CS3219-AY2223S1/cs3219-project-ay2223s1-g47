@@ -2,6 +2,7 @@ from dotenv import load_dotenv
 import os
 load_dotenv() # load environment variables from .env file
 from pathlib import Path
+import aiohttp
 
 # assertions to check .env file
 assert os.environ.get("ENV") in ['DEV', 'PROF']
@@ -12,6 +13,7 @@ assert os.environ.get("QUESTION_SERVICE_HOST") is not None
 assert os.environ.get("USER_SERVICE_HOST") is not None
 assert os.environ.get("MATCHING_SERVICE_HOST") is not None
 assert os.environ.get("FRONTEND_HOST") is not None
+assert os.environ.get("DAILY_VIDEO_TOKEN") is not None
 
 # enviroment
 ENV_IS_PROD = os.environ.get("ENV") == 'PROD'
@@ -34,6 +36,10 @@ MONGODB_TABLES = [
     ROOM_TABLE_NAME
 ]
 
+# daily video service
+DAILY_VIDEO_DOMAIN = "https://api.daily.co/v1" # "https://tanyjnaaman.daily.co"
+DAILY_VIDEO_TOKEN = os.environ.get("DAILY_VIDEO_TOKEN") or ""
+
 
 # ======================== question service ========================
 QUESTION_SERVICE_HOST = os.environ.get("QUESTION_SERVICE_HOST")
@@ -49,3 +55,6 @@ MATCHING_SERVICE_HOST = os.environ.get("MATCHING_SERVICE_HOST")
 
 # ======================== frontend ========================
 FRONTEND_HOST = os.environ.get("FRONTEND_HOST")
+
+
+

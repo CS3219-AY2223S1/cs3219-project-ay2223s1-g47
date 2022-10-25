@@ -40,3 +40,8 @@ class CrudItemNotFoundException(CollaborationServiceException):
 class AuthorizationException(CollaborationServiceException):
     def __init__(self, message: str, detail: dict = None):
         super().__init__(status_code=403, message=message, detail=detail)
+
+# ================ Video service =========================
+class VideoServiceException(CollaborationServiceException):
+    def __init__(self, message: str, detail: dict = None):
+        super().__init__(status_code=500, message=message, detail=detail)

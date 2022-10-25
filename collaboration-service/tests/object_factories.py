@@ -1,5 +1,6 @@
-from typing import List
+from typing import Dict, List
 
+from src.integrations.daily_video.interfaces.daily_video_room import DailyVideoRoom
 from src.collaboration.interfaces.events import ChatRoomEvent
 from src.collaboration.interfaces.user import User
 from src.collaboration.interfaces.room_state import RoomState
@@ -63,6 +64,7 @@ def create_room(
     user1_username: str = None,
     user2_id: str = None,
     user2_username: str = None,
+    video_room: DailyVideoRoom = None,
     question_id: str = None,
     question: Question = None,
     events : List[ChatRoomEvent] = None
@@ -80,10 +82,32 @@ def create_room(
         username1=user1_username or fake.name(),
         user2_id=user2_id or fake.uuid4(),
         username2=user2_username or fake.name(),
+        video_room=video_room or create_video_room(),
         question_id=question_id or fake.uuid4(),
         question=question or create_question(),
         events=events or []
     )
 
-
-
+def create_video_room(
+    id: str = None, 
+    name: str = None, 
+    api_created: bool = None,
+    privacy: str = None,
+    url: str = None,
+    created_at: str = None,
+    config: Dict[str, any] = None
+):
+    """
+    Creates a mock video room.
+    """
+    fake = Faker()
+    return DailyVideoRoom(**{
+        "id": id or fake.uuid4(),
+        "name": name or fake.name(),
+        "api_created": api_created or True,
+        "privacy": privacy or "private",
+        "url": url or fake.url(),
+        "created_at": created_at or str(fake.date_time()),
+        "config": config or {}
+    })
+    

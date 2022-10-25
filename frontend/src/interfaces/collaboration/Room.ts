@@ -5,6 +5,7 @@ export interface Room {
   numInRoom: number;
   question: Question;
   events: ChatRoomEvent[];
+  videoRoomUrl: string;
 }
 
 export interface RoomState {

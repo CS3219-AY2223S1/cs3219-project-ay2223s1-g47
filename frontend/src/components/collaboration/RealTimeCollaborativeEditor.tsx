@@ -83,7 +83,6 @@ export default function RealTimeCollaborativeEditor(props: {
       });
 
       // 5. create codemirror editor state
-      console.log(language, convertLanguage(language));
       const state = EditorState.create({
         doc: yText.toString(),
         extensions: [

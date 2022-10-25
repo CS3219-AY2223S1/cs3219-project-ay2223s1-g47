@@ -1,4 +1,4 @@
-from src.collaboration.exceptions import DatabaseException, DatabaseItemNotFoundException
+from src.exceptions import DatabaseException, DatabaseItemNotFoundException
 from src.db.interfaces import DatabaseIndexWrapper
 from pymongo import MongoClient
 from src.constants import ENV_IS_DEV, MONGODB_COLLABORATION_DATABASE_NAME, MONGODB_JSON_PATH, MONGODB_TABLES, MONGODB_URI

@@ -107,3 +107,5 @@ services:
       - USER_SERVICE_HOST=http://user-service:8000
       - FRONTEND_HOST=http://localhost:3000
       - MATCHING_SERVICE_HOST=http://matching-service:8001
+      - DAILY_VIDEO_TOKEN=a4648e74d5bc82c51a31925d61ec9a015c7b6c83ce56140754622bf9d285d79d
+

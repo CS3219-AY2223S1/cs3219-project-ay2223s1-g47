@@ -7,7 +7,7 @@ from src.collaboration.services.room_crud_services import RoomCrudService
 from src.db.db import DatabaseWrapper
 from src.constants import  ROOM_TABLE_NAME
 
-from tests.object_factories import create_question, create_room
+from tests.object_factories import create_question, create_room, create_video_room
 import mongomock
 import pytest
 
@@ -26,9 +26,17 @@ class TestRoomCrudService:
         user2_id = str(uuid4())
         username2 = "user2"
         question = create_question()
+        video_room = create_video_room()
 
         # when 
-        service.create_room(user1_id, username1, user2_id, username2, question, room_id)
+        service.create_room(user1_id=user1_id, 
+            username1=username1, 
+            user2_id=user2_id, 
+            username2=username2, 
+            video_room=video_room, 
+            question=question, 
+            _room_id=room_id
+        )
         room = service.get_room_by_id(room_id)
 
         # then
@@ -38,6 +46,7 @@ class TestRoomCrudService:
         assert room.user2_id == user2_id
         assert room.username2 == username2
         assert room.question == question        
+        assert room.video_room == video_room
 
 
     @pytest.mark.parametrize(
@@ -58,7 +67,7 @@ class TestRoomCrudService:
         test_db = DatabaseWrapper(_client=mongomock.MongoClient())
         service = RoomCrudService(test_db)
         for room in rooms_in_db:
-            service.create_room(room.user1_id, room.username1, room.user2_id, room.username2, room.question, room.room_id)
+            service.create_room(room.user1_id, room.username1, room.user2_id, room.username2, room.video_room, room.question, room.room_id)
         
         # when
         for room in updated_rooms:
