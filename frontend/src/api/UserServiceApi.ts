@@ -92,7 +92,7 @@ export const apiCallUserLogout: () => Promise<{
   data: {};
 }> = async () => {
   const response = (await axios
-    .post(USER_SERVICE_LOGOUT_URL, { withCredentials: true })
+    .post(USER_SERVICE_LOGOUT_URL,{}, { withCredentials: true })
     .catch((error: Error | AxiosError) => {
       if (axios.isAxiosError(error)) {
         return error.response?.data; // return response data from backend
