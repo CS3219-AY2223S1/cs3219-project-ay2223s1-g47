@@ -9,6 +9,7 @@ import { UserContext, UserContextType } from "../contexts/UserContext";
 import useIsMobile from "../hooks/useIsMobile";
 import { Button } from "./Button";
 import { TextField } from "./TextField";
+import { validatePassword, validateUsername } from "../components/user/utils";
 
 const SettingsCard = styled.form`
   border-radius: 20px;
@@ -62,6 +63,11 @@ function AccountPage() {
   // ================ Event handlers ==================
   const handleChangeUsername = async (e: any) => {
     e.preventDefault();
+
+    const usernameIsValid = validateUsername(username);
+    setIsUsernameError(!usernameIsValid);
+    if(!usernameIsValid){return;}
+
     await apiCallUserChangeUsername(username, "")
       .then((response) => {
         if (response.status === 200) {
@@ -80,6 +86,11 @@ function AccountPage() {
 
   const handleChangePassword = async (e: any) => {
     e.preventDefault();
+
+    const passwordIsValid = validatePassword(password, password);
+    setIsPasswordError(!passwordIsValid);
+    if(!passwordIsValid){return;}
+    
     await apiCallUserChangePassword("", password)
       .then((response) => {
         if (response.status === 200) {
