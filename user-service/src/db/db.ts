@@ -13,7 +13,7 @@ let mock_db: MongoMemoryServer | null = null;
 /**
  * This function is called to populate the dev db with data from the local json file.
  */
-const populateDevDb = () => {
+const populateDevDb = async () => {
   const db = mongoose.connection;
 
   // 1. if dev, populate
@@ -26,14 +26,16 @@ const populateDevDb = () => {
     try {
       // clear db
       console.log("Clearing existing tables");
-      tables.forEach((table) => {
-        db.collection(table)
+      tables.forEach(async (table) => {
+        await db
+          .collection(table)
           .drop()
           .catch((error) => {
             console.error(
-              "Tried to drop table " + table + " but it doesn't exist."
+              "\n**Tried to drop table " + table + " but it doesn't exist."
             );
             console.error(error);
+            console.error("\n**");
           });
       });
 

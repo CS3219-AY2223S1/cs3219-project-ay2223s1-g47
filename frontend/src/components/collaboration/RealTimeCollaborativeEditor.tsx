@@ -21,7 +21,7 @@ export default function RealTimeCollaborativeEditor(props: {
   username: string;
   userId: string;
   language: string;
-  initialCode: string;
+  initialCode?: string;
   codeCallback: (code: string) => void;
 }) {
   // =========== props =========================
@@ -57,7 +57,9 @@ export default function RealTimeCollaborativeEditor(props: {
       // 1. create yjs document and get text from codemirror editor
       const yDoc = new Y.Doc();
       const yText = yDoc.getText("codemirror");
-      yText.insert(0, initialCode);
+      if (!!initialCode) {
+        yText.insert(0, initialCode);
+      }
 
       // TODO: as import signalling servers for y-webrtc
       const signallingServers = Y_JS_SIGNALLING_SERVERS;
@@ -67,7 +69,7 @@ export default function RealTimeCollaborativeEditor(props: {
       //@ts-ignore
       const provider = new WebrtcProvider(roomId, yDoc, {
         signaling: signallingServers,
-        maxConns: 2, // only support 2 for now
+        maxConns: 10, // only support 2 for now
       });
 
       // 3. include a undo manager
@@ -77,7 +79,7 @@ export default function RealTimeCollaborativeEditor(props: {
       // TODO: fix bug here with name
       const color = RandomColor();
       const awareness = provider.awareness;
-      awareness.setLocalState({
+      awareness.setLocalStateField("user", {
         name: username,
         color: color,
       });

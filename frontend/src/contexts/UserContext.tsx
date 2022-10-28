@@ -149,6 +149,9 @@ const UserContextProvider = (props: { children: JSX.Element }) => {
    * Clears the websocket connection.
    */
   const clearWebSocket = async () => {
+    if (webSocket) {
+      webSocket.close();
+    }
     setWebSocket(undefined);
   };
 
