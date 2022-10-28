@@ -17,17 +17,29 @@ import RealTimeCollaborativeEditor from "./RealTimeCollaborativeEditor";
 import styled from "styled-components";
 
 const Grid = styled.div`
+  box-sizing: border-box;
   display: grid;
-  grid-column-gap: 2rem;
-  grid-row-gap: 2rem;
+  grid-column-gap: 3rem;
+  grid-row-gap: 3rem;
   grid-template-areas: 'question editor editor'
                        'video editor editor';
   grid-template-columns: 1fr 1fr 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-rows: 1fr auto;
+  height: 100%;
+  padding: 0 0 2rem 0;
 `;
 
 const Video = styled.div`
+  border-radius: 20px;
+  box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.4),
+    -5px -5px 15px 5px rgba(63, 63, 74, 1);
   grid-area: video;
+  overflow: hidden;
+  transform: translateZ(0px);
+
+  #callframe {
+    height: 100%;
+  }
 
   iframe {
     min-height: 250px;
@@ -35,15 +47,33 @@ const Video = styled.div`
 `;
 
 const Editor = styled.div`
+  background: rgba(0, 0, 0, .1);
   grid-area: editor;
+  overflow: auto;
+
+  .ͼ2 .cm-gutters {
+    background: none;
+    color: #aaa;
+  }
+
+  .ͼ2 .cm-activeLineGutter {
+    background: rgb(255, 179, 117);
+    color: rgb(48,48,51);
+  }
 `;
 
 const Question = styled.div`
+  border-radius: 20px;
+  box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.4),
+    -5px -5px 15px 5px rgba(63, 63, 74, 1);
+  padding: 3em 2em;
   grid-area: question;
+  overflow-y: scroll;
 
   h1 {
     color: rgb(255, 179, 117);
     margin: 0 0 2rem 0;
+    text-align: center;
     text-shadow: 5px 2px 20px rgba(255, 90, 8, 0.8);
   }
 `;

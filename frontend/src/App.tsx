@@ -17,11 +17,13 @@ import "react-toastify/dist/ReactToastify.css";
 import { NavBar } from "./components/NavBar";
 import { HistoryPage } from "./components/HistoryPage";
 
-const AppComponent = styled.div`
+const Wrapper = styled.div`
   background: rgb(48, 48, 51);
   color: #fff;
+  flex-direction: column;
   font-family: sans-serif;
-  min-height: 100vh;
+  height: 100vh;
+  overflow: hidden;
 
   a {
     color: rgb(64, 159, 255);
@@ -29,6 +31,8 @@ const AppComponent = styled.div`
 `;
 
 const Content = styled.div`
+  box-sizing: border-box;
+  height: calc(100vh - 4rem);
   margin: 0 auto;
   max-width: 1200px;
   padding: 3rem 0;
@@ -42,8 +46,9 @@ function App() {
   console.log("App.tsx: loggedIn = " + isLoggedIn);
 
   return (
-    <AppComponent>
+    <>
       <Router>
+        <Wrapper>
         {isLoggedIn && <NavBar />}
         <Content>
           <Routes>
@@ -119,8 +124,9 @@ function App() {
             />
           </Routes>
         </Content>
+        </Wrapper>
       </Router>
-    </AppComponent>
+    </>
   );
 }
 
