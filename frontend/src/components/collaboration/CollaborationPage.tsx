@@ -10,11 +10,73 @@ import { useSearchParams } from "react-router-dom";
 import { UserContext, UserContextType } from "../../contexts/UserContext";
 import { apiGetNewJwt } from "../../api/UserServiceApi";
 import { COLLABORATION_SERVICE_COLLABRATION_ROOM_URL } from "../../constants";
-import { Divider, Grid, Paper, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { useDebounce } from "../../hooks/useDebounce";
 
 import RealTimeCollaborativeEditor from "./RealTimeCollaborativeEditor";
+import styled from "styled-components";
+
+const Grid = styled.div`
+  box-sizing: border-box;
+  display: grid;
+  grid-column-gap: 3rem;
+  grid-row-gap: 3rem;
+  grid-template-areas: 'question editor editor'
+                       'video editor editor';
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr auto;
+  height: 100%;
+  padding: 0 0 2rem 0;
+`;
+
+const Video = styled.div`
+  border-radius: 20px;
+  box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.4),
+    -5px -5px 15px 5px rgba(63, 63, 74, 1);
+  grid-area: video;
+  overflow: hidden;
+  transform: translateZ(0px);
+
+  #callframe {
+    height: 100%;
+  }
+
+  iframe {
+    min-height: 250px;
+  }
+`;
+
+const Editor = styled.div`
+  background: rgba(0, 0, 0, .1);
+  grid-area: editor;
+  overflow: auto;
+
+  .ͼ2 .cm-gutters {
+    background: none;
+    color: #aaa;
+  }
+
+  .ͼ2 .cm-activeLineGutter {
+    background: rgb(255, 179, 117);
+    color: rgb(48,48,51);
+  }
+`;
+
+const Question = styled.div`
+  border-radius: 20px;
+  box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.4),
+    -5px -5px 15px 5px rgba(63, 63, 74, 1);
+  padding: 3em 2em;
+  grid-area: question;
+  overflow-y: scroll;
+
+  h1 {
+    color: rgb(255, 179, 117);
+    margin: 0 0 2rem 0;
+    text-align: center;
+    text-shadow: 5px 2px 20px rgba(255, 90, 8, 0.8);
+  }
+`;
 
 function CollaborationPage() {
   // =========== query params ==================
@@ -231,52 +293,23 @@ function CollaborationPage() {
    * Question component
    */
   const questionComponent = (
-    <Grid container component={Paper} direction={"column"}>
-      <Grid item xs={12} padding={"12px"}>
-        <Typography variant="h4">{room?.question.title}</Typography>
-      </Grid>
-      <Grid item xs={12} padding={"12px"}>
-        <Typography variant="body1">{room?.question.description}</Typography>
-      </Grid>
-      <Grid item xs={12}></Grid>
-    </Grid>
-  );
-
-  const roomComponent = (
-    <Grid
-      container
-      direction="row"
-      justifyContent="space-evenly"
-      style={{ minHeight: "100vh" }}
-    >
-      <Grid item xs={4}>
-        <Grid
-          container
-          direction="column"
-          // justifyContent="space-evenly"
-          style={{ height: "100%" }}
-          // spacing={12}
-        >
-          <Grid item xs={6}>
-            {questionComponent}
-          </Grid>
-          <Grid item xs={6}>
-            <div style={{ height: "100%" }} id="callframe"></div>
-          </Grid>
-          <Divider />
-        </Grid>
-      </Grid>
-      <Grid item xs={8}>
-        {codeEditorComponent}
-      </Grid>
-    </Grid>
+    <Question>
+      <h1>{room?.question.title}</h1>
+      <p>
+        {room?.question.description}
+      </p>
+    </Question>
   );
 
   return (
-    <div style={{ minHeight: "100vh" }}>
-      <div id="video"></div>
-      {roomComponent}
-    </div>
+    <Grid>
+      {questionComponent}
+      <Editor>{codeEditorComponent}</Editor>
+      <Video>
+        <div id="callframe"></div>
+        <div id="video"></div>
+      </Video>
+    </Grid>
   );
 }
 
