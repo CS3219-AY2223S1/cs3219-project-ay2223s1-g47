@@ -21,8 +21,9 @@ const Grid = styled.div`
   display: grid;
   grid-column-gap: 3rem;
   grid-row-gap: 3rem;
-  grid-template-areas: 'question editor editor'
-                       'video editor editor';
+  grid-template-areas:
+    "question editor editor"
+    "video editor editor";
   grid-template-columns: 1fr 1fr 1fr;
   grid-template-rows: 1fr auto;
   height: 100%;
@@ -47,7 +48,7 @@ const Video = styled.div`
 `;
 
 const Editor = styled.div`
-  background: rgba(0, 0, 0, .1);
+  background: rgba(0, 0, 0, 0.1);
   grid-area: editor;
   overflow: auto;
 
@@ -58,7 +59,7 @@ const Editor = styled.div`
 
   .ͼ2 .cm-activeLineGutter {
     background: rgb(255, 179, 117);
-    color: rgb(48,48,51);
+    color: rgb(48, 48, 51);
   }
 `;
 
@@ -170,10 +171,19 @@ function CollaborationPage() {
     socketJwt?: string
   ) => {
     if (room && debouncedCode && webSocket && socketJwt) {
-      room.state.code = debouncedCode;
+      if (!webSocket.readyState) {
+        // try again in 1 second
+        console.log("websocket not ready. retrying room update in 1 second");
+        setTimeout(
+          () => handleRoomUpdate(room, debouncedCode, webSocket, socketJwt),
+          1000
+        );
+      } else {
+        room.state.code = debouncedCode;
 
-      // stringify and send room state
-      webSocket.send(JSON.stringify(room.state));
+        // stringify and send room state
+        webSocket.send(JSON.stringify(room.state));
+      }
     }
   };
 
@@ -190,7 +200,7 @@ function CollaborationPage() {
    */
   useEffect(() => {
     handleRoomUpdate(room, debouncedCode, webSocket, socketJwt);
-  }, [room, debouncedCode, webSocket, socketJwt]);
+  }, [debouncedCode, webSocket, socketJwt]);
 
   /**
    * Hook that initializes authentication in preparation for the websocket connection.
@@ -215,6 +225,9 @@ function CollaborationPage() {
           socketJwt
       );
     }
+    return () => {
+      clearWebSocket();
+    };
   }, [socketJwt, room?.roomId]);
 
   /**
@@ -282,7 +295,7 @@ function CollaborationPage() {
       username={user.username}
       userId={user.userId}
       language={"python"} // TODO: not hard code this
-      initialCode={initialCode ?? ""}
+      initialCode={(room?.numInRoom ?? 1) > 1 ? undefined : initialCode ?? ""}
       codeCallback={(code: string) => {
         setCode(code);
       }}
@@ -295,9 +308,7 @@ function CollaborationPage() {
   const questionComponent = (
     <Question>
       <h1>{room?.question.title}</h1>
-      <p>
-        {room?.question.description}
-      </p>
+      <p>{room?.question.description}</p>
     </Question>
   );
 
