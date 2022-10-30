@@ -1,9 +1,11 @@
-import { randomUUID, sign } from "crypto";
+import { randomUUID } from "crypto";
 import {
   DbPermissionDeniedException,
   DbReadException,
   DbWriteException,
   UserDetailValidationException,
+  UsernameClashException,
+  UserNotFoundException,
   UserServiceException,
 } from "../../exceptions";
 import { LoginDetails, SignUpDetails } from "../../interfaces/login-details";
@@ -17,7 +19,7 @@ export async function createUser(signupDetails: SignUpDetails) {
   // 1. check if user exists
   const username = signupDetails.username;
   if (await userWithUsernameExists(username)) {
-    throw new DbWriteException("User already exists.");
+    throw new UsernameClashException("User already exists.");
   }
 
   // 2. if user does not exist, we create and save the uservalidate the change
@@ -63,6 +65,9 @@ export async function modifyUser(id: string, signupDetails: SignUpDetails) {
         { password: signupDetails.password }
       );
     } else {
+      if (await userWithUsernameExists(signupDetails.username)) {
+        throw new UsernameClashException("User already exists");
+      }
       user1 = await UserModel.findOneAndUpdate(
         { id },
         { username: signupDetails.username }
@@ -130,7 +135,7 @@ export async function deleteUser(userId: string) {
   try {
     // 1. check if user exists
     if (!(await userWithIdExists(userId))) {
-      throw new DbWriteException(
+      throw new UserNotFoundException(
         "User does not exist, but we are trying to delete them."
       );
     }

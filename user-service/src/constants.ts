@@ -27,6 +27,7 @@ export const ENV_IS_PROD = process.env.ENV == 'PROD'
  */
 export const CORS_OPTIONS: cors.CorsOptions = {
   credentials: true,
+  // origin: '*'
   origin: 'http://localhost:3000' // TODO: currently we allow all origins
 }
 
