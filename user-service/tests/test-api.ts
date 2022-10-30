@@ -46,7 +46,7 @@ describe("signup", () => {
     const res = await agent
       .post("/signup")
       .send({ username: "user1", password: "testpw" });
-    expect(res.statusCode).toEqual(500);
+    expect(res.statusCode).toEqual(409);
   });
 
   // empty username
