@@ -21,6 +21,32 @@ export class UserDetailValidationException extends UserServiceException {
 }
 
 /**
+ * Exception thrown when creating/renaming an account clashes with an existing account
+ */
+ export class UsernameClashException extends UserServiceException {
+  constructor(message: string) {
+    super(message,409);
+
+    // Set the prototype explicitly.
+    Object.setPrototypeOf(this, DbWriteException.prototype);
+  }
+}
+
+/**
+ * Exception thrown when deleting an account that does not exist
+ */
+ export class UserNotFoundException extends UserServiceException {
+  constructor(message: string) {
+    super(message,404);
+
+    // Set the prototype explicitly.
+    Object.setPrototypeOf(this, DbWriteException.prototype);
+  }
+}
+
+
+
+/**
  * Exception thrown when there is an error writing to the database.
  */
 export class DbWriteException extends UserServiceException {

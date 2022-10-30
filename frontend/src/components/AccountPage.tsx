@@ -7,8 +7,11 @@ import {
 } from "../api/UserServiceApi";
 import { UserContext, UserContextType } from "../contexts/UserContext";
 import useIsMobile from "../hooks/useIsMobile";
+import { Snackbar} from "@mui/material";
+import MuiAlert from "@mui/material/Alert";
 import { Button } from "./Button";
 import { TextField } from "./TextField";
+import { validatePassword, validateUsername } from "../components/user/utils";
 
 const SettingsCard = styled.form`
   border-radius: 20px;
@@ -49,8 +52,7 @@ function AccountPage() {
   // ================ State management ================
   // UI states
   const isMobile = useIsMobile();
-  const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] =
-    useState<Boolean>(false);
+  const [isErrorSnackbarOpen, setIsErrorSnackbarOpen] = useState(false);
   const [errorSnackBarContent, setErrorSnackbarContent] = useState<String>("");
 
   // contexts
@@ -62,13 +64,19 @@ function AccountPage() {
   // ================ Event handlers ==================
   const handleChangeUsername = async (e: any) => {
     e.preventDefault();
+
+    const usernameIsValid = validateUsername(username);
+    setIsUsernameError(!usernameIsValid);
+    if(!usernameIsValid){return;}
+
     await apiCallUserChangeUsername(username, "")
       .then((response) => {
         if (response.status === 200) {
           navigate("/");
         } else {
           const errorMessage: string =
-            "Something went wrong! Please try again later.";
+          response.data.message ??
+          "Something went wrong! Please try again later.";
           setErrorSnackbarContent(errorMessage);
         }
         setIsErrorSnackbarOpen(true);
@@ -80,6 +88,11 @@ function AccountPage() {
 
   const handleChangePassword = async (e: any) => {
     e.preventDefault();
+
+    const passwordIsValid = validatePassword(password, password);
+    setIsPasswordError(!passwordIsValid);
+    if(!passwordIsValid){return;}
+    
     await apiCallUserChangePassword("", password)
       .then((response) => {
         if (response.status === 200) {
@@ -129,6 +142,25 @@ function AccountPage() {
     <Button onClick={handleChangePassword}>Confirm New Password</Button>
   );
 
+  /**
+   * This renders the error snackbar.
+   */
+   const errorSnackbar = (
+    <Snackbar
+      anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
+      open={isErrorSnackbarOpen}
+      autoHideDuration={5000}
+      onClose={() => setIsErrorSnackbarOpen(false)}
+      role="alert"
+    >
+      <MuiAlert elevation={6} variant="filled" severity="error">
+        {errorSnackBarContent}
+      </MuiAlert>
+    </Snackbar>
+  );
+
+
+
   // ====== Render ======
   return (
     <SettingsCard>
@@ -139,6 +171,7 @@ function AccountPage() {
         {changePassword_TextField}
         <ButtonContainer>{changePassword_button}</ButtonContainer>
       </form>
+      {errorSnackbar}
     </SettingsCard>
   );
 }

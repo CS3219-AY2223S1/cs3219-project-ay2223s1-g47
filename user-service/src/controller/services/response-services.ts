@@ -31,7 +31,7 @@ export function createInternalServerErrorResponse(
 ) {
   return response
     .status(statusCode ?? 500)
-    .json({ message: message ?? "Internal server error." });
+    .json({ data:{ message: message ?? "Internal server error." }});
 }
 
 export function createOkResponse(response: Response, data?: unknown) {
@@ -39,5 +39,5 @@ export function createOkResponse(response: Response, data?: unknown) {
 }
 
 export function createBadRequestResponse(response: Response, message?: string) {
-  return response.status(400).json({ message: message ?? "Bad request." });
+  return response.status(400).json({ data:{ message: message ?? "Bad request." }});
 }
