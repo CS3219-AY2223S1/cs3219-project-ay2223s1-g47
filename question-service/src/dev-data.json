@@ -14,14 +14,38 @@
       "difficulty": 0,
       "topic": 0
     },
+
+
     {
-      "qid": "3",
-      "title": "question 3",
-      "description": "question 3 long desc",
+      "qid": "10",
+      "title": "Find and Replace Pattern",
+      "description": "Given a list of strings `words` and a string `pattern`, return a list of `words[i]` that match `pattern`. You may return the answer in any order. A word matches the pattern if there exists a permutation of letters `p` so that after replacing every letter `x` in the pattern with `p(x)`, we get the desired word. Recall that a permutation of letters is a bijection from letters to letters: every letter maps to another letter, and no two letters map to the same letter.",
+      "difficulty": 1,
+      "topic": 0
+    },
+    {
+      "qid": "11",
+      "title": "question 11",
+      "description": "question 11 long desc",
+      "difficulty": 1,
+      "topic": 0
+    },
+
+
+    {
+      "qid": "21",
+      "title": "question 21",
+      "description": "question 21 long desc",
+      "difficulty": 1,
+      "topic": 0
+    },
+    {
+      "qid": "22",
+      "title": "question 22",
+      "description": "question 22 long desc",
       "difficulty": 1,
       "topic": 0
     }
-
 
 
 
