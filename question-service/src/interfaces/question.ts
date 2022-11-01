@@ -17,5 +17,10 @@ export enum QuestionDifficulty {
 }
 
 export enum QuestionTopic {
-  ARRAYS_AND_HASHING = 0,
+  ARRAY = 0,
+  STRING = 1,
+  SORTING = 2,
+  TREE = 3,
+  HASH_TABLE = 4,
+  DYNAMIC_PROGRAMMING = 5,
 }
