@@ -22,8 +22,8 @@ const populateDevDb = async () => {
     try {
       // clear db
       console.log("Clearing existing tables");
-      tables.forEach((table) => {
-        db.collection(table)
+      tables.forEach(async (table) => {
+        await db.collection(table)
           .drop()
           .catch((error) => {
             console.error("Tried to drop table " + table + " but some error.");
