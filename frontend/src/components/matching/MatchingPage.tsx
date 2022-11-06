@@ -71,6 +71,11 @@ function MatchingPage() {
 
   // ====== Event handlers ======
 
+  const onDisconnect = () => {
+    socket?.disconnect();
+    setIsMatching(false);
+  }
+
   const onMatchingTimeout = () => {
     setIsMatching(false);
     toast("Matching timeout! Please make another match.");
@@ -125,7 +130,7 @@ function MatchingPage() {
   );
 
   // ====== Render ======
-  if (isMatching) return <MatchLoadingComponent />;
+  if (isMatching) return <MatchLoadingComponent onDisconnect={onDisconnect} />;
 
   return <Grid>{matchingSelection}</Grid>;
 }
