@@ -106,7 +106,7 @@ export function HistoryPage() {
   const roomComponentListItem = (room: Room) => {
     return (
       <li>
-        <div>{room.createdAt}</div>
+        <div>{room.createdAt.substring(0, 10)}</div>
         <div>{room.question.title}</div>
         <div>{difficultyMap[room.question.difficulty]}</div>
         <div>{room.roomId}</div>
