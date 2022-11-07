@@ -23,7 +23,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   font-family: sans-serif;
   height: 100vh;
-  overflow: hidden;
+  overflow: auto;
 
   a {
     color: rgb(64, 159, 255);
