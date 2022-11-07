@@ -104,12 +104,14 @@ export function HistoryPage() {
    * A given room card.
    */
   const roomComponentListItem = (room: Room) => {
-    return <li>
-      <div>{ room.createdAt }</div>
-      <div>{ room.question.title }</div>
-      <div>{ difficultyMap[room.question.difficulty] }</div>
-      <div>{ room.roomId }</div>
-    </li>;
+    return (
+      <li>
+        <div>{room.createdAt}</div>
+        <div>{room.question.title}</div>
+        <div>{difficultyMap[room.question.difficulty]}</div>
+        <div>{room.roomId}</div>
+      </li>
+    );
   };
 
   /**
@@ -132,17 +134,21 @@ export function HistoryPage() {
   /**
    * Display when there are no rooms
    */
-  const noRooms = <div>You've not had any session </div>;
+  const noRooms = <div>You've not had any session! </div>;
 
   return (
     <HistoryComponent>
       <h1>Match History</h1>
       <Stats>
         {difficultyMap.map((difficulty, key) => {
-          return <Counter>
-            <div>{rooms.filter(room => room.question.difficulty == key).length}</div>
-            <div>{ difficulty }</div>
-          </Counter>
+          return (
+            <Counter>
+              <div>
+                {rooms.filter((room) => room.question.difficulty == key).length}
+              </div>
+              <div>{difficulty}</div>
+            </Counter>
+          );
         })}
       </Stats>
       {rooms.length > 0 ? roomComponentList : noRooms}

@@ -23,7 +23,7 @@ const Wrapper = styled.div`
   flex-direction: column;
   font-family: sans-serif;
   height: 100vh;
-  overflow: hidden;
+  overflow: auto;
 
   a {
     color: rgb(64, 159, 255);
@@ -34,8 +34,8 @@ const Content = styled.div`
   box-sizing: border-box;
   height: calc(100vh - 4rem);
   margin: 0 auto;
-  max-width: 1200px;
-  padding: 3rem 0;
+  max-width: 95vw;
+  padding: 2rem 0;
 `;
 
 function App() {
@@ -49,81 +49,81 @@ function App() {
     <>
       <Router>
         <Wrapper>
-        {isLoggedIn && <NavBar />}
-        <Content>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <ProtectedRoute
-                  redirectPath={"/login"}
-                  isAllowed={isLoggedIn}
-                  children={<Home />}
-                />
-              }
-            />
-            <Route
-              path="/match"
-              element={
-                <ProtectedRoute
-                  redirectPath={"/"}
-                  isAllowed={isLoggedIn}
-                  children={<MatchingPage />}
-                />
-              }
-            />
-            <Route
-              path="/room"
-              element={
-                <ProtectedRoute
-                  redirectPath={"/"}
-                  isAllowed={isLoggedIn}
-                  children={<CollaborationPage />}
-                />
-              }
-            />
-            <Route
-              path="/signup"
-              element={
-                <ProtectedRoute
-                  redirectPath={"/"}
-                  isAllowed={true} // if logged in, redirect to home
-                  children={<SignupPage />}
-                />
-              }
-            />
-            <Route
-              path="/login"
-              element={
-                <ProtectedRoute
-                  redirectPath={"/"}
-                  isAllowed={!isLoggedIn} // if logged in, redirect to home
-                  children={<LoginPage />}
-                />
-              }
-            />
-            <Route
-              path="/settings"
-              element={
-                <ProtectedRoute
-                  redirectPath={"/"}
-                  isAllowed={isLoggedIn} // if not logged in, redirect to home
-                  children={<AccountPage />}
-                />
-              }
-            />
-            <Route
-              path="/history"
-              element={
-                <ProtectedRoute
-                  redirectPath={"/"}
-                  isAllowed={isLoggedIn} // if not logged in, redirect to home
-                  children={<HistoryPage />}
-                />
-              }
-            />
-          </Routes>
-        </Content>
+          {isLoggedIn && <NavBar />}
+          <Content>
+            <Routes>
+              <Route
+                path="/"
+                element={
+                  <ProtectedRoute
+                    redirectPath={"/login"}
+                    isAllowed={isLoggedIn}
+                    children={<Home />}
+                  />
+                }
+              />
+              <Route
+                path="/match"
+                element={
+                  <ProtectedRoute
+                    redirectPath={"/"}
+                    isAllowed={isLoggedIn}
+                    children={<MatchingPage />}
+                  />
+                }
+              />
+              <Route
+                path="/room"
+                element={
+                  <ProtectedRoute
+                    redirectPath={"/"}
+                    isAllowed={isLoggedIn}
+                    children={<CollaborationPage />}
+                  />
+                }
+              />
+              <Route
+                path="/signup"
+                element={
+                  <ProtectedRoute
+                    redirectPath={"/"}
+                    isAllowed={true} // if logged in, redirect to home
+                    children={<SignupPage />}
+                  />
+                }
+              />
+              <Route
+                path="/login"
+                element={
+                  <ProtectedRoute
+                    redirectPath={"/"}
+                    isAllowed={!isLoggedIn} // if logged in, redirect to home
+                    children={<LoginPage />}
+                  />
+                }
+              />
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute
+                    redirectPath={"/"}
+                    isAllowed={isLoggedIn} // if not logged in, redirect to home
+                    children={<AccountPage />}
+                  />
+                }
+              />
+              <Route
+                path="/history"
+                element={
+                  <ProtectedRoute
+                    redirectPath={"/"}
+                    isAllowed={isLoggedIn} // if not logged in, redirect to home
+                    children={<HistoryPage />}
+                  />
+                }
+              />
+            </Routes>
+          </Content>
         </Wrapper>
       </Router>
     </>

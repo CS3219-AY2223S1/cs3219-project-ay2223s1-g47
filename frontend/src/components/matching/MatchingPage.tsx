@@ -74,7 +74,7 @@ function MatchingPage() {
   const onDisconnect = () => {
     socket?.disconnect();
     setIsMatching(false);
-  }
+  };
 
   const onMatchingTimeout = () => {
     setIsMatching(false);
@@ -117,14 +117,16 @@ function MatchingPage() {
     <>
       {matchOptionCard(
         "Easy",
-        "Choose this if you're new to programming",
+        "Choose this if you're new to programming.",
         () => createPendingMatch(0) // TODO: use enums rather than magic numbers
       )}
       {matchOptionCard("Medium", "For most people.", () =>
         createPendingMatch(1)
       )}
-      {matchOptionCard("Hard", "Dark Souls, but for programmers", () =>
-        createPendingMatch(2)
+      {matchOptionCard(
+        "Hard",
+        "Dark Souls, but for programmers. You have been warned!",
+        () => createPendingMatch(2)
       )}
     </>
   );
