@@ -117,9 +117,6 @@ class RoomConnectionManager:
         self.room.num_in_room -= 1
         self.room.events.append(leave_event)
 
-        # send room state to user
-        await self.publish_room_excluding([user.id], self.room)
-
         # save to db
         self.crud_service.update_room(self.room)
         

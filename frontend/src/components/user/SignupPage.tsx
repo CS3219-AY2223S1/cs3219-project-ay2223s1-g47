@@ -1,8 +1,4 @@
-import {
-  Link,
-  Snackbar,
-  Typography,
-} from "@mui/material";
+import { Link, Snackbar, Typography } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 import { useNavigate } from "react-router-dom";
 import { useState } from "react";
@@ -15,8 +11,8 @@ import { Button } from "../Button";
 
 const SignupCard = styled.div`
   border-radius: 20px;
-  box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, .4),
-      -5px -5px 15px 5px rgba(63, 63, 74, 1);
+  box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.4),
+    -5px -5px 15px 5px rgba(63, 63, 74, 1);
   margin: 0 auto;
   max-width: 500px;
   padding: 3rem 2rem 4rem 2rem;
@@ -35,24 +31,24 @@ const SignupCard = styled.div`
     grid-area: heading;
     margin: 0 auto 4rem auto;
     text-align: center;
-    text-shadow: 5px 2px 20px rgba(255, 90, 8, .8);
+    text-shadow: 5px 2px 20px rgba(255, 90, 8, 0.8);
   }
 `;
 
 const Logo = styled.div`
-    font-size: 3rem;
-    font-weight: bold;
-    margin: 0 0 4rem 0;
-    text-align: center;
+  font-size: 3rem;
+  font-weight: bold;
+  margin: 0 0 4rem 0;
+  text-align: center;
 
-    > span:first-of-type {
-        color: rgb(255, 179, 117);
-        text-shadow: 5px 2px 20px rgba(255, 90, 8, .8);
-    }
-    > span:last-of-type {
-        color: rgb(46, 137, 255);
-        text-shadow: 5px 2px 20px rgba(34, 0, 224, .5);
-    }
+  > span:first-of-type {
+    color: rgb(255, 179, 117);
+    text-shadow: 5px 2px 20px rgba(255, 90, 8, 0.8);
+  }
+  > span:last-of-type {
+    color: rgb(46, 137, 255);
+    text-shadow: 5px 2px 20px rgba(34, 0, 224, 0.5);
+  }
 `;
 
 function SignupPage() {
@@ -125,9 +121,9 @@ function SignupPage() {
         onChange={(e) => setUsername(e.target.value)}
         hasError={isUsernameError}
         helperText={
-          isUsernameError ?
-          "3-20 characters, only letters, numbers, and underscores"
-          : null
+          isUsernameError
+            ? "3-20 characters, only letters, numbers, and underscores"
+            : null
         }
       />
       <TextField
@@ -135,7 +131,11 @@ function SignupPage() {
         type="password"
         value={password}
         hasError={isPasswordError}
-        helperText={isPasswordError ? "Passwords must match!" : null}
+        helperText={
+          isPasswordError
+            ? "Passwords must match and be at least 8 characters!"
+            : null
+        }
         onChange={(e) => setPassword(e.target.value)}
       />
       <TextField
@@ -144,11 +144,13 @@ function SignupPage() {
         value={reenteredPassword}
         onChange={(e) => setReenteredPassword(e.target.value)}
         hasError={isPasswordError}
-        helperText={isPasswordError ? "Passwords must match!" : null}
+        helperText={
+          isPasswordError
+            ? "Passwords must match and be at least 8 characters!"
+            : null
+        }
       />
-      <Link href="/login">
-          Already have an account?
-      </Link>
+      <Link href="/login">Already have an account?</Link>
       <Button onClick={handleSignup}>Sign Up</Button>
     </form>
   );
@@ -170,14 +172,18 @@ function SignupPage() {
     </Snackbar>
   );
 
-  return (<>
-    <Logo><span>Peer</span><span>Prep</span></Logo>
-    <SignupCard>
-      <h1>Sign Up</h1>
-      {signUpForm}
-      {errorSnackbar}
-    </SignupCard>
-  </>
+  return (
+    <>
+      <Logo>
+        <span>Peer</span>
+        <span>Prep</span>
+      </Logo>
+      <SignupCard>
+        <h1>Sign Up</h1>
+        {signUpForm}
+        {errorSnackbar}
+      </SignupCard>
+    </>
   );
 }
 

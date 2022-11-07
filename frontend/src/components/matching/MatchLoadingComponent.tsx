@@ -1,4 +1,5 @@
 import styled from "styled-components";
+import { Button } from "../Button";
 
 const MatchLoading = styled.div`
     display: grid;
@@ -60,7 +61,7 @@ const MatchStick = styled.div`
     width: 8px;
 `;
 
-export function MatchLoadingComponent() {
+export function MatchLoadingComponent({ onDisconnect }: { onDisconnect: (e: any) => void }) {
     return <MatchLoading>
         <Match>
             <MatchFlame/>
@@ -68,5 +69,6 @@ export function MatchLoadingComponent() {
             <MatchStick/>
         </Match>
         <p>Please wait while we search for a match...</p>
+        <Button type="destructive" onClick={onDisconnect}>Cancel Match</Button>
     </MatchLoading>
 }
