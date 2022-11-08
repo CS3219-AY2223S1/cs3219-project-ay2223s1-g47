@@ -1,6 +1,8 @@
-# CS3219-AY22-23-Project-Skeleton
+# CS3219-AY22-23-Project
 
-This is a template repository for CS3219 project.
+![image](https://user-images.githubusercontent.com/67091469/200583874-21973566-999e-484f-beba-0fa152ce2015.png)
+
+This is our repository containing our term project, _PeerPrep_.
 
 ## Run it using `docker-compose`
 ```
