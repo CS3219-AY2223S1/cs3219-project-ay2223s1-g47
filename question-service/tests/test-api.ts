@@ -5,8 +5,8 @@ import db from "../src/db/db";
 const agent = request.agent(app);
 
 // ================ db set up =================
-beforeEach(() => db.connectDb(true));
-afterEach(() => db.closeDb());
+beforeAll(() => db.connectDb(true));
+afterAll(() => db.closeDb());
 
 // ================ test cases =================
 
