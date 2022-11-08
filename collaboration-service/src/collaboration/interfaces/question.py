@@ -3,7 +3,12 @@ from pydantic import BaseModel
 from enum import IntEnum
 
 class QuestionTopic(IntEnum):
-    ARRAYS_AND_HASHING = 0
+    ARRAY = 0
+    STRING = 1
+    SORTING = 2
+    TREE = 3
+    HASH_TABLE = 4
+    DYNAMIC_PROGRAMMING = 5
 
 class QuestionDifficulty(IntEnum):
     EASY = 0

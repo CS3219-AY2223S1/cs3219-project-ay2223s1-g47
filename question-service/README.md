@@ -26,8 +26,5 @@ And you should see the service running on `localhost:8002`.
 
 ## Running tests for development
 
-run `npm run test` 
+run `npm run test`
 run `npm run test` for muted console logging
-
-tests getting by ID
-tests getting by difficulty

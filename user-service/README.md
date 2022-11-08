@@ -89,5 +89,3 @@ We run tests with `jest`. Do so with:
 ```
 npm test
 ```
-
-For CI, **todo**
