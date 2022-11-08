@@ -43,7 +43,7 @@ const Video = styled.div`
   }
 
   iframe {
-    min-height: 250px;
+    min-height: 300px;
   }
 `;
 

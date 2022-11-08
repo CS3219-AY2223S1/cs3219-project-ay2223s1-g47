@@ -52,7 +52,7 @@ const LogoutButton = styled.button`
 
 const NavBarComponent = styled.nav`
   margin: 0 auto;
-  max-width: 1200px;
+  max-width: 1920px;
   padding: 1rem 0;
 `;
 

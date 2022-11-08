@@ -34,7 +34,7 @@ const Content = styled.div`
   box-sizing: border-box;
   height: calc(100vh - 4rem);
   margin: 0 auto;
-  max-width: 95vw;
+  max-width: 1920px;
   padding: 2rem 0;
 `;
 
