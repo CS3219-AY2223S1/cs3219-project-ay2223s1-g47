@@ -19,8 +19,8 @@ import styled from "styled-components";
 const Grid = styled.div`
   box-sizing: border-box;
   display: grid;
-  grid-column-gap: 3rem;
-  grid-row-gap: 3rem;
+  grid-column-gap: 2rem;
+  grid-row-gap: 2rem;
   grid-template-areas:
     "question editor editor"
     "video editor editor";
@@ -31,11 +31,11 @@ const Grid = styled.div`
 `;
 
 const Video = styled.div`
-  border-radius: 20px;
+  border-radius: 10px;
   box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.4),
     -5px -5px 15px 5px rgba(63, 63, 74, 1);
   grid-area: video;
-  overflow: hidden;
+  overflow: auto;
   transform: translateZ(0px);
 
   #callframe {
@@ -48,6 +48,9 @@ const Video = styled.div`
 `;
 
 const Editor = styled.div`
+  border-radius: 10px;
+  box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.4),
+    -5px -5px 15px 5px rgba(63, 63, 74, 1);
   background: rgba(0, 0, 0, 0.1);
   grid-area: editor;
   overflow: auto;
@@ -64,12 +67,12 @@ const Editor = styled.div`
 `;
 
 const Question = styled.div`
-  border-radius: 20px;
+  border-radius: 10px;
   box-shadow: 5px 5px 15px 5px rgba(0, 0, 0, 0.4),
     -5px -5px 15px 5px rgba(63, 63, 74, 1);
-  padding: 3em 2em;
+  padding: 2em 2em;
   grid-area: question;
-  overflow-y: scroll;
+  overflow: auto;
 
   h1 {
     color: rgb(255, 179, 117);
@@ -295,7 +298,7 @@ function CollaborationPage() {
       username={user.username}
       userId={user.userId}
       language={"python"} // TODO: not hard code this
-      initialCode={(room?.numInRoom ?? 1) > 1 ? undefined : initialCode ?? ""}
+      initialCode={(room?.numInRoom ?? 2) > 1 ? undefined : initialCode ?? ""}
       codeCallback={(code: string) => {
         setCode(code);
       }}

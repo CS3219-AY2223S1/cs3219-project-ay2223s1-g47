@@ -7,7 +7,7 @@ export const validatePassword = (
   password: string,
   reenteredPassword: string
 ) => {
-  return password.length > 0 && password === reenteredPassword;
+  return password.length > 8 && password === reenteredPassword; // at least 3 characters long
 };
 
 /**

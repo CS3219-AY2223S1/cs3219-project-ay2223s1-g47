@@ -7,7 +7,7 @@ import {
 } from "../api/UserServiceApi";
 import { UserContext, UserContextType } from "../contexts/UserContext";
 import useIsMobile from "../hooks/useIsMobile";
-import { Snackbar} from "@mui/material";
+import { Snackbar } from "@mui/material";
 import MuiAlert from "@mui/material/Alert";
 import { Button } from "./Button";
 import { TextField } from "./TextField";
@@ -67,7 +67,9 @@ function AccountPage() {
 
     const usernameIsValid = validateUsername(username);
     setIsUsernameError(!usernameIsValid);
-    if(!usernameIsValid){return;}
+    if (!usernameIsValid) {
+      return;
+    }
 
     await apiCallUserChangeUsername(username, "")
       .then((response) => {
@@ -75,8 +77,8 @@ function AccountPage() {
           navigate("/");
         } else {
           const errorMessage: string =
-          response.data.message ??
-          "Something went wrong! Please try again later.";
+            response.data.message ??
+            "Something went wrong! Please try again later.";
           setErrorSnackbarContent(errorMessage);
         }
         setIsErrorSnackbarOpen(true);
@@ -91,8 +93,10 @@ function AccountPage() {
 
     const passwordIsValid = validatePassword(password, password);
     setIsPasswordError(!passwordIsValid);
-    if(!passwordIsValid){return;}
-    
+    if (!passwordIsValid) {
+      return;
+    }
+
     await apiCallUserChangePassword("", password)
       .then((response) => {
         if (response.status === 200) {
@@ -134,7 +138,9 @@ function AccountPage() {
       type="password"
       value={password}
       hasError={isPasswordError}
-      helperText={isPasswordError ? "Password cannot be empty" : null}
+      helperText={
+        isPasswordError ? "Password must be at least 8 characters long!" : null
+      }
       onChange={(e) => setPassword(e.target.value)}
     />
   );
@@ -145,7 +151,7 @@ function AccountPage() {
   /**
    * This renders the error snackbar.
    */
-   const errorSnackbar = (
+  const errorSnackbar = (
     <Snackbar
       anchorOrigin={{ vertical: "bottom", horizontal: "center" }}
       open={isErrorSnackbarOpen}
@@ -158,8 +164,6 @@ function AccountPage() {
       </MuiAlert>
     </Snackbar>
   );
-
-
 
   // ====== Render ======
   return (

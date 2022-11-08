@@ -6,8 +6,16 @@ import QuestionModel from "../../models/question-model";
  */
 const get_question_by_difficulty = async (difficulty: QuestionDifficulty) => {
   // using mongoose wrapper, query
-  const questionModel = await QuestionModel.findOne() // find one picks randomly. see https://stackoverflow.com/questions/39277670/how-to-find-random-record-in-mongoose
-    .where("difficulty")
+  
+
+  const count = await QuestionModel.count({"difficulty":difficulty});
+  const  random = Math.floor(Math.random() * count);
+  
+  
+  const questionModel = await QuestionModel
+  .findOne() // find one picks randomly. see https://stackoverflow.com/questions/39277670/how-to-find-random-record-in-mongoose
+  .skip(random)
+  .where("difficulty")
     .equals(difficulty)
     .catch((err) => {
       console.log(err);
