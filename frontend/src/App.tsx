@@ -35,7 +35,7 @@ const Content = styled.div`
   height: calc(100vh - 4rem);
   margin: 0 auto;
   max-width: 1920px;
-  padding: 2rem 0;
+  padding: 2rem 4rem;
 `;
 
 function App() {
