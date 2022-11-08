@@ -93,34 +93,27 @@
     },
     {
       "qid": "14",
-      "title": "Longest Substring Without Repeating Characters",
-      "description": "Given a string s, find the length of the longest substring without repeating characters.",
-      "difficulty": 1,
-      "topic": 4
-    },
-    {
-      "qid": "15",
       "title": "First Missing Positive",
       "description": "Given an unsorted integer array nums, return the smallest missing positive integer. You must implement an algorithm that runs in O(n) time and uses constant extra space.",
       "difficulty": 2,
       "topic": 4
     },
     {
-      "qid": "16",
+      "qid": "15",
       "title": "Climbing Stairs",
       "description": "You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
       "difficulty": 0,
       "topic": 5
     },
     {
-      "qid": "17",
+      "qid": "16",
       "title": "Maximum Subarray",
       "description": "Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum. A subarray is a contiguous part of an array.",
       "difficulty": 1,
       "topic": 5
     },
     {
-      "qid": "18",
+      "qid": "17",
       "title": "Wildcard Matching",
       "description": "Given an input string (s) and a pattern (p), implement wildcard pattern matching with support for '?' and '*' where: 1. '?' Matches any single character. 2. '*' Matches any sequence of characters (including the empty sequence). The matching should cover the entire input string (not partial).",
       "difficulty": 2,
