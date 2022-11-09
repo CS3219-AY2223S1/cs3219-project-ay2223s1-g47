@@ -1,0 +1,123 @@
+{
+  "questions": [
+    {
+      "qid": "1",
+      "title": "Two-Sum",
+      "description": "Given an array of integers nums and an integer target, return indices of the two numbers such that they add up to target. You may assume that each input would have exactly one solution, and you may not use the same element twice.",
+      "difficulty": 0,
+      "topic": 0
+    },
+    {
+      "qid": "2",
+      "title": "Find First and Last Position of Element in Sorted Array",
+      "description": "Given an array of integers nums sorted in non-decreasing order, find the starting and ending position of a given target value. If target is not found in the array, return [-1, -1]. You must write an algorithm with O(log n) runtime complexity.",
+      "difficulty": 1,
+      "topic": 0
+    },
+    {
+      "qid": "3",
+      "title": "Median of Two Sorted Arrays",
+      "description": "Given two sorted arrays nums1 and nums2 of size m and n respectively, return the median of the two sorted arrays. The overall run time complexity should be O(log(m+n)).",
+      "difficulty": 2,
+      "topic": 0
+    },
+    {
+      "qid": "4",
+      "title": "Valid Parentheses",
+      "description": "Given a string s containing just the characters '(', ')', '{', '}', '[' and ']', determine if the input string is valid. An input string is valid if: 1. Open brackets must be closed by the same type of brackets. 2. Open brackets must be closed in the correct order. 3. Every close bracket has a corresponding open bracket of the same type.",
+      "difficulty": 0,
+      "topic": 1
+    },
+    {
+      "qid": "5",
+      "title": "Longest Substring Without Repeating Characters",
+      "description": "Given a string s, find the length of the longest substring without repeating characters.",
+      "difficulty": 1,
+      "topic": 1
+    },
+    {
+      "qid": "6",
+      "title": "Edit Distance",
+      "description": "Given two strings word1 and word2, return the minimum number of operations required to convert word1 to word2. You have the following three operations permitted on a word: 1. Insert a character 2. Delete a character 3. Replace a character",
+      "difficulty": 2,
+      "topic": 1
+    },
+    {
+      "qid": "7",
+      "title": "Merge Sorted Array",
+      "description": "You are given two integer arrays nums1 and nums2, sorted in non-decreasing order, and two integers m and n, representing the number of elements in nums1 and nums2 respectively. Merge nums1 and nums2 into a single array sorted in non-decreasing order. The final sorted array should not be returned by the function, but instead be stored inside the array nums1. To accommodate this, nums1 has a length of m + n, where the first m elements denote the elements that should be merged, and the last n elements are set to 0 and should be ignored. nums2 has a length of n.",
+      "difficulty": 0,
+      "topic": 2
+    },
+    {
+      "qid": "8",
+      "title": "Kth Largest Element in an Array",
+      "description": "Given an integer array nums and an integer k, return the kth largest element in the array. Note that it is the kth largest element in the sorted order, not the kth distinct element. You must solve it in O(n) time complexity.",
+      "difficulty": 1,
+      "topic": 2
+    },
+    {
+      "qid": "9",
+      "title": "Maximum Gap",
+      "description": "Given an integer array nums, return the maximum difference between two successive elements in its sorted form. If the array contains less than two elements, return 0. You must write an algorithm that runs in linear time and uses linear extra space.",
+      "difficulty": 2,
+      "topic": 2
+    },
+    {
+      "qid": "10",
+      "title": "Binary Tree Inorder Traversal",
+      "description": "Given the root of a binary tree, return the inorder traversal of its nodes' values.",
+      "difficulty": 0,
+      "topic": 3
+    },
+    {
+      "qid": "11",
+      "title": "Unique Binary Search Trees",
+      "description": "Given an integer n, return the number of structurally unique BST's (binary search trees) which has exactly n nodes of unique values from 1 to n.",
+      "difficulty": 1,
+      "topic": 3
+    },
+    {
+      "qid": "12",
+      "title": "Validate Binary Search Tree",
+      "description": "Given the root of a binary tree, determine if it is a valid binary search tree (BST). A valid BST is defined as follows: 1. The left subtree of a node contains only nodes with keys less than the node's key. 2. The right subtree of a node contains only nodes with keys greater than the node's key. 3. Both the left and right subtrees must also be binary search trees.",
+      "difficulty": 2,
+      "topic": 3
+    },
+    {
+      "qid": "13",
+      "title": "Contains Duplicate",
+      "description": "Given an integer array nums, return true if any value appears at least twice in the array, and return false if every element is distinct.",
+      "difficulty": 0,
+      "topic": 4
+    },
+    {
+      "qid": "14",
+      "title": "First Missing Positive",
+      "description": "Given an unsorted integer array nums, return the smallest missing positive integer. You must implement an algorithm that runs in O(n) time and uses constant extra space.",
+      "difficulty": 2,
+      "topic": 4
+    },
+    {
+      "qid": "15",
+      "title": "Climbing Stairs",
+      "description": "You are climbing a staircase. It takes n steps to reach the top. Each time you can either climb 1 or 2 steps. In how many distinct ways can you climb to the top?",
+      "difficulty": 0,
+      "topic": 5
+    },
+    {
+      "qid": "16",
+      "title": "Maximum Subarray",
+      "description": "Given an integer array nums, find the contiguous subarray (containing at least one number) which has the largest sum and return its sum. A subarray is a contiguous part of an array.",
+      "difficulty": 1,
+      "topic": 5
+    },
+    {
+      "qid": "17",
+      "title": "Wildcard Matching",
+      "description": "Given an input string (s) and a pattern (p), implement wildcard pattern matching with support for '?' and '*' where: 1. '?' Matches any single character. 2. '*' Matches any sequence of characters (including the empty sequence). The matching should cover the entire input string (not partial).",
+      "difficulty": 2,
+      "topic": 5
+    }
+  ]
+}

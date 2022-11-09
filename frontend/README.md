@@ -1,18 +1,14 @@
-# Getting Started with Create React App
+# `PeerPrep`'s frontend
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Workflows
 
-## Available Scripts
-
-In the project directory, you can run:
+In the project directory `frontend/`, you can run:
 
 ### `npm start`
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+Runs the app in the development mode. You can set the port number in the `.env` file. By default, we use 3000. Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+The page will reload if you make edits. You will also see any lint errors in the console.
 
 ### `npm test`
 
@@ -29,42 +25,83 @@ Your app is ready to be deployed!
 
 See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
 
-### `npm run eject`
+## Some design choices
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+<details>
+<summary><b>Use of React</b></summary>
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). See the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started) for more details.
+</details>
+<details>
+<br/>
+<summary><b>Use of TypeScript</b> </summary>
+<br>
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Long story short, TypeScript is a superset of JavaScript that provides useful features like type checking. It is compiled to `.js` and run by the JavaScript runtime. For more details, [this](https://mattermost.com/blog/using-react-with-typescript/) is a pretty useful reading.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+</details>
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Some key concepts
 
-## Learn More
+<details>
+<summary> JSX and TSX </summary>
+<br>
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+`.jsx` and `.tsx` files provide syntactic sugar for creating specific JavaScript objects, reducing verbosity. In our use case, as specified in `tsconfig.json`, we are using React to interpret these elements. So when we write:
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+```
+const tag = <h1>Hello</h1>
+```
 
-### Code Splitting
+We are essentially doing:
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+```
+const tag = React.createElement("h1", {}, "Hello")
+```
 
-### Analyzing the Bundle Size
+And under the hood, `React.createElement` simply creates a plain JavaScript object.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+</details>
+<details>
+<summary> How the React Renderer works </summary>
+<br>
 
-### Making a Progressive Web App
+Taken from [here](https://www.freecodecamp.org/news/react-under-the-hood/).
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Decoupling objects and rendering
 
-### Advanced Configuration
+At its core, React basically maintains a tree, and in doing so, it allows us to effectively reconstruct the DOM (the rendered HTML on the browser) in JavaScript and push only the changes that have occured (by traversing down said tree).
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+When we use `.jsx` or `.tsx` files (or manually create React elements), we essentially create a huge, nested object. How do we then create actual HTML tags out of it?
 
-### Deployment
+The main idea is that the ReactDOM recusirvely traverses the object and creates nodes based on their `type` property and appends them to the DOM.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+A key thing is to observe that the ReactDOM is decoupled from React - that is, the ReactDOM renders (i.e. converts to HTML) the React element. In doing so, for different platforms, we could use different renderers. [React Native](), for example, is a different renderer that runs natively on the host OS.
 
-### `npm run build` fails to minify
+### Lazy re-rendering by the React DOM
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+React essentially maintains a JavaScript version of the DOM and uses it to
+"diff" what is newly-rendered (upon some change), and decide what to then push to the actual DOM.
+
+Because recursively diffing would be expensive, the assumption is made that if a parent has changed, its containing subtree has changed - so a recursive re-render would be done downwards.
+
+### How the React DOM identifies nodes: keys
+
+At this point, it's worth thinking about how exactly React efficiently does a diff - and the idea lies in keys! That is, on a change, the _key_ of an element changes - this allows the renderer to check whether the keys match, rather than iterating through specific attributes.
+The below way is an efficient way of performing the same thing:
+
+```
+    <li key="A">A</li>
+    <li key="B">B</li>
+```
+
+Now, if this gets changed to:
+
+```
+    <li key="Z">Z</li>
+    <li key="A">A</li>
+    <li key="B">B</li>
+```
+
+React would now know that keys 'A' and 'B' already exists, so we just need to add the new element with key 'Z'.
+
+</details>
