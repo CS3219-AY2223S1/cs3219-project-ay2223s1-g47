@@ -26,7 +26,7 @@ def create_question(
         title = title or fake.sentence(),
         description = description or fake.sentence(),
         difficulty = difficulty or QuestionDifficulty.EASY,
-        topic = topic or QuestionTopic.ARRAYS_AND_HASHING
+        topic = topic or QuestionTopic.ARRAY
     )
 
 def create_user(
